@@ -11,12 +11,7 @@ import {
   ArrowRight,
   Plus,
   Clock,
-  CheckCircle2,
-  AlertCircle,
-  Database,
-  Phone,
 } from "lucide-react";
-import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { DOCTORS } from "@/data/doctors";
 import { DEPARTMENTS } from "@/data/departments";
 import { BLOG_POSTS } from "@/data/blog";
@@ -59,44 +54,6 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Supabase Connection Helper Card */}
-      {!isSupabaseConfigured && (
-        <div className="p-5 sm:p-6 rounded-3xl bg-zinc-900 text-white border border-zinc-800 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
-              <Database className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-white">
-                  Supabase Database Ready for Connection
-                </h3>
-                <span className="text-[10px] bg-amber-400/20 text-amber-300 font-bold px-2 py-0.5 rounded-md">
-                  Awaiting Credentials
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-                The database schema and turnkey SQL seed script are ready in{" "}
-                <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-200">
-                  supabase/schema.sql
-                </code>
-                . Simply paste your Supabase Project URL and Anon Key into{" "}
-                <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-200">
-                  .env.local
-                </code>{" "}
-                to activate live cloud persistence.
-              </p>
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <span className="text-xs text-zinc-400 block sm:text-right">Local Safe Mode Active</span>
-            <span className="text-[11px] text-emerald-400 font-semibold block sm:text-right">
-              ✓ All CMS tools functional
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Stats Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
