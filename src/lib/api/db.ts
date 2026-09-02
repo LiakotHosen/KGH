@@ -3,7 +3,7 @@ import { DOCTORS } from "@/data/doctors";
 import { DEPARTMENTS } from "@/data/departments";
 import { CLINIC_SETTINGS } from "@/data/settings";
 import { BLOG_POSTS } from "@/data/blog";
-import { Doctor, Department, SubService, ClinicSettings, BlogPost } from "@/types";
+import { Doctor, Department, SubService, ClinicSettings, BlogPost, GalleryItem } from "@/types";
 
 // ==============================================================================
 // 1. DOCTORS API
@@ -351,6 +351,135 @@ export async function saveLiveClinicSettings(settings: ClinicSettings): Promise<
     return { success: true };
   } catch (err: any) {
     console.error("saveLiveClinicSettings error:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+// ==============================================================================
+// 5. GALLERY API
+// ==============================================================================
+
+export const INITIAL_GALLERY: GalleryItem[] = [
+  {
+    id: "gal-1",
+    title: { en: "Modern Dental Operatory Suite", bn: "আধুনিক ডেন্টাল চেয়ার ও ক্লিনিক্যাল রুম" },
+    category: "chamber",
+    desc: { en: "Ergonomic clinical chairs with integrated digital display systems.", bn: "রোগীর সর্বোচ্চ আরামদায়ক পরিবেশ ও ডিজিটাল মনিটরিং ব্যবস্থা।" },
+    imageUrl: "/images/departments/consultation-cta.jpg",
+  },
+  {
+    id: "gal-2",
+    title: { en: "Digital 3D Intraoral Scanner", bn: "ডিজিটাল থ্রিডি ইন্ট্রাওরাল স্ক্যানার" },
+    category: "treatments",
+    desc: { en: "Micron-precise digital impression taking without silicone putty.", bn: "কোনো আঠালো পেস্ট ছাড়াই সেকেন্ডে দাঁতের ডিজিটাল থ্রিডি মডেল।" },
+    imageUrl: "/images/departments/orthodontics.jpg",
+  },
+  {
+    id: "gal-3",
+    title: { en: "Hospital-Grade Class-B Autoclave", bn: "ক্লাস-বি অটোক্লেভ জীবাণুমুক্তকরণ ইউনিট" },
+    category: "sterilization",
+    desc: { en: "100% bacterial and viral eradication for every surgical instrument.", bn: "আন্তর্জাতিক মান অনুযায়ী প্রতিটি যন্ত্রের শতভাগ জীবাণুমুক্তকরণ।" },
+    imageUrl: "/images/departments/oral-surgery.jpg",
+  },
+  {
+    id: "gal-4",
+    title: { en: "Clear Aligners Precision Planning", bn: "ক্লিয়ার অ্যালাইনার পরিকল্পনা" },
+    category: "treatments",
+    desc: { en: "Computerized orthodontic progression from initial visit to final smile.", bn: "কম্পিউটার নিয়ন্ত্রিত সুনির্দিষ্ট দাঁত সোজা করার পরিকল্পনা।" },
+    imageUrl: "/images/departments/endodontics.jpg",
+  },
+  {
+    id: "gal-5",
+    title: { en: "Digital OPG & Panoramic Radiography", bn: "ডিজিটাল ওপিজি ও প্যানোরামিক এক্স-রে" },
+    category: "treatments",
+    desc: { en: "Ultra-low radiation high definition jaw imaging suite.", bn: "স্বল্পমাত্রার রেডিয়েশনসহ চোয়ালের উচ্চমানের ডিজিটাল প্রতিচ্ছবি।" },
+    imageUrl: "/images/departments/periodontics.jpg",
+  },
+  {
+    id: "gal-6",
+    title: { en: "Patient Consultation Lounge", bn: "রোগী ও পরিবারের আরামদায়ক লাউঞ্জ" },
+    category: "chamber",
+    desc: { en: "Serene, quiet waiting environment designed for patient peace of mind.", bn: "মানসিক প্রশান্তিদায়ক শান্ত ও স্নিগ্ধ অপেক্ষার পরিবেশ।" },
+    imageUrl: "/images/departments/prosthodontics.jpg",
+  },
+];
+
+export async function fetchLiveGalleryItems(): Promise<GalleryItem[]> {
+  if (!isSupabaseConfigured) return INITIAL_GALLERY;
+
+  try {
+    const { data, error } = await supabase
+      .from("gallery_items")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      return INITIAL_GALLERY;
+    }
+
+    return data.map((d: any) => ({
+      id: d.id,
+      title: { en: d.title_en, bn: d.title_bn },
+      category: d.category,
+      desc: { en: d.desc_en, bn: d.desc_bn },
+      imageUrl: d.image_url,
+    }));
+  } catch (err) {
+    console.error("fetchLiveGalleryItems error:", err);
+    return INITIAL_GALLERY;
+  }
+}
+
+export async function saveLiveGalleryItem(item: GalleryItem): Promise<{ success: boolean; data?: any; error?: string }> {
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    const payload = {
+      title_en: item.title.en,
+      title_bn: item.title.bn,
+      category: item.category,
+      desc_en: item.desc.en,
+      desc_bn: item.desc.bn,
+      image_url: item.imageUrl,
+    };
+
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.id);
+
+    if (isUuid) {
+      const { data, error } = await supabase
+        .from("gallery_items")
+        .upsert({ id: item.id, ...payload })
+        .select()
+        .single();
+      if (error) throw error;
+      return { success: true, data };
+    } else {
+      const { data, error } = await supabase
+        .from("gallery_items")
+        .insert(payload)
+        .select()
+        .single();
+      if (error) throw error;
+      return { success: true, data };
+    }
+  } catch (err: any) {
+    console.error("saveLiveGalleryItem error:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+export async function deleteLiveGalleryItem(id: string): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    const { error } = await supabase
+      .from("gallery_items")
+      .delete()
+      .eq("id", id);
+    if (error) throw error;
+    return { success: true };
+  } catch (err: any) {
+    console.error("deleteLiveGalleryItem error:", err);
     return { success: false, error: err.message };
   }
 }

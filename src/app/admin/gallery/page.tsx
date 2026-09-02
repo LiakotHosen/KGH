@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Image as ImageIcon,
   Plus,
@@ -12,53 +12,29 @@ import {
   Search,
 } from "lucide-react";
 import { MediaPickerModal } from "@/components/admin/MediaPickerModal";
-
-interface GalleryCardItem {
-  id: string;
-  title: { en: string; bn: string };
-  category: "chamber" | "treatments" | "sterilization";
-  desc: { en: string; bn: string };
-  imageUrl: string;
-}
-
-const INITIAL_GALLERY: GalleryCardItem[] = [
-  {
-    id: "gal-1",
-    title: { en: "Modern Dental Operatory Suite", bn: "আধুনিক ডেন্টাল চেয়ার ও ক্লিনিক্যাল রুম" },
-    category: "chamber",
-    desc: { en: "Ergonomic clinical chairs with integrated digital display systems.", bn: "রোগীর সর্বোচ্চ আরামদায়ক পরিবেশ ও ডিজিটাল মনিটরিং ব্যবস্থা।" },
-    imageUrl: "/images/departments/consultation-cta.jpg",
-  },
-  {
-    id: "gal-2",
-    title: { en: "Digital 3D Intraoral Scanner", bn: "ডিজিটাল থ্রিডি ইন্ট্রাওরাল স্ক্যানার" },
-    category: "treatments",
-    desc: { en: "Micron-precise digital impression taking without silicone putty.", bn: "কোনো আঠালো পেস্ট ছাড়াই সেকেন্ডে দাঁতের ডিজিটাল থ্রিডি মডেল।" },
-    imageUrl: "/images/departments/orthodontics.jpg",
-  },
-  {
-    id: "gal-3",
-    title: { en: "Hospital-Grade Class-B Autoclave", bn: "ক্লাস-বি অটোক্লেভ জীবাণুমুক্তকরণ ইউনিট" },
-    category: "sterilization",
-    desc: { en: "100% bacterial and viral eradication for every surgical instrument.", bn: "আন্তর্জাতিক মান অনুযায়ী প্রতিটি যন্ত্রের শতভাগ জীবাণুমুক্তকরণ।" },
-    imageUrl: "/images/departments/oral-surgery.jpg",
-  },
-  {
-    id: "gal-4",
-    title: { en: "Patient Consultation Lounge", bn: "রোগী ও পরিবারের আরামদায়ক লাউঞ্জ" },
-    category: "chamber",
-    desc: { en: "Serene, quiet waiting environment designed for patient peace of mind.", bn: "মানসিক প্রশান্তিদায়ক শান্ত ও স্নিগ্ধ অপেক্ষার পরিবেশ।" },
-    imageUrl: "/images/departments/prosthodontics.jpg",
-  },
-];
+import { GalleryItem } from "@/types";
+import {
+  fetchLiveGalleryItems,
+  saveLiveGalleryItem,
+  deleteLiveGalleryItem,
+  INITIAL_GALLERY,
+} from "@/lib/api/db";
 
 export default function AdminGalleryPage() {
-  const [items, setItems] = useState<GalleryCardItem[]>(INITIAL_GALLERY);
+  const [items, setItems] = useState<GalleryItem[]>(INITIAL_GALLERY);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<GalleryCardItem | null>(null);
+  const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
-  const [formData, setFormData] = useState<GalleryCardItem>({
+  useEffect(() => {
+    fetchLiveGalleryItems().then((liveItems) => {
+      if (liveItems && liveItems.length > 0) {
+        setItems(liveItems);
+      }
+    });
+  }, []);
+
+  const [formData, setFormData] = useState<GalleryItem>({
     id: "",
     title: { en: "", bn: "" },
     category: "chamber",
@@ -78,26 +54,33 @@ export default function AdminGalleryPage() {
     setIsModalOpen(true);
   };
 
-  const handleOpenEdit = (item: GalleryCardItem) => {
+  const handleOpenEdit = (item: GalleryItem) => {
     setEditingItem(item);
     setFormData(item);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this gallery item?")) {
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this gallery item? This will update the live website immediately.")) {
       setItems(items.filter((i) => i.id !== id));
+      await deleteLiveGalleryItem(id);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingItem) {
       setItems(items.map((i) => (i.id === editingItem.id ? formData : i)));
     } else {
-      setItems([...items, formData]);
+      setItems([formData, ...items]);
     }
     setIsModalOpen(false);
+    await saveLiveGalleryItem(formData);
+    // Refetch to ensure synced IDs
+    const refreshed = await fetchLiveGalleryItems();
+    if (refreshed && refreshed.length > 0) {
+      setItems(refreshed);
+    }
   };
 
   return (
@@ -226,7 +209,7 @@ export default function AdminGalleryPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      category: e.target.value as GalleryCardItem["category"],
+                      category: e.target.value as GalleryItem["category"],
                     })
                   }
                   className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 bg-white"

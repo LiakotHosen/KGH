@@ -114,3 +114,12 @@ export interface ClinicSettings {
     whatsapp?: string;
   };
 }
+
+export interface GalleryItem {
+  id: string;
+  title: BilingualText;
+  category: "chamber" | "treatments" | "sterilization";
+  desc: BilingualText;
+  imageUrl: string;
+}
+

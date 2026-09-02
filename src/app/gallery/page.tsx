@@ -1,58 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Play, Image as ImageIcon, Sparkles, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { CtaBanner } from "@/components/home/CtaBanner";
+import { fetchLiveGalleryItems, INITIAL_GALLERY } from "@/lib/api/db";
+import { GalleryItem } from "@/types";
 
 export default function GalleryPage() {
   const { isBn } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(INITIAL_GALLERY);
+
+  useEffect(() => {
+    fetchLiveGalleryItems().then((items) => {
+      if (items && items.length > 0) {
+        setGalleryItems(items);
+      }
+    });
+  }, []);
 
   const categories = [
     { id: "all", label: { en: "All", bn: "সকল ছবি" } },
     { id: "chamber", label: { en: "Chamber & Setup", bn: "চেম্বার ও পরিবেশ" } },
     { id: "treatments", label: { en: "Clinical Treatments", bn: "চিকিৎসা ও আধুনিক প্রযুক্তি" } },
     { id: "sterilization", label: { en: "Sterilization Units", bn: "জীবাণুমুক্তকরণ ব্যবস্থা" } },
-  ];
-
-  const galleryItems = [
-    {
-      id: 1,
-      title: { en: "Modern Dental Operatory Suite", bn: "আধুনিক ডেন্টাল চেয়ার ও ক্লিনিক্যাল রুম" },
-      category: "chamber",
-      desc: { en: "Ergonomic clinical chairs with integrated digital display systems.", bn: "রোগীর সর্বোচ্চ আরামদায়ক পরিবেশ ও ডিজিটাল মনিটরিং ব্যবস্থা।" },
-    },
-    {
-      id: 2,
-      title: { en: "Digital 3D Intraoral Scanner", bn: "ডিজিটাল থ্রিডি ইন্ট্রাওরাল স্ক্যানার" },
-      category: "treatments",
-      desc: { en: "Micron-precise digital impression taking without silicone putty.", bn: "কোনো আঠালো পেস্ট ছাড়াই সেকেন্ডে দাঁতের ডিজিটাল থ্রিডি মডেল।" },
-    },
-    {
-      id: 3,
-      title: { en: "Hospital-Grade Class-B Autoclave", bn: "ক্লাস-বি অটোক্লেভ জীবাণুমুক্তকরণ ইউনিট" },
-      category: "sterilization",
-      desc: { en: "100% bacterial and viral eradication for every surgical instrument.", bn: "আন্তর্জাতিক মান অনুযায়ী প্রতিটি যন্ত্রের শতভাগ জীবাণুমুক্তকরণ।" },
-    },
-    {
-      id: 4,
-      title: { en: "Clear Aligners Precision Planning", bn: "ক্লিয়ার অ্যালাইনার পরিকল্পনা" },
-      category: "treatments",
-      desc: { en: "Computerized orthodontic progression from initial visit to final smile.", bn: "কম্পিউটার নিয়ন্ত্রিত সুনির্দিষ্ট দাঁত সোজা করার পরিকল্পনা।" },
-    },
-    {
-      id: 5,
-      title: { en: "Digital OPG & Panoramic Radiography", bn: "ডিজিটাল ওপিজি ও প্যানোরামিক এক্স-রে" },
-      category: "treatments",
-      desc: { en: "Ultra-low radiation high definition jaw imaging suite.", bn: "স্বল্পমাত্রার রেডিয়েশনসহ চোয়ালের উচ্চমানের ডিজিটাল প্রতিচ্ছবি।" },
-    },
-    {
-      id: 6,
-      title: { en: "Patient Consultation Lounge", bn: "রোগী ও পরিবারের আরামদায়ক লাউঞ্জ" },
-      category: "chamber",
-      desc: { en: "Serene, quiet waiting environment designed for patient peace of mind.", bn: "মানসিক প্রশান্তিদায়ক শান্ত ও স্নিগ্ধ অপেক্ষার পরিবেশ।" },
-    },
   ];
 
   const filteredItems =
@@ -105,30 +77,33 @@ export default function GalleryPage() {
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="group rounded-2xl border border-zinc-200 overflow-hidden bg-zinc-50 hover:shadow-lg transition-all duration-300"
+                className="group rounded-2xl border border-zinc-200 overflow-hidden bg-zinc-50 hover:shadow-xl transition-all duration-300 flex flex-col"
               >
-                {/* Visual Placeholder / Mock Chamber Representation */}
-                <div className="relative h-56 bg-zinc-900 overflow-hidden flex items-center justify-center text-zinc-400">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+                {/* Visual Image Banner */}
+                <div className="relative h-60 bg-zinc-900 overflow-hidden">
+                  <img
+                    src={item.imageUrl}
+                    alt={isBn ? item.title.bn : item.title.en}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
                   
-                  {/* Subtle graphical backdrop */}
-                  <div className="text-center p-6 space-y-2 relative z-20 text-white">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto border border-white/20">
-                      <Sparkles className="w-5 h-5 text-zinc-200" />
-                    </div>
-                    <span className="text-xs font-bold tracking-wider uppercase text-zinc-300 block">
-                      {isBn ? item.title.bn : item.title.en}
+                  <div className="absolute bottom-3 left-4 right-4 z-10">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider mb-1 border border-white/20">
+                      {item.category}
                     </span>
                   </div>
                 </div>
 
-                <div className="p-5 bg-white">
-                  <h3 className="text-sm font-bold text-zinc-950 mb-1">
-                    {isBn ? item.title.bn : item.title.en}
-                  </h3>
-                  <p className="text-xs text-zinc-600 leading-relaxed">
-                    {isBn ? item.desc.bn : item.desc.en}
-                  </p>
+                <div className="p-5 bg-white flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-zinc-950 mb-1.5">
+                      {isBn ? item.title.bn : item.title.en}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+                      {isBn ? item.desc.bn : item.desc.en}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
