@@ -75,8 +75,8 @@ npm install
 ### 3. Environment Variables
 Create a `.env.local` file in the root directory:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://kumltgqxafqjckbdnmnd.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_topdg64bkRx3PAE-eM5cjA_NIi5Nhww
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 SUPABASE_SERVICE_ROLE_KEY=
 
 ADMIN_EMAIL=admin@kghdental.com
