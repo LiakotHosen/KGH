@@ -7,29 +7,36 @@ import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@kghdental.com");
-  const [password, setPassword] = useState("kghdental2026!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    // Fast authentication check (credentials can also be authenticated with Supabase Auth)
-    if (
-      (email === "admin@kghdental.com" && password === "kghdental2026!") ||
-      password.length >= 6
-    ) {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("kgh_admin_auth", "true");
-      }
-      setTimeout(() => {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("kgh_admin_auth", "true");
+        }
         router.push("/admin");
-      }, 500);
-    } else {
-      setError("Invalid admin credentials. Please check and try again.");
+      } else {
+        setError(data.error || "Invalid admin credentials. Please try again.");
+        setIsLoading(false);
+      }
+    } catch {
+      setError("Network error. Please verify your connection.");
       setIsLoading(false);
     }
   };

@@ -145,13 +145,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="text-[10px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded-md">Live</span>
           </Link>
 
-          <Link
-            href="/admin/login"
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 transition-colors"
+          <button
+            onClick={async () => {
+              try {
+                await fetch("/api/auth/logout", { method: "POST" });
+              } catch {
+                // ignore
+              }
+              if (typeof window !== "undefined") {
+                localStorage.removeItem("kgh_admin_auth");
+              }
+              window.location.href = "/admin/login";
+            }}
+            className="w-full flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 transition-colors text-left"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out</span>
-          </Link>
+          </button>
         </div>
       </aside>
 
