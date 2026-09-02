@@ -1,18 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, ArrowRight, ChevronRight } from "lucide-react";
 import { DEPARTMENTS } from "@/data/departments";
+import { Department } from "@/types";
+import { fetchLiveDepartments } from "@/lib/api/db";
 import { DepartmentIcon } from "@/components/shared/DepartmentIcon";
 import { useLanguage } from "@/context/LanguageContext";
 import { CtaBanner } from "@/components/home/CtaBanner";
 
 export default function ServicesPage() {
   const { t, isBn } = useLanguage();
+  const [deptList, setDeptList] = useState<Department[]>(DEPARTMENTS);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredDepartments = DEPARTMENTS.map((dept) => {
+  useEffect(() => {
+    fetchLiveDepartments().then((depts) => {
+      if (depts && depts.length > 0) {
+        setDeptList(depts);
+      }
+    });
+  }, []);
+
+  const filteredDepartments = deptList.map((dept) => {
     if (!searchQuery.trim()) return dept;
     const q = searchQuery.toLowerCase();
     const matchingServices = dept.subServices.filter(

@@ -271,6 +271,7 @@ export async function createLiveAppointment(record: {
   appointment_date: string;
   time_slot: string;
   symptoms?: string;
+  status?: string;
 }): Promise<{ success: boolean; error?: string }> {
   if (!isSupabaseConfigured) return { success: true };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Calendar,
@@ -17,6 +17,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { DOCTORS } from "@/data/doctors";
+import { Doctor } from "@/types";
+import { fetchLiveDoctors, createLiveAppointment } from "@/lib/api/db";
 import { DEPARTMENTS } from "@/data/departments";
 import { useLanguage } from "@/context/LanguageContext";
 import { UI_STRINGS } from "@/data/translations";
@@ -29,19 +31,28 @@ export function BookingWizard() {
   const preSelectedTreatment = searchParams.get("treatment");
 
   const { t, isBn } = useLanguage();
+  const [doctorsList, setDoctorsList] = useState<Doctor[]>(DOCTORS);
+
+  useEffect(() => {
+    fetchLiveDoctors().then((docs) => {
+      if (docs && docs.length > 0) {
+        setDoctorsList(docs);
+      }
+    });
+  }, []);
 
   // Find initial doctor if passed in URL
   const initialDoctorId = useMemo(() => {
     if (preSelectedDoctor) {
-      const doc = DOCTORS.find((d) => d.id === preSelectedDoctor);
+      const doc = doctorsList.find((d) => d.id === preSelectedDoctor);
       if (doc) return doc.id;
     }
     if (preSelectedDept) {
       const dept = DEPARTMENTS.find((d) => d.slug === preSelectedDept);
       if (dept && dept.leadDoctorId) return dept.leadDoctorId;
     }
-    return DOCTORS[0].id;
-  }, [preSelectedDoctor, preSelectedDept]);
+    return doctorsList[0]?.id || "dr-diean";
+  }, [preSelectedDoctor, preSelectedDept, doctorsList]);
 
   // Wizard state
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -59,8 +70,8 @@ export function BookingWizard() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const activeDoctor = useMemo(() => {
-    return DOCTORS.find((d) => d.id === selectedDoctorId) || DOCTORS[0];
-  }, [selectedDoctorId]);
+    return doctorsList.find((d) => d.id === selectedDoctorId) || doctorsList[0];
+  }, [selectedDoctorId, doctorsList]);
 
   // Generate next 14 calendar days that match the doctor's active schedule
   const availableDates = useMemo(() => {
@@ -180,6 +191,20 @@ export function BookingWizard() {
         const existing = localStorage.getItem("kgh_admin_appointments");
         const list = existing ? JSON.parse(existing) : [];
         localStorage.setItem("kgh_admin_appointments", JSON.stringify([newRecord, ...list]));
+
+        // Direct live persistence into Supabase appointments table
+        createLiveAppointment({
+          reference_code: ref,
+          patient_name: patientName,
+          patient_phone: patientPhone,
+          patient_email: patientEmail || undefined,
+          doctor_name: activeDoctor ? activeDoctor.name.en : "Specialist Doctor",
+          department_name: activeDoctor ? activeDoctor.specialty.en : "General Consultation",
+          appointment_date: selectedDate,
+          time_slot: selectedTimeSlot,
+          symptoms: visitReason || undefined,
+          status: "pending",
+        }).catch((err) => console.warn("Live appointment insert error:", err));
       } catch (err) {
         console.warn("Could not cache appointment:", err);
       }
@@ -267,7 +292,7 @@ export function BookingWizard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {DOCTORS.map((doc) => {
+              {doctorsList.map((doc) => {
                 const isSelected = selectedDoctorId === doc.id;
                 return (
                   <div

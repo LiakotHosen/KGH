@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Calendar, ShieldCheck, UserCheck, ArrowRight } from "lucide-react";
 import { DEPARTMENTS } from "@/data/departments";
 import { DOCTORS } from "@/data/doctors";
+import { Doctor } from "@/types";
+import { fetchLiveDoctors } from "@/lib/api/db";
 import { DepartmentIcon } from "@/components/shared/DepartmentIcon";
 import { SubServiceAccordion } from "@/components/services/SubServiceAccordion";
 import { useLanguage } from "@/context/LanguageContext";
@@ -15,6 +17,15 @@ export default function DepartmentDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
   const { t, isBn } = useLanguage();
+  const [doctorsList, setDoctorsList] = useState<Doctor[]>(DOCTORS);
+
+  useEffect(() => {
+    fetchLiveDoctors().then((docs) => {
+      if (docs && docs.length > 0) {
+        setDoctorsList(docs);
+      }
+    });
+  }, []);
 
   const department = DEPARTMENTS.find((d) => d.slug === slug);
 
@@ -23,7 +34,7 @@ export default function DepartmentDetailPage() {
   }
 
   // Find linked lead specialist if available
-  const leadDoctor = DOCTORS.find((doc) => doc.id === department.leadDoctorId);
+  const leadDoctor = doctorsList.find((doc) => doc.id === department.leadDoctorId);
 
   return (
     <div className="min-h-screen bg-white">
