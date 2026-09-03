@@ -367,7 +367,7 @@ export const DEPARTMENTS: Department[] = [
       bn: "আপনার প্রাকৃতিক দাঁত রক্ষা করাই আমাদের প্রধান লক্ষ্য — রুট ক্যানেল, নান্দনিক ফিলিং ও হোয়াইটেনিং।",
     },
     iconName: "ShieldCheck",
-    leadDoctorId: "dr-diean",
+    leadDoctorId: "dr-bappy",
     imageUrl: "/images/departments/endodontics.jpg",
     subServices: [
       {

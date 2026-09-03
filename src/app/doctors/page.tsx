@@ -125,6 +125,19 @@ export default function DoctorsPage() {
                     </p>
                   </div>
 
+                  {/* Specialized Training & Clinical Experience */}
+                  {doc.experience && (
+                    <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-zinc-800">
+                      <GraduationCap className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-bold text-zinc-900 block mb-0.5">
+                          {isBn ? "উচ্চতর প্রশিক্ষণ ও ক্লিনিক্যাল অভিজ্ঞতা" : "Advanced Training & Clinical Expertise"}
+                        </span>
+                        <span className="text-zinc-700 leading-relaxed font-medium">{t(doc.experience)}</span>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Chamber Availability Box */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-zinc-950 text-white space-y-2.5">
                     <div className="flex items-center justify-between">

@@ -22,19 +22,26 @@ export async function fetchLiveDoctors(): Promise<Doctor[]> {
       return DOCTORS;
     }
 
-    return data.map((d: any) => ({
-      id: d.id,
-      slug: d.id,
-      name: { en: d.name_en, bn: d.name_bn },
-      specialty: { en: d.specialty_en, bn: d.specialty_bn },
-      degrees: { en: d.degrees_en, bn: d.degrees_bn },
-      schedule: d.schedule,
-      bio: { en: d.bio_en, bn: d.bio_bn },
-      photoUrl: d.photo_url,
-      bmdcReg: d.bmdc_reg || "",
-      isConfirmed: true,
-      isActive: d.is_active ?? true,
-    }));
+    return data.map((d: any) => {
+      const staticDoc = DOCTORS.find((s) => s.id === d.id);
+      return {
+        id: d.id,
+        slug: staticDoc?.slug || d.id,
+        name: { en: d.name_en, bn: d.name_bn },
+        specialty: { en: d.specialty_en, bn: d.specialty_bn },
+        degrees: { en: d.degrees_en, bn: d.degrees_bn },
+        designation: d.designation_en ? { en: d.designation_en, bn: d.designation_bn } : staticDoc?.designation,
+        institution: d.institution_en ? { en: d.institution_en, bn: d.institution_bn } : staticDoc?.institution,
+        experience: d.experience_en ? { en: d.experience_en, bn: d.experience_bn } : staticDoc?.experience,
+        departmentId: d.department_id || staticDoc?.departmentId,
+        schedule: d.schedule,
+        bio: { en: d.bio_en, bn: d.bio_bn },
+        photoUrl: d.photo_url || staticDoc?.photoUrl || "/images/doctors/dr-diean.jpg",
+        bmdcReg: d.bmdc_reg || staticDoc?.bmdcReg || "",
+        isConfirmed: true,
+        isActive: d.is_active ?? true,
+      };
+    });
   } catch (err) {
     console.error("fetchLiveDoctors error:", err);
     return DOCTORS;

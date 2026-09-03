@@ -148,25 +148,34 @@ export const DOCTORS: Doctor[] = [
     id: "dr-bappy",
     slug: "dr-md-muhtashim-chowdhury-bappy",
     name: {
-      en: "Dr. Md. Muhtashim Chowdhury Bappy",
-      bn: "ডা. মো. মুহতাসিম চৌধুরী বাপ্পী",
+      en: "Dr. Md. Muhtashim Chowdhury (Bappy)",
+      bn: "ডা. মো. মুহতাসিম চৌধুরী (বাপ্পী)",
     },
     specialty: {
-      en: "Dental Specialist",
-      bn: "ডেন্টাল বিশেষজ্ঞ",
+      en: "Oral and Dental Surgeon",
+      bn: "ওরাল অ্যান্ড ডেন্টাল সার্জন",
     },
+    departmentId: "endodontics",
     degrees: {
-      en: "BDS, Specialized Training",
-      bn: "বিডিএস, বিশেষায়িত প্রশিক্ষণপ্রাপ্ত",
+      en: "BDS (DU), MPH (NSU), PGT (Conservative Dentistry & Maxillofacial Surgery)",
+      bn: "বিডিএস (ঢাবি), এমপিএইচ (এনএসইউ), পিজিটি (কনজারভেটিভ ডেন্টিস্ট্রি ও ম্যাক্সিলোফেসিয়াল সার্জারি)",
     },
     designation: {
-      en: "Consultant Dental Surgeon",
-      bn: "কনসালটেন্ট ডেন্টাল সার্জন",
+      en: "Oral and Dental Surgeon",
+      bn: "ওরাল অ্যান্ড ডেন্টাল সার্জন",
+    },
+    institution: {
+      en: "BSMMU (Ex-PG Hospital)",
+      bn: "বিএসএমএমইউ (সাবেক পিজি হাসপাতাল)",
     },
     photoUrl: "/images/doctors/dr-diean.jpg",
     bio: {
-      en: "Dedicated dental practitioner offering advanced clinical care across general and restorative dentistry. Detailed profile updating upon final credential verification.",
-      bn: "উন্নত ও আধুনিক ডেন্টাল কেয়ার প্রদানের জন্য নিবেদিতপ্রাণ চিকিৎসক। পূর্ণাঙ্গ জীবনবৃত্তান্ত ও বিবরণী প্রক্রিয়াধীন।",
+      en: "Dr. Md. Muhtashim Chowdhury (Bappy) is an Oral and Dental Surgeon holding BDS from Dhaka University (DU) and MPH from North South University (NSU). He completed Post Graduate Training (PGT) in Conservative Dentistry & Maxillofacial Surgery at BSMMU (Ex-PG Hospital). Dr. Bappy has attained Advance Implant Training from USC (USA) and Advance Endodontic Training from Japan, specializing in modern painless root canals, dental implants, and maxillofacial procedures.",
+      bn: "ডা. মো. মুহতাসিম চৌধুরী (বাপ্পী) একজন দক্ষ ওরাল অ্যান্ড ডেন্টাল সার্জন। তিনি ঢাকা বিশ্ববিদ্যালয় (ঢাবি) থেকে বিডিএস এবং নর্থ সাউথ বিশ্ববিদ্যালয় (এনএসইউ) থেকে এমপিএইচ সম্পন্ন করেছেন। তিনি বিএসএমএমইউ (সাবেক পিজি হাসপাতাল) থেকে কনজারভেটিভ ডেন্টিস্ট্রি ও ম্যাক্সিলোফেসিয়াল সার্জারিতে পিজিটি সম্পন্ন করেন। এছাড়া তিনি আমেরিকার ইউএসসি (USC, USA) থেকে অ্যাডভান্স ইমপ্ল্যান্ট ট্রেনিং এবং জাপান থেকে অ্যাডভান্স এন্ডোডন্টিক ট্রেনিং প্রাপ্ত। তিনি আধুনিক ব্যথামুক্ত রুট ক্যানেল, ডেন্টাল ইমপ্ল্যান্ট ও ম্যাক্সিলোফেসিয়াল চিকিৎসায় অভিজ্ঞ।",
+    },
+    experience: {
+      en: "Advance Implant Training (USC, USA) • Advance Endodontic Training (Japan) • PGT (BSMMU, Ex-PG Hospital)",
+      bn: "অ্যাডভান্স ইমপ্ল্যান্ট ট্রেনিং (ইউএসসি, আমেরিকা) • অ্যাডভান্স এন্ডোডন্টিক ট্রেনিং (জাপান) • পিজিটি (বিএসএমএমইউ, সাবেক পিজি হাসপাতাল)",
     },
     schedule: {
       availableDaysEn: "Every day except Tuesday",
@@ -180,31 +189,40 @@ export const DOCTORS: Doctor[] = [
         bn: "সকাল ১১:০০ – দুপুর ২:০০",
       },
     },
-    isConfirmed: false,
+    isConfirmed: true,
   },
   {
     id: "dr-ratina",
-    slug: "dr-jesinta-chowdhury-ratina",
+    slug: "dr-jesinta-islam",
     name: {
-      en: "Dr. Jesinta Chowdhury Ratina",
-      bn: "ডা. জেসিন্টা চৌধুরী রাতিনা",
+      en: "Dr. Jesinta Islam",
+      bn: "ডা. জেসিন্টা ইসলাম",
     },
     specialty: {
-      en: "Dental Specialist",
-      bn: "ডেন্টাল বিশেষজ্ঞ",
+      en: "Oral and Dental Surgeon",
+      bn: "ওরাল অ্যান্ড ডেন্টাল সার্জন",
     },
+    departmentId: "endodontics",
     degrees: {
-      en: "BDS, Post-Graduate Fellow",
-      bn: "বিডিএস, পোস্ট-গ্র্যাজুয়েট ফেলো",
+      en: "BDS (DU), MPH (NSU), PGT (Conservative Dentistry & Endodontics)",
+      bn: "বিডিএস (ঢাবি), এমপিএইচ (এনএসইউ), পিজিটি (কনজারভেটিভ ডেন্টিস্ট্রি ও এন্ডোডন্টিক্স)",
     },
     designation: {
-      en: "Consultant Dental Surgeon",
-      bn: "কনসালটেন্ট ডেন্টাল সার্জন",
+      en: "Oral and Dental Surgeon",
+      bn: "ওরাল অ্যান্ড ডেন্টাল সার্জন",
+    },
+    institution: {
+      en: "BSMMU (Ex-PG Hospital)",
+      bn: "বিএসএমএমইউ (সাবেক পিজি হাসপাতাল)",
     },
     photoUrl: "/images/doctors/dr-fatema.jpg",
     bio: {
-      en: "Providing patient-centered comprehensive dental solutions with modern clinical standards. Full biographical details pending final client handover.",
-      bn: "আধুনিক ক্লিনিক্যাল মান বজায় রেখে রোগীর স্বাচ্ছন্দ্যময় চিকিৎসায় পারদর্শী। বিস্তারিত তথ্য প্রক্রিয়াধীন।",
+      en: "Dr. Jesinta Islam is an accomplished Oral and Dental Surgeon holding BDS from Dhaka University (DU) and MPH from North South University (NSU). She completed Post Graduate Training (PGT) in Conservative Dentistry & Endodontics at BSMMU (Ex-PG Hospital) and received Advance Implant Training in Rome, Italy. She specializes in precision root canal therapy, aesthetic dentistry, conservative treatments, and dental implant solutions with patient-centered care.",
+      bn: "ডা. জেসিন্টা ইসলাম একজন নিবেদিতপ্রাণ ওরাল অ্যান্ড ডেন্টাল সার্জন। তিনি ঢাকা বিশ্ববিদ্যালয় (ঢাবি) থেকে বিডিএস এবং নর্থ সাউথ বিশ্ববিদ্যালয় (এনএসইউ) থেকে এমপিএইচ ডিগ্রি অর্জন করেছেন। তিনি বিএসএমএমইউ (সাবেক পিজি হাসপাতাল) থেকে কনজারভেটিভ ডেন্টিস্ট্রি ও এন্ডোডন্টিক্সে পিজিটি সম্পন্ন করেছেন এবং ইতালির রোম থেকে অ্যাডভান্স ইমপ্ল্যান্ট ট্রেনিং সম্পন্ন করেছেন। তিনি আধুনিক রুট ক্যানেল, নান্দনিক ডেন্টিস্ট্রি ও ডেন্টাল ইমপ্ল্যান্ট চিকিৎসায় বিশেষভাবে পারদর্শী।",
+    },
+    experience: {
+      en: "Advance Implant Training (Rome, Italy) • PGT in Conservative Dentistry & Endodontics (BSMMU, Ex-PG Hospital)",
+      bn: "অ্যাডভান্স ইমপ্ল্যান্ট ট্রেনিং (রোম, ইতালি) • পিজিটি (কনজারভেটিভ ডেন্টিস্ট্রি ও এন্ডোডন্টিক্স, বিএসএমএমইউ, সাবেক পিজি হাসপাতাল)",
     },
     schedule: {
       availableDaysEn: "Tuesday only",
@@ -218,7 +236,7 @@ export const DOCTORS: Doctor[] = [
         bn: "সকাল ১১:০০ – দুপুর ২:০০",
       },
     },
-    isConfirmed: false,
+    isConfirmed: true,
   },
   {
     id: "dr-joy",
