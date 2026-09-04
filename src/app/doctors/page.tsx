@@ -44,8 +44,8 @@ export default function DoctorsPage() {
             </h1>
             <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-relaxed">
               {isBn
-                ? "ছয়জন বিশেষজ্ঞ। লক্ষ্য একটাই — আপনার ঠিক যে চিকিৎসাটা দরকার, সেটা দেবে সেই বিষয়ে সবচেয়ে দক্ষ মানুষটাই।"
-                : "Six specialists. One shared mission — to give you the exact care you need, from the person best trained to give it."}
+                ? "পাঁচজন বিশেষজ্ঞ। লক্ষ্য একটাই — আপনার ঠিক যে চিকিৎসাটা দরকার, সেটা দেবে সেই বিষয়ে সবচেয়ে দক্ষ মানুষটাই।"
+                : "Five specialists. One shared mission — to give you the exact care you need, from the person best trained to give it."}
             </p>
           </div>
         </div>

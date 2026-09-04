@@ -3,8 +3,8 @@ import { ClinicSettings } from "@/types";
 export const CLINIC_SETTINGS: ClinicSettings = {
   name: "KGH Dental",
   tagline: {
-    en: "Multi-Specialty Dental Care, Under One Roof",
-    bn: "একই ছাদের নিচে সব ধরনের বিশেষায়িত ডেন্টাল কেয়ার",
+    en: "Multi-Specialty Dental Care In One Chamber",
+    bn: "একটি চেম্বারে সব ধরনের বিশেষায়িত ডেন্টাল কেয়ার",
   },
   phoneNumbers: ["+880 1700-000000", "+880 1800-000000"],
   emergencyPhone: "+880 1700-000000",

@@ -62,18 +62,18 @@ export const DOCTORS: Doctor[] = [
     },
     departmentId: "oral-surgery",
     degrees: {
-      en: "BDS, FCPS (Oral & Maxillofacial Surgery)",
-      bn: "বিডিএস, এফসিপিএস (ওরাল অ্যান্ড ম্যাক্সিলোফেসিয়াল সার্জারি)",
+      en: "BDS (RMC), FCPS (Oral & Maxillofacial Surgery)",
+      bn: "বিডিএস (রামেক), এফসিপিএস (ওরাল অ্যান্ড ম্যাক্সিলোফেসিয়াল সার্জারি)",
     },
     designation: {
-      en: "Assistant Professor",
-      bn: "সহকারী অধ্যাপক",
+      en: "Oral & Maxillofacial Surgeon",
+      bn: "ওরাল অ্যান্ড ম্যাক্সিলোফেসিয়াল সার্জন",
     },
     institution: {
       en: "Kumudini Women's Medical College & Hospital",
       bn: "কুমুদিনী উইমেন'স মেডিকেল কলেজ",
     },
-    photoUrl: "/images/doctors/dr-diean.jpg", // fallback placeholder until additional photo provided
+    photoUrl: "/images/doctors/DR. MD. SANWAR HOSSAIN.png",
     bio: {
       en: "Dr. Md. Sanwar Hossain is a fellowship-trained oral and maxillofacial surgeon (FCPS) with extensive experience in oral cancer surgery, facial trauma management, and complex dental surgeries. He currently serves as Assistant Professor at Kumudini Women's Medical College and has published research in oral and maxillofacial pathology.",
       bn: "ডা. মো. সানোয়ার হোসেন একজন ফেলোশিপপ্রাপ্ত ওরাল ও ম্যাক্সিলোফেসিয়াল সার্জন (এফসিপিএস), যার রয়েছে মুখের ক্যান্সার সার্জারি, মুখমণ্ডলের আঘাত চিকিৎসা এবং জটিল দাঁতের সার্জারিতে বিস্তৃত অভিজ্ঞতা। বর্তমানে তিনি কুমুদিনী উইমেন'স মেডিকেল কলেজে সহকারী অধ্যাপক হিসেবে কর্মরত এবং ওরাল ও ম্যাক্সিলোফেসিয়াল প্যাথলজিতে গবেষণাও প্রকাশ করেছেন।",
@@ -237,43 +237,5 @@ export const DOCTORS: Doctor[] = [
       },
     },
     isConfirmed: true,
-  },
-  {
-    id: "dr-joy",
-    slug: "dr-md-sanowar-hossain-joy",
-    name: {
-      en: "Dr. Md. Sanowar Hossain Joy",
-      bn: "ডা. মো. সানোয়ার হোসেন জয়",
-    },
-    specialty: {
-      en: "Dental Specialist",
-      bn: "ডেন্টাল বিশেষজ্ঞ",
-    },
-    degrees: {
-      en: "BDS, Advanced Clinical Training",
-      bn: "বিডিএস, অ্যাডভান্সড ক্লিনিক্যাল ট্রেনিং",
-    },
-    designation: {
-      en: "Consultant Dental Surgeon",
-      bn: "কনসালটেন্ট ডেন্টাল সার্জন",
-    },
-    photoUrl: "/images/doctors/dr-diean.jpg",
-    bio: {
-      en: "Specializing in gentle dental care and preventive treatments. Dedicated to high-precision restorative dentistry at KGH Dental.",
-      bn: "যত্নশীল চিকিৎসা ও প্রতিরোধমূলক ডেন্টাল কেয়ারে প্রশিক্ষিত চিকিৎসক। পূর্ণাঙ্গ তথ্য প্রক্রিয়াধীন।",
-    },
-    schedule: {
-      availableDaysEn: "Saturday only",
-      availableDaysBn: "শুধুমাত্র শনিবার",
-      daysOfWeek: [6],
-      startTime: "17:30",
-      endTime: "21:00",
-      slotDurationMinutes: 30,
-      note: {
-        en: "5:30 PM – 9:00 PM",
-        bn: "বিকাল ৫:৩০ – রাত ৯:০০",
-      },
-    },
-    isConfirmed: false,
   },
 ];

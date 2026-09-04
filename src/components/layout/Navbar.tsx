@@ -65,7 +65,7 @@ export function Navbar() {
       <div
         className={`w-full transition-all duration-300 ${
           isScrolled
-            ? "glass-panel shadow-md py-2.5 sm:py-3"
+            ? "bg-white/98 backdrop-blur-md shadow-sm py-2.5 sm:py-3 border-b border-zinc-200"
             : "bg-white/95 backdrop-blur-md border-b border-zinc-200/80 py-3 sm:py-4"
         }`}
       >

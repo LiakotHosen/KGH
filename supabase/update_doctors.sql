@@ -37,3 +37,20 @@ SET
     is_active = true,
     updated_at = NOW()
 WHERE id = 'dr-ratina';
+
+-- 3. Update Dr. Md. Sanwar Hossain
+UPDATE public.doctors
+SET
+    name_en = 'Dr. Md. Sanwar Hossain',
+    name_bn = 'ডা. মো. সানোয়ার হোসেন',
+    specialty_en = 'Oral & Maxillofacial Surgeon',
+    specialty_bn = 'ওরাল অ্যান্ড ম্যাক্সিলোফেসিয়াল সার্জন',
+    degrees_en = 'BDS (RMC), FCPS (Oral & Maxillofacial Surgery)',
+    degrees_bn = 'বিডিএস (রামেক), এফসিপিএস (ওরাল অ্যান্ড ম্যাক্সিলোফেসিয়াল সার্জারি)',
+    updated_at = NOW()
+WHERE id = 'dr-sanwar';
+
+-- 4. Remove duplicate Dr. Joy record (Joy is Dr. Md. Sanwar Hossain)
+DELETE FROM public.doctors
+WHERE id = 'dr-joy';
+

@@ -13,12 +13,12 @@ export const UI_STRINGS = {
   },
   hero: {
     eyebrow: {
-      en: "Multi-Specialty Dental Care, Under One Roof",
-      bn: "একই ছাদের নিচে সব ধরনের ডেন্টাল কেয়ার",
+      en: "Multi-Specialty Dental Care In One Chamber",
+      bn: "একটি চেম্বারে সব ধরনের ডেন্টাল কেয়ার",
     },
     headline: {
-      en: "Your Smile Deserves a Team of Specialists",
-      bn: "আপনার হাসির যত্নে থাকুক বিশেষজ্ঞদের একটা পুরো টিম",
+      en: "A Full Team of Dedicated Specialists for Your Smile",
+      bn: "আপনার হাসির যত্নে আছি আমরা পুরো একটি টিম",
     },
     subhead: {
       en: "From orthodontics to oral surgery, KGH Dental brings together specialist dentists across every field — so every treatment you need is handled by someone who's an expert in exactly that.",
@@ -122,8 +122,8 @@ export const UI_STRINGS = {
       bn: "আমাদের বিশেষজ্ঞদের সাথে পরিচিত হোন",
     },
     subtitle: {
-      en: "Six specialists, one shared commitment to your smile.",
-      bn: "ছয়জন বিশেষজ্ঞ, লক্ষ্য একটাই — আপনার হাসির যত্ন।",
+      en: "Five specialists, one shared commitment to your smile.",
+      bn: "পাঁচজন বিশেষজ্ঞ, লক্ষ্য একটাই — আপনার হাসির যত্ন।",
     },
     viewProfile: {
       en: "View Full Profile",

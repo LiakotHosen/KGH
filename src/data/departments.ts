@@ -14,7 +14,7 @@ export const DEPARTMENTS: Department[] = [
     },
     iconName: "Smile",
     leadDoctorId: "dr-fatema",
-    imageUrl: "/images/departments/orthodontics.jpg",
+    imageUrl: "/images/services-images-for-7-services/Orthodontics.jpeg",
     subServices: [
       {
         id: "metal-braces",
@@ -171,7 +171,7 @@ export const DEPARTMENTS: Department[] = [
     },
     iconName: "Stethoscope",
     leadDoctorId: "dr-sanwar",
-    imageUrl: "/images/departments/oral-surgery.jpg",
+    imageUrl: "/images/services-images-for-7-services/Oral & Maxillofacial Surgery.png",
     subServices: [
       {
         id: "simple-extraction",
@@ -368,7 +368,7 @@ export const DEPARTMENTS: Department[] = [
     },
     iconName: "ShieldCheck",
     leadDoctorId: "dr-bappy",
-    imageUrl: "/images/departments/endodontics.jpg",
+    imageUrl: "/images/services-images-for-7-services/Conservative Dentistry & Endodontics.jpeg",
     subServices: [
       {
         id: "root-canal",
@@ -565,7 +565,7 @@ export const DEPARTMENTS: Department[] = [
     },
     iconName: "Sparkles",
     leadDoctorId: "dr-diean",
-    imageUrl: "/images/departments/prosthodontics.jpg",
+    imageUrl: "/images/services-images-for-7-services/Prosthodontics.jpeg",
     subServices: [
       {
         id: "dental-crowns",
@@ -742,7 +742,7 @@ export const DEPARTMENTS: Department[] = [
     },
     iconName: "Baby",
     leadDoctorId: "dr-diean",
-    imageUrl: "/images/departments/pediatric.jpg",
+    imageUrl: "/images/services-images-for-7-services/Pediatric Dentistry.jpeg",
     subServices: [
       {
         id: "pulpotomy",
@@ -939,7 +939,7 @@ export const DEPARTMENTS: Department[] = [
     },
     iconName: "Activity",
     leadDoctorId: "dr-sanwar",
-    imageUrl: "/images/departments/periodontics.jpg",
+    imageUrl: "/images/services-images-for-7-services/Periodontics.jpeg",
     subServices: [
       {
         id: "scaling-polishing",
@@ -1136,7 +1136,7 @@ export const DEPARTMENTS: Department[] = [
     },
     iconName: "FileCheck",
     leadDoctorId: "dr-diean",
-    imageUrl: "/images/departments/general-consultation.jpg",
+    imageUrl: "/images/services-images-for-7-services/Consultation.jpeg",
     subServices: [
       {
         id: "general-checkup",
