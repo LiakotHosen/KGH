@@ -71,4 +71,18 @@ export const REVIEWS: GoogleReview[] = [
       bn: "স্কেলিং ও পলিশিং",
     },
   },
+  {
+    id: "rev-6",
+    authorName: "Farhana Yeasmin",
+    rating: 5,
+    date: "3 months ago",
+    comment: {
+      en: "Had a single-sitting root canal done by Dr. Bappy. Absolutely painless and completed with modern rotary equipment. Truly world-class dental care!",
+      bn: "ডা. বাপ্পীর কাছে ওয়ান-সিটিং রুট ক্যানেল করিয়েছি। আধুনিক যন্ত্রপাতির কারণে কোনো ব্যথা ছাড়াই সম্পন্ন হয়েছে। সত্যিই আন্তর্জাতিক মানের সেবা!",
+    },
+    treatment: {
+      en: "Single-Visit Root Canal",
+      bn: "ওয়ান-সিটিং রুট ক্যানেল",
+    },
+  },
 ];

@@ -69,7 +69,7 @@ export function Navbar() {
             : "bg-white/95 backdrop-blur-md border-b border-zinc-200/80 py-3 sm:py-4"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 flex items-center justify-between">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center group py-0.5">
             <img
@@ -155,7 +155,7 @@ export function Navbar() {
             {/* Book Appointment CTA */}
             <Link
               href="/appointment"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 text-xs lg:text-sm font-bold text-white bg-zinc-900 hover:bg-black rounded-xl transition-all shadow-xs hover:shadow-md active:scale-98"
+              className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 text-xs lg:text-sm font-bold text-white bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] rounded-xl transition-all shadow-xs hover:shadow-md active:scale-98"
             >
               <Calendar className="w-4 h-4" />
               <span>{isBn ? UI_STRINGS.nav.bookNow.bn : UI_STRINGS.nav.bookNow.en}</span>

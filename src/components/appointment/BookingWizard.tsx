@@ -660,7 +660,7 @@ export function BookingWizard() {
             <button
               type="button"
               onClick={handleNextStep}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-zinc-950 hover:bg-black text-white text-xs font-bold shadow-xs transition-colors active:scale-98"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all active:scale-98 cursor-pointer"
             >
               <span>
                 {currentStep === 3

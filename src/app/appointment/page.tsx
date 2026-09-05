@@ -10,16 +10,16 @@ function AppointmentContent() {
   const { isBn } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-zinc-50/60 py-12 sm:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+    <div className="min-h-screen bg-zinc-50/60 py-16 sm:py-20">
+      <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600">
             {isBn ? "অনলাইন সিরিয়াল বুকিং" : "Online Chamber Reservation"}
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-zinc-950 mt-1">
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-zinc-950 mt-2 tracking-tight">
             {isBn ? "আপনার অ্যাপয়েন্টমেন্ট বুক করুন" : "Book Your Specialist Appointment"}
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-600 mt-2">
+          <p className="text-sm sm:text-base text-zinc-600 mt-3 max-w-2xl mx-auto">
             {isBn
               ? "আপনার পছন্দের ডাক্তার বেছে নিন, সুবিধাজনক একটা সময় নির্বাচন করুন — বাকিটা আমরা দেখব।"
               : "Choose your doctor, pick a time that works for you, and we'll take care of the rest."}

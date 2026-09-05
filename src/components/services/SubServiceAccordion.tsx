@@ -133,7 +133,7 @@ export function SubServiceAccordion({
                     href={`/appointment?department=${departmentSlug}&treatment=${encodeURIComponent(
                       service.name.en
                     )}`}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-950 hover:bg-black text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
                   >
                     <Calendar className="w-3.5 h-3.5" />
                     <span>

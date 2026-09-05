@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, ShieldCheck, UserCheck, ArrowRight } from "lucide-react";
+import { ArrowLeft, ChevronLeft, Calendar, ShieldCheck, UserCheck, ArrowRight } from "lucide-react";
 import { DEPARTMENTS } from "@/data/departments";
 import { DOCTORS } from "@/data/doctors";
 import { Doctor } from "@/types";
@@ -38,15 +38,15 @@ export default function DepartmentDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Department Banner Header */}
-      <section className="bg-zinc-50 border-b border-zinc-200 py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header Banner */}
+      <section className="bg-zinc-100 border-b border-zinc-200 py-12 sm:py-16">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
           <Link
             href="/services"
-            className="inline-flex items-center gap-2 text-xs font-bold text-zinc-600 hover:text-black mb-6 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-600 hover:text-black mb-6 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>{isBn ? "সকল বিভাগে ফিরে যান" : "Back to All Departments"}</span>
+            <ChevronLeft className="w-4 h-4" />
+            <span>{isBn ? "সকল সেবার তালিকায় ফিরে যান" : "Back to All Departments"}</span>
           </Link>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -69,7 +69,7 @@ export default function DepartmentDetailPage() {
               <div className="pt-2 flex flex-wrap items-center gap-3">
                 <Link
                   href={`/appointment?department=${department.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-950 hover:bg-black text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-colors"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>{isBn ? "এই বিভাগে সিরিয়াল নিন" : "Book Department Appointment"}</span>
@@ -122,7 +122,7 @@ export default function DepartmentDetailPage() {
 
                   <Link
                     href={`/appointment?doctor=${leadDoctor.id}`}
-                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-zinc-900 hover:bg-black text-white text-xs font-bold rounded-xl transition-colors"
+                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-xs font-bold rounded-xl transition-colors"
                   >
                     <span>{isBn ? "সরাসরি সিরিয়াল বুক করুন" : "Book Directly with Specialist"}</span>
                   </Link>

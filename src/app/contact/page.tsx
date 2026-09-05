@@ -39,16 +39,16 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Page Header */}
-      <section className="bg-zinc-50 border-b border-zinc-200 py-14 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+      <section className="bg-zinc-50 border-b border-zinc-200 py-16 sm:py-20">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
+          <div className="max-w-4xl">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600">
               {isBn ? "সহযোগিতা ও সিরিয়াল" : "Support & Assistance"}
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 mt-1 tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-zinc-950 mt-2 tracking-tight">
               {isBn ? "যোগাযোগ করুন" : "Get in Touch with KGH Dental"}
             </h1>
-            <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-relaxed">
+            <p className="text-base sm:text-lg text-zinc-600 mt-4 leading-relaxed max-w-3xl">
               {isBn
                 ? "বুকিং করার আগে কোনো প্রশ্ন আছে? আমাদের সাথে যোগাযোগ করুন — সাহায্য করতে আমরা প্রস্তুত।"
                 : "Have a question before booking? Reach out to our front desk team — we're happy to guide you to the right specialist."}
@@ -58,8 +58,8 @@ export default function ContactPage() {
       </section>
 
       {/* Main Content: Info Cards & Form */}
-      <section className="py-14 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-24">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             {/* Left 5 Cols: Contact Information */}
             <div className="lg:col-span-5 space-y-6">
@@ -249,7 +249,7 @@ export default function ContactPage() {
 
                     <button
                       type="submit"
-                      className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 bg-zinc-950 hover:bg-black text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-colors"
+                      className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
                     >
                       <Send className="w-4 h-4" />
                       <span>{isBn ? "বার্তা পাঠান" : "Submit Message"}</span>

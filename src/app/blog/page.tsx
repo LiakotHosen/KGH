@@ -29,16 +29,16 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Page Header */}
-      <section className="bg-zinc-50 border-b border-zinc-200 py-14 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+      <section className="bg-zinc-50 border-b border-zinc-200 py-16 sm:py-20">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
+          <div className="max-w-4xl">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600">
               {isBn ? "ডেন্টাল স্বাস্থ্য জ্ঞান ও নির্দেশিকা" : "Dental Health Education & Guides"}
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 mt-1 tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-zinc-950 mt-2 tracking-tight">
               {isBn ? "দাঁত ও মুখের যত্নে বিশেষজ্ঞ পরামর্শ" : "Evidence-Based Dental Guides"}
             </h1>
-            <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-relaxed">
+            <p className="text-base sm:text-lg text-zinc-600 mt-4 leading-relaxed max-w-3xl">
               {isBn
                 ? "১০টি গুরুত্বপূর্ণ বিষয়ে আমাদের ডেন্টাল চিকিৎসকদের বাস্তবসম্মত তথ্য, ভুল ধারণা নিরসন ও চিকিৎসা পরামর্শ।"
                 : "Explore 10 comprehensive clinical guides addressing common dental questions, treatments, myths, and proactive preventive care."}
@@ -50,9 +50,9 @@ export default function BlogPage() {
                 <button
                   key={dept.id}
                   onClick={() => setSelectedDept(dept.id)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                     selectedDept === dept.id
-                      ? "bg-zinc-950 text-white shadow-xs"
+                      ? "bg-[#474B4E] text-white shadow-xs"
                       : "bg-white text-zinc-700 border border-zinc-300 hover:bg-zinc-100"
                   }`}
                 >
@@ -65,8 +65,8 @@ export default function BlogPage() {
       </section>
 
       {/* Blog Cards Grid */}
-      <section className="py-14 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-24">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPosts.map((post) => (
               <article

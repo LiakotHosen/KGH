@@ -173,7 +173,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
           <Link
             href="/appointment"
             onClick={onClose}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-semibold rounded-xl shadow-xs"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-sm font-semibold rounded-xl shadow-xs"
           >
             <Calendar className="w-4 h-4" />
             <span>{isBn ? "সিরিয়াল বুক করুন" : "Book Appointment"}</span>

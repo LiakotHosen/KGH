@@ -105,9 +105,9 @@ export default function BlogPostPage() {
           </div>
 
           {/* Aftercare & Prevention */}
-          <div className="p-6 rounded-2xl bg-zinc-950 text-white space-y-3">
+          <div className="p-6 rounded-2xl bg-[#474B4E] text-white space-y-3 shadow-sm">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-amber-400" />
+              <ShieldCheck className="w-5 h-5 text-amber-300" />
               <h3 className="text-base font-bold text-white">
                 {isBn ? "প্রতিরোধ ও চিকিৎসা পরবর্তী যত্ন" : "Prevention & Post-Treatment Care"}
               </h3>
@@ -132,7 +132,7 @@ export default function BlogPostPage() {
 
             <Link
               href={`/appointment?department=${post.departmentSlug}`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-950 hover:bg-black text-white text-xs font-bold rounded-xl shadow-xs transition-colors shrink-0"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-colors shrink-0"
             >
               <Calendar className="w-4 h-4" />
               <span>{isBn ? "কনসালটেশন বুক করুন" : "Schedule Appointment"}</span>

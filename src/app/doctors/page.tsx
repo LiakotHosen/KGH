@@ -33,16 +33,16 @@ export default function DoctorsPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Page Header */}
-      <section className="bg-zinc-50 border-b border-zinc-200 py-14 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+      <section className="bg-zinc-50 border-b border-zinc-200 py-16 sm:py-20">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
+          <div className="max-w-4xl">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600">
               {isBn ? "ক্লিনিক্যাল প্যানেল" : "Specialist Dental Faculty"}
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 mt-1 tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-zinc-950 mt-2 tracking-tight">
               {isBn ? "আমাদের বিশেষজ্ঞ ডাক্তারবৃন্দ" : "Meet Our Specialists"}
             </h1>
-            <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-relaxed">
+            <p className="text-base sm:text-lg text-zinc-600 mt-4 leading-relaxed max-w-3xl">
               {isBn
                 ? "পাঁচজন বিশেষজ্ঞ। লক্ষ্য একটাই — আপনার ঠিক যে চিকিৎসাটা দরকার, সেটা দেবে সেই বিষয়ে সবচেয়ে দক্ষ মানুষটাই।"
                 : "Five specialists. One shared mission — to give you the exact care you need, from the person best trained to give it."}
@@ -52,8 +52,8 @@ export default function DoctorsPage() {
       </section>
 
       {/* Doctors Grid */}
-      <section className="py-14 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section className="py-16 sm:py-24">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20 space-y-10">
           {doctorsList.map((doc) => (
             <div
               key={doc.id}
@@ -139,15 +139,15 @@ export default function DoctorsPage() {
                   )}
 
                   {/* Chamber Availability Box */}
-                  <div className="p-4 sm:p-5 rounded-2xl bg-zinc-950 text-white space-y-2.5">
+                  <div className="p-4 sm:p-5 rounded-2xl bg-[#474B4E] text-white space-y-2.5 shadow-sm">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-amber-400" />
-                        <span className="text-xs font-bold uppercase tracking-wider text-zinc-200">
+                        <Clock className="w-4 h-4 text-amber-300" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-zinc-100">
                           {isBn ? "কেজিএইচ ডেন্টাল চেম্বার সময়সূচি" : "KGH Dental Chamber Schedule"}
                         </span>
                       </div>
-                      <span className="text-[11px] font-semibold text-zinc-400 bg-zinc-800 px-2.5 py-1 rounded-md">
+                      <span className="text-[11px] font-semibold text-zinc-200 bg-black/20 px-2.5 py-1 rounded-md">
                         {isBn ? "৩০ মিনিট স্লট" : "30-Min Interval"}
                       </span>
                     </div>
@@ -166,7 +166,7 @@ export default function DoctorsPage() {
                   <div className="pt-2">
                     <Link
                       href={`/appointment?doctor=${doc.id}`}
-                      className="inline-flex items-center gap-2 px-7 py-3.5 bg-zinc-900 hover:bg-black text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs hover:shadow-md transition-all active:scale-98"
+                      className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs hover:shadow-md transition-all active:scale-98"
                     >
                       <Calendar className="w-4 h-4" />
                       <span>{isBn ? "এই ডাক্তারের সিরিয়াল বুক করুন" : "Book Consultation with Doctor"}</span>

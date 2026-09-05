@@ -252,26 +252,26 @@ export function DepartmentGrid() {
   return (
     <section
       id="specialized-care"
-      className="w-full py-16 sm:py-20 lg:py-24 bg-[#525659] text-white transition-colors duration-300"
+      className="w-full py-20 sm:py-28 lg:py-32 bg-[#474B4E] text-white transition-colors duration-300 relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24">
         
         {/* Section Header: Centered & High Contrast White Typography */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-100 mb-3 shadow-sm">
+        <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-100 mb-3.5 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>{isBn ? "আমাদের সেবাসমূহ" : "Our Services"}</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
             {isBn ? UI_STRINGS.departmentsSection.title.bn : UI_STRINGS.departmentsSection.title.en}
           </h2>
 
-          <p className="text-base sm:text-lg text-zinc-200 mt-3 leading-relaxed font-normal">
+          <p className="text-base sm:text-lg lg:text-xl text-zinc-200 mt-4 leading-relaxed font-normal max-w-3xl mx-auto">
             {isBn ? UI_STRINGS.departmentsSection.subtitle.bn : UI_STRINGS.departmentsSection.subtitle.en}
           </p>
 
-          <div className="mt-5 flex items-center justify-center">
+          <div className="mt-6 flex items-center justify-center">
             <Link
               href="/services"
               className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-white hover:text-zinc-100 hover:gap-3 transition-all duration-200 border-b-2 border-white/80 pb-0.5"
@@ -282,8 +282,8 @@ export function DepartmentGrid() {
           </div>
         </div>
 
-        {/* Main Interactive Showcase Layout (Seamless Dark Theme Container) */}
-        <div className="bg-[#474b4e] rounded-3xl border border-white/15 shadow-2xl p-6 sm:p-8 lg:p-12 overflow-hidden">
+        {/* Main Interactive Showcase Layout (Seamless Dark Charcoal Glass Container) */}
+        <div className="bg-black/15 backdrop-blur-md rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-10 lg:p-14 xl:p-16 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             
             {/* Left Column: Department Information & Actions */}
@@ -342,7 +342,7 @@ export function DepartmentGrid() {
                     {(isBn ? showcaseInfo.topTreatments.bn : showcaseInfo.topTreatments.en).map((item, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#3a3e41] hover:bg-[#34373a] border border-white/15 text-xs font-medium text-white shadow-sm transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/20 hover:bg-black/30 border border-white/15 text-xs font-medium text-white shadow-sm transition-colors"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                         <span>{item}</span>
@@ -468,7 +468,7 @@ export function DepartmentGrid() {
           </div>
 
           {/* Bottom Callout Banner: "Not Sure Which Department? Start with a General Consultation" */}
-          <div className="mt-10 pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#3a3e41]/90 rounded-2xl p-5 sm:p-6 border border-white/15">
+          <div className="mt-10 pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-4 bg-black/20 backdrop-blur-sm rounded-2xl p-5 sm:p-6 border border-white/10">
             <div className="flex items-center gap-3.5">
               <div className="w-10 h-10 rounded-xl bg-white/10 text-amber-300 flex items-center justify-center shrink-0 shadow-xs border border-white/15">
                 <Sparkles className="w-5 h-5" />

@@ -11,21 +11,21 @@ export function WhyChooseUs() {
   const icons = [UserCheck, Sparkles, FileText, CalendarCheck2];
 
   return (
-    <section className="py-16 sm:py-20 bg-zinc-50 border-b border-zinc-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <span className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+    <section className="py-20 sm:py-28 lg:py-32 bg-zinc-50 border-b border-zinc-200">
+      <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24">
+        <div className="text-center max-w-4xl mx-auto mb-14 sm:mb-16">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600">
             {isBn ? "আমাদের বিশেষত্ব" : "Our Clinical Standard"}
           </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-950 mt-1.5">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 mt-2">
             {isBn ? UI_STRINGS.whyChooseUs.title.bn : UI_STRINGS.whyChooseUs.title.en}
           </h2>
-          <p className="text-sm sm:text-base text-zinc-600 mt-2.5">
+          <p className="text-base sm:text-lg text-zinc-600 mt-3 max-w-2xl mx-auto">
             {isBn ? UI_STRINGS.whyChooseUs.subtitle.bn : UI_STRINGS.whyChooseUs.subtitle.en}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {UI_STRINGS.whyChooseUs.items.map((item, index) => {
             const Icon = icons[index];
             return (

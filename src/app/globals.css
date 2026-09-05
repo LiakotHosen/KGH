@@ -8,9 +8,41 @@
     --text-primary: #09090b;
     --text-secondary: #71717a;
     --text-muted: #a1a1aa;
-    --brand-dark: #18181b;
-    --brand-accent: #27272a;
+    --brand-dark: #474B4E;
+    --brand-accent: #373a3c;
+    --brand-charcoal: #474B4E;
+    --brand-charcoal-hover: #373a3c;
+    --brand-charcoal-dark: #2b2d2f;
   }
+}
+
+@theme {
+  --color-charcoal: #474B4E;
+  --color-charcoal-hover: #373a3c;
+  --color-charcoal-dark: #2b2d2f;
+}
+
+.bg-charcoal {
+  background-color: #474B4E;
+}
+
+.hover\:bg-charcoal-hover:hover {
+  background-color: #373a3c;
+}
+
+.btn-charcoal {
+  background-color: #474B4E;
+  color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-charcoal:hover {
+  background-color: #373a3c;
+}
+
+.btn-charcoal:active {
+  background-color: #2b2d2f;
+  transform: scale(0.98);
 }
 
 body {

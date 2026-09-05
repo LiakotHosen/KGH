@@ -42,19 +42,19 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Page Header */}
-      <section className="bg-zinc-50 border-b border-zinc-200 py-14 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+      <section className="bg-zinc-50 border-b border-zinc-200 py-16 sm:py-20">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
+          <div className="max-w-4xl">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600">
               {isBn ? "সকল ক্লিনিক্যাল বিভাগ ও সেবা" : "Clinical Departments & Services"}
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 mt-1 tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-zinc-950 mt-2 tracking-tight">
               {isBn ? "কেজিএইচ ডেন্টালের সকল বিশেষায়িত সেবা" : "Comprehensive Dental Care Across 7 Specialties"}
             </h1>
-            <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-relaxed">
+            <p className="text-base sm:text-lg text-zinc-600 mt-4 leading-relaxed max-w-3xl">
               {isBn
-                ? "আমাদের ৭টি সুনির্দিষ্ট বিভাগে মোট ৫৬টি আধুনিক চিকিৎসা সেবা রয়েছে। প্রতিটি বিভাগ পরিচালিত হয় সেই বিষয়ে উচ্চতর প্রশিক্ষণপ্রাপ্ত বিশেষজ্ঞদের মাধ্যমে।"
-                : "Explore 56 specialized treatments across 7 clinical departments. Each department is operated by trained dental specialists committed to predictable, compassionate outcomes."}
+                ? "কেজিএইচ ডেন্টালে প্রতিটি চিকিৎসার জন্য আছেন আলাদা বিশেষজ্ঞ ডাক্তার। আপনার সমস্যা অনুযায়ী সঠিক বিভাগটি বেছে নিন এবং জেনে নিন আমাদের সেবাসমূহ।"
+                : "Explore our 7 specialized dental departments and 54 dedicated treatments. Every department is led by a specialist trained in that exact field."}
             </p>
 
             {/* Treatment Search Bar */}
@@ -69,7 +69,7 @@ export default function ServicesPage() {
                     ? "কোনো নির্দিষ্ট চিকিৎসা খুঁজছেন? (উদা: ব্রেসেস, রুট ক্যানেল, ইমপ্ল্যান্ট)..."
                     : "Search any treatment (e.g., Braces, Root Canal, Implant, Cleaning)..."
                 }
-                className="w-full pl-12 pr-4 py-3.5 bg-white rounded-2xl border border-zinc-300 text-sm shadow-xs focus:outline-hidden focus:ring-2 focus:ring-zinc-950 focus:border-zinc-950 transition-all"
+                className="w-full pl-12 pr-4 py-3.5 bg-white rounded-2xl border border-zinc-300 text-sm shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#474B4E] focus:border-[#474B4E] transition-all"
               />
             </div>
           </div>
@@ -77,8 +77,8 @@ export default function ServicesPage() {
       </section>
 
       {/* Department Cards Listing */}
-      <section className="py-14 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section className="py-16 sm:py-24">
+        <div className="w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20 space-y-8">
           {filteredDepartments.map((dept) => (
             <div
               key={dept.id}
@@ -104,7 +104,7 @@ export default function ServicesPage() {
 
                 <Link
                   href={`/services/${dept.slug}`}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-zinc-900 hover:bg-black text-white text-xs font-bold shadow-xs transition-colors self-start lg:self-auto"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#474B4E] hover:bg-[#373a3c] text-white text-xs font-bold shadow-xs transition-colors self-start lg:self-auto"
                 >
                   <span>{isBn ? "বিভাগের সকল চিকিৎসা দেখুন" : "View Department & Procedures"}</span>
                   <ArrowRight className="w-4 h-4" />
