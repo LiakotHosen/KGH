@@ -252,12 +252,11 @@ export function DepartmentGrid() {
   return (
     <section
       id="specialized-care"
-      className="w-full py-20 sm:py-28 lg:py-32 bg-[#474B4E] text-white transition-colors duration-300 relative overflow-hidden"
+      className="w-full py-16 sm:py-24 lg:py-28 bg-[#474B4E] text-white transition-colors duration-300 relative overflow-hidden"
     >
-      <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24">
-        
-        {/* Section Header: Centered & High Contrast White Typography */}
-        <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-16">
+      {/* Section Header: Centered & High Contrast White Typography */}
+      <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 mb-10 sm:mb-14">
+        <div className="text-center max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-100 mb-3.5 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>{isBn ? "আমাদের সেবাসমূহ" : "Our Services"}</span>
@@ -281,219 +280,218 @@ export function DepartmentGrid() {
             </Link>
           </div>
         </div>
+      </div>
 
-        {/* Main Interactive Showcase Layout (Seamless Dark Charcoal Glass Container) */}
-        <div className="bg-black/15 backdrop-blur-md rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-10 lg:p-14 xl:p-16 overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-            
-            {/* Left Column: Department Information & Actions */}
-            <div
-              className={`lg:col-span-6 flex flex-col justify-between transition-opacity duration-300 ${
-                isTransitioning ? "opacity-30" : "opacity-100"
-              }`}
-            >
-              <div>
-                {/* Topic / Category Pill with Left/Right Arrows */}
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="inline-flex items-center bg-white/10 hover:bg-white/15 border border-white/20 rounded-full px-2 py-1 transition-colors shadow-sm">
-                    <button
-                      type="button"
-                      onClick={handlePrev}
-                      aria-label="Previous Specialty"
-                      className="p-1 rounded-full text-zinc-200 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
-                    >
-                      <ChevronLeft className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="px-2.5 text-xs font-semibold text-white tracking-wide select-none">
-                      {isBn ? showcaseInfo.categoryPill.bn : showcaseInfo.categoryPill.en}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleNext}
-                      aria-label="Next Specialty"
-                      className="p-1 rounded-full text-zinc-200 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
-                    >
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  <span className="text-[11px] font-semibold text-zinc-300">
-                    {String(activeIndex + 1).padStart(2, "0")} / {String(deptList.length).padStart(2, "0")}
-                  </span>
-                </div>
-
-                {/* Bold Headline in Crisp White */}
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-[1.15] mb-4">
-                  {isBn ? showcaseInfo.headline.bn : showcaseInfo.headline.en}
-                </h3>
-
-                {/* Body Description */}
-                <p className="text-sm sm:text-base text-zinc-200 leading-relaxed mb-6 font-normal">
-                  {isBn ? showcaseInfo.description.bn : showcaseInfo.description.en}
-                </p>
-
-                {/* Featured Procedures Pills - Differentiated Tone (#3a3e41 with Subtle Contrast) */}
-                <div className="mb-8">
-                  <div className="text-xs font-bold uppercase tracking-wider text-zinc-300 mb-3 flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-zinc-200" />
-                    <span>{isBn ? "প্রধান বিশেষায়িত সেবাসমূহ" : "Key Specialized Treatments"}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {(isBn ? showcaseInfo.topTreatments.bn : showcaseInfo.topTreatments.en).map((item, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/20 hover:bg-black/30 border border-white/15 text-xs font-medium text-white shadow-sm transition-colors"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        <span>{item}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
+      {/* Main Interactive Showcase: 100% Full-Bleed Edge-to-Edge Layout (NO Nested Card Box!) */}
+      <div className="w-full flex flex-col lg:flex-row items-center lg:items-stretch justify-between gap-8 lg:gap-0">
+        
+        {/* Left Column: Department Information & Actions */}
+        <div
+          className={`w-full lg:w-1/2 xl:w-[48%] flex flex-col justify-center px-4 sm:px-8 lg:pl-12 lg:pr-8 xl:pl-16 xl:pr-12 2xl:pl-24 2xl:pr-16 py-4 lg:py-6 transition-opacity duration-300 ${
+            isTransitioning ? "opacity-30" : "opacity-100"
+          }`}
+        >
+          <div>
+            {/* Topic / Category Pill with Left/Right Arrows */}
+            <div className="flex items-center gap-2 mb-5 sm:mb-6">
+              <div className="inline-flex items-center bg-white/10 hover:bg-white/15 border border-white/20 rounded-full px-2.5 py-1 transition-colors shadow-sm">
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  aria-label="Previous Specialty"
+                  className="p-1 rounded-full text-zinc-200 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <span className="px-2.5 text-xs sm:text-sm font-semibold text-white tracking-wide select-none">
+                  {isBn ? showcaseInfo.categoryPill.bn : showcaseInfo.categoryPill.en}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  aria-label="Next Specialty"
+                  className="p-1 rounded-full text-zinc-200 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
               </div>
 
-              {/* Action Buttons: High-Contrast White Primary + Translucent Secondary */}
-              <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/15">
-                <Link
-                  href={`/services/${activeDept.slug}`}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 active:scale-98 group"
-                >
-                  <span>{isBn ? "চিকিৎসা ও সেবাসমূহ দেখুন" : "Explore Treatments"}</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-
-                <Link
-                  href={`/appointment?dept=${activeDept.slug}`}
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-semibold transition-all duration-200"
-                >
-                  <Calendar className="w-4 h-4 text-zinc-200" />
-                  <span>{isBn ? "অ্যাপয়েন্টমেন্ট নিন" : "Book with Specialist"}</span>
-                </Link>
-              </div>
+              <span className="text-xs font-semibold text-zinc-300">
+                {String(activeIndex + 1).padStart(2, "0")} / {String(deptList.length).padStart(2, "0")}
+              </span>
             </div>
 
-            {/* Right Column: Thumbnail Rail + Large Showcase Image */}
-            <div className="lg:col-span-6 flex flex-col sm:flex-row gap-4 items-stretch">
-              
-              {/* Vertical Thumbnail Strip (Left of Big Image) */}
-              <div className="order-2 sm:order-1 flex sm:flex-col gap-2.5 sm:gap-3 overflow-x-auto sm:overflow-y-auto sm:max-h-[500px] py-1 px-1 shrink-0 scrollbar-thin">
-                {deptList.map((dept, idx) => {
-                  const isActive = idx === activeIndex;
-                  return (
-                    <button
-                      key={dept.id}
-                      type="button"
-                      onClick={() => handleSelectDepartment(idx)}
-                      title={t(dept.name)}
-                      className={`group relative rounded-xl overflow-hidden transition-all duration-200 text-left shrink-0 sm:shrink cursor-pointer ${
-                        isActive
-                          ? "ring-2 ring-white ring-offset-2 ring-offset-[#474b4e] shadow-2xl scale-[1.03] opacity-100"
-                          : "opacity-60 hover:opacity-100 hover:scale-[1.03] border border-white/20"
-                      }`}
-                    >
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-20 lg:h-20 relative bg-zinc-800">
-                        <img
-                          src={dept.imageUrl}
-                          alt={t(dept.name)}
-                          className="w-full h-full object-cover object-center"
-                        />
-                        {/* Overlay gradient */}
-                        <div
-                          className={`absolute inset-0 transition-opacity ${
-                            isActive ? "bg-black/10" : "bg-black/40 group-hover:bg-black/15"
-                          }`}
-                        />
-                        {/* Miniature Icon Badge */}
-                        <div className="absolute top-1.5 left-1.5 p-1 rounded-md bg-zinc-950/80 backdrop-blur-xs text-white shadow-2xs border border-white/20">
-                          <DepartmentIcon name={dept.iconName} className="w-3 h-3" />
-                        </div>
-                        {/* Active Indicator Bar in Bright White */}
-                        {isActive && (
-                          <div className="absolute bottom-0 inset-x-0 h-1 bg-white" />
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
+            {/* Bold Headline in Crisp White */}
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white tracking-tight leading-[1.14] mb-4">
+              {isBn ? showcaseInfo.headline.bn : showcaseInfo.headline.en}
+            </h3>
+
+            {/* Body Description */}
+            <p className="text-sm sm:text-base lg:text-lg text-zinc-200 leading-relaxed mb-6 font-normal max-w-xl">
+              {isBn ? showcaseInfo.description.bn : showcaseInfo.description.en}
+            </p>
+
+            {/* Featured Procedures Pills */}
+            <div className="mb-8">
+              <div className="text-xs font-bold uppercase tracking-wider text-zinc-300 mb-3 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-zinc-200" />
+                <span>{isBn ? "প্রধান বিশেষায়িত সেবাসমূহ" : "Key Specialized Treatments"}</span>
               </div>
-
-              {/* Big Showcase Image */}
-              <div className="order-1 sm:order-2 flex-1 relative rounded-2xl sm:rounded-3xl overflow-hidden bg-zinc-800 border border-white/20 shadow-2xl min-h-[320px] sm:min-h-[460px] lg:min-h-[500px]">
-                <img
-                  key={activeDept.id}
-                  src={activeDept.imageUrl}
-                  alt={t(activeDept.name)}
-                  className={`w-full h-full object-cover object-center transition-all duration-500 ${
-                    isTransitioning ? "opacity-40 scale-102" : "opacity-100 scale-100"
-                  }`}
-                />
-
-                {/* Gradient Shadow */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent pointer-events-none" />
-
-                {/* Top Floating Badge on Image */}
-                <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2 pointer-events-none">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-950/85 backdrop-blur-md border border-white/20 text-white text-xs font-bold shadow-md">
-                    <DepartmentIcon name={activeDept.iconName} className="w-3.5 h-3.5 text-zinc-100" />
-                    <span>{t(activeDept.name)}</span>
-                  </div>
-
-                  <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full bg-zinc-950/80 backdrop-blur-md text-white text-[11px] font-semibold border border-white/20">
-                    {activeDept.subServices.length} {isBn ? "টি বিশেষায়িত সেবা" : "Treatments"}
-                  </span>
-                </div>
-
-                {/* Bottom Floating Info Card */}
-                <div className="absolute bottom-4 inset-x-4 p-3.5 rounded-2xl bg-zinc-950/90 backdrop-blur-md border border-white/20 text-white flex items-center justify-between gap-3 shadow-xl">
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">
-                      {isBn ? "ক্লিনিক্যাল এক্সিলেন্স" : "Clinical Excellence"}
-                    </p>
-                    <p className="text-xs sm:text-sm font-bold text-white truncate">
-                      {isBn ? showcaseInfo.specialistBadge.bn : showcaseInfo.specialistBadge.en}
-                    </p>
-                  </div>
-                  <Link
-                    href={`/services/${activeDept.slug}`}
-                    className="shrink-0 p-2 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 transition-colors shadow-xs"
-                    title={isBn ? "বিস্তারিত দেখুন" : "View Details"}
+              <div className="flex flex-wrap gap-2">
+                {(isBn ? showcaseInfo.topTreatments.bn : showcaseInfo.topTreatments.en).map((item, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/25 hover:bg-black/35 border border-white/15 text-xs sm:text-sm font-medium text-white shadow-sm transition-colors"
                   >
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>{item}</span>
+                  </span>
+                ))}
               </div>
-
             </div>
-
           </div>
 
-          {/* Bottom Callout Banner: "Not Sure Which Department? Start with a General Consultation" */}
-          <div className="mt-10 pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-4 bg-black/20 backdrop-blur-sm rounded-2xl p-5 sm:p-6 border border-white/10">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-white/10 text-amber-300 flex items-center justify-center shrink-0 shadow-xs border border-white/15">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-sm sm:text-base font-bold text-white">
-                  {isBn ? "নিশ্চিত নন কোন বিশেষজ্ঞের কাছে যাবেন?" : "Not Sure Which Department Fits Your Need?"}
-                </h4>
-                <p className="text-xs sm:text-sm text-zinc-200">
-                  {isBn
-                    ? "জেনারেল কনসালটেশন নিন — আমাদের অভিজ্ঞ ডেন্টিস্ট পরীক্ষা করে সঠিক বিশেষজ্ঞের কাছে রেফার করবেন।"
-                    : "Book a preliminary consultation. Our doctor will evaluate your case and guide you to the ideal specialist."}
-                </p>
-              </div>
-            </div>
+          {/* Action Buttons: High-Contrast White Primary + Translucent Secondary */}
+          <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/15">
+            <Link
+              href={`/services/${activeDept.slug}`}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 active:scale-98 group"
+            >
+              <span>{isBn ? "চিকিৎসা ও সেবাসমূহ দেখুন" : "Explore Treatments"}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
 
             <Link
-              href="/appointment?dept=general-consultation"
-              className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 border border-white/20 text-xs sm:text-sm font-bold transition-all duration-200 shadow-md active:scale-98"
+              href={`/appointment?dept=${activeDept.slug}`}
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-semibold transition-all duration-200"
             >
-              <span>{isBn ? "জেনারেল কনসালটেশন বুক করুন" : "Book General Consultation"}</span>
-              <ArrowRight className="w-4 h-4" />
+              <Calendar className="w-4 h-4 text-zinc-200" />
+              <span>{isBn ? "অ্যাপয়েন্টমেন্ট নিন" : "Book with Specialist"}</span>
             </Link>
           </div>
+        </div>
 
+        {/* Right Column: Thumbnail Rail + Large Showcase Image (Bleeds to Screen Edge) */}
+        <div className="w-full lg:w-1/2 xl:w-[52%] flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch px-4 sm:px-8 lg:pl-0 lg:pr-0">
+          
+          {/* Vertical Thumbnail Strip */}
+          <div className="order-2 sm:order-1 flex sm:flex-col gap-2.5 sm:gap-3 overflow-x-auto sm:overflow-y-auto sm:max-h-[560px] xl:max-h-[620px] py-1 px-1 shrink-0 scrollbar-thin">
+            {deptList.map((dept, idx) => {
+              const isActive = idx === activeIndex;
+              return (
+                <button
+                  key={dept.id}
+                  type="button"
+                  onClick={() => handleSelectDepartment(idx)}
+                  title={t(dept.name)}
+                  className={`group relative rounded-xl overflow-hidden transition-all duration-200 text-left shrink-0 sm:shrink cursor-pointer ${
+                    isActive
+                      ? "ring-2 ring-white ring-offset-2 ring-offset-[#474b4e] shadow-2xl scale-[1.03] opacity-100"
+                      : "opacity-60 hover:opacity-100 hover:scale-[1.03] border border-white/20"
+                  }`}
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-20 lg:h-20 xl:w-22 xl:h-22 relative bg-zinc-800">
+                    <img
+                      src={dept.imageUrl}
+                      alt={t(dept.name)}
+                      className="w-full h-full object-cover object-center"
+                    />
+                    {/* Overlay gradient */}
+                    <div
+                      className={`absolute inset-0 transition-opacity ${
+                        isActive ? "bg-black/10" : "bg-black/40 group-hover:bg-black/15"
+                      }`}
+                    />
+                    {/* Miniature Icon Badge */}
+                    <div className="absolute top-1.5 left-1.5 p-1 rounded-md bg-zinc-950/80 backdrop-blur-xs text-white shadow-2xs border border-white/20">
+                      <DepartmentIcon name={dept.iconName} className="w-3 h-3" />
+                    </div>
+                    {/* Active Indicator Bar in Bright White */}
+                    {isActive && (
+                      <div className="absolute bottom-0 inset-x-0 h-1 bg-white" />
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Big Showcase Image: Full Bleed to the Right Edge on Desktop */}
+          <div className="order-1 sm:order-2 flex-1 relative rounded-2xl sm:rounded-3xl lg:rounded-l-3xl lg:rounded-r-none overflow-hidden bg-zinc-800 border border-white/15 lg:border-r-0 shadow-2xl min-h-[340px] sm:min-h-[460px] lg:min-h-[560px] xl:min-h-[620px]">
+            <img
+              key={activeDept.id}
+              src={activeDept.imageUrl}
+              alt={t(activeDept.name)}
+              className={`w-full h-full object-cover object-center transition-all duration-500 ${
+                isTransitioning ? "opacity-40 scale-102" : "opacity-100 scale-100"
+              }`}
+            />
+
+            {/* Gradient Shadow */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+
+            {/* Top Floating Badge on Image */}
+            <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2 pointer-events-none">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-950/85 backdrop-blur-md border border-white/20 text-white text-xs font-bold shadow-md">
+                <DepartmentIcon name={activeDept.iconName} className="w-3.5 h-3.5 text-zinc-100" />
+                <span>{t(activeDept.name)}</span>
+              </div>
+
+              <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full bg-zinc-950/80 backdrop-blur-md text-white text-[11px] font-semibold border border-white/20">
+                {activeDept.subServices.length} {isBn ? "টি বিশেষায়িত সেবা" : "Treatments"}
+              </span>
+            </div>
+
+            {/* Bottom Floating Info Card */}
+            <div className="absolute bottom-4 left-4 right-4 sm:right-6 lg:right-8 p-3.5 sm:p-4 rounded-2xl bg-zinc-950/90 backdrop-blur-md border border-white/20 text-white flex items-center justify-between gap-3 shadow-xl">
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">
+                  {isBn ? "ক্লিনিক্যাল এক্সিলেন্স" : "Clinical Excellence"}
+                </p>
+                <p className="text-xs sm:text-sm font-bold text-white truncate">
+                  {isBn ? showcaseInfo.specialistBadge.bn : showcaseInfo.specialistBadge.en}
+                </p>
+              </div>
+              <Link
+                href={`/services/${activeDept.slug}`}
+                className="shrink-0 p-2 sm:p-2.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 transition-colors shadow-xs"
+                title={isBn ? "বিস্তারিত দেখুন" : "View Details"}
+              >
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Bottom Callout: "Not Sure Which Department? Start with a General Consultation" */}
+      <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 mt-12 lg:mt-16">
+        <div className="border-t border-white/15 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-white/10 text-amber-300 flex items-center justify-center shrink-0 shadow-xs border border-white/15">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-base sm:text-lg font-bold text-white">
+                {isBn ? "নিশ্চিত নন কোন বিশেষজ্ঞের কাছে যাবেন?" : "Not Sure Which Department Fits Your Need?"}
+              </h4>
+              <p className="text-xs sm:text-sm text-zinc-200 mt-0.5 max-w-2xl">
+                {isBn
+                  ? "জেনারেল কনসালটেশন নিন — আমাদের অভিজ্ঞ ডেন্টিস্ট পরীক্ষা করে সঠিক বিশেষজ্ঞের কাছে রেফার করবেন।"
+                  : "Book a preliminary consultation. Our doctor will evaluate your case and guide you to the ideal specialist."}
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href="/appointment?dept=general-consultation"
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs sm:text-sm font-bold transition-all duration-200 shadow-md hover:shadow-lg active:scale-98"
+          >
+            <span>{isBn ? "জেনারেল কনসালটেশন বুক করুন" : "Book General Consultation"}</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </section>
