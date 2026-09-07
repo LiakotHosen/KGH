@@ -18,9 +18,28 @@ import { Doctor } from "@/types";
 import { fetchLiveDoctors } from "@/lib/api/db";
 import { useLanguage } from "@/context/LanguageContext";
 
+const LOCAL_DOCTOR_IMAGES: Record<string, string> = {
+  "dr-diean": "/images/doctors/dr-diean.jpg",
+  "dr-sanwar": "/images/doctors/DR. MD. SANWAR HOSSAIN.png",
+  "dr-fatema": "/images/doctors/dr-fatema.jpg",
+  "dr-bappy": "/images/doctors/dr-Bappy.png",
+  "dr-ratina": "/images/doctors/Dr Jesinta Islam.png",
+  "dr-rifat": "/images/doctors/Dr Rifat Rahman.png",
+};
+
 export function DoctorPreview() {
   const { t, isBn } = useLanguage();
   const [doctorsList, setDoctorsList] = useState<Doctor[]>(DOCTORS);
+
+  // Preload all doctor images immediately in the browser cache so they appear with 0ms delay
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      Object.values(LOCAL_DOCTOR_IMAGES).forEach((src) => {
+        const img = new window.Image();
+        img.src = encodeURI(src);
+      });
+    }
+  }, []);
 
   // Repeat array 5 times to form an infinite looping circular track
   const REPEAT_COUNT = 5;
@@ -358,9 +377,17 @@ export function DoctorPreview() {
                     {/* Doctor Photo - Natural Aspect Ratio (4/3), NOT Stretched! */}
                     <div className="relative w-full aspect-[4/3] bg-zinc-100 overflow-hidden border-b border-zinc-100">
                       <img
-                        src={doc.photoUrl}
+                        src={doc.photoUrl || LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg"}
                         alt={t(doc.name)}
                         draggable={false}
+                        loading="eager"
+                        decoding="async"
+                        onError={(e) => {
+                          const fallback = LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg";
+                          if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
+                            e.currentTarget.src = fallback;
+                          }
+                        }}
                         className="w-full h-full object-cover object-top select-none pointer-events-none"
                       />
                       {doc.designation && (
@@ -438,9 +465,17 @@ export function DoctorPreview() {
                   {/* Photo with EXACT 4/3 Aspect Ratio */}
                   <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-white border border-zinc-300/80 group-hover:border-zinc-500 group-hover:shadow-xl transition-all duration-300 shadow-2xs">
                     <img
-                      src={doc.photoUrl}
+                      src={doc.photoUrl || LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg"}
                       alt={t(doc.name)}
                       draggable={false}
+                      loading="eager"
+                      decoding="async"
+                      onError={(e) => {
+                        const fallback = LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg";
+                        if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
+                          e.currentTarget.src = fallback;
+                        }
+                      }}
                       className="w-full h-full object-cover object-top opacity-90 group-hover:opacity-100 group-hover:scale-104 transition-all duration-400 select-none pointer-events-none"
                     />
                     <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />

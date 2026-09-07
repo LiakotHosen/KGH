@@ -85,4 +85,32 @@ export const REVIEWS: GoogleReview[] = [
       bn: "ওয়ান-সিটিং রুট ক্যানেল",
     },
   },
+  {
+    id: "rev-7",
+    authorName: "Anisur Rahman",
+    rating: 5,
+    date: "3 weeks ago",
+    comment: {
+      en: "Consulted Dr. Rifat for a persistent mouth ulcer. His thorough diagnosis, oral cancer screening, and medications gave me complete relief within days. Highly expert oral medicine care.",
+      bn: "মুখে দীর্ঘদিনের একটি ঘা নিয়ে ডা. রিফাতের শরণাপন্ন হয়েছিলাম। ওনার নিখুঁত ডায়াগনোসিস, স্ক্রিনিং ও ওষুধের পর কয়েক দিনেই সম্পূর্ণ সুস্থ হয়ে যাই। ওরাল মেডিসিনে অনন্য বিশেষজ্ঞ।",
+    },
+    treatment: {
+      en: "Oral Medicine & Lesion Care",
+      bn: "ওরাল মেডিসিন ও ক্ষত চিকিৎসা",
+    },
+  },
+  {
+    id: "rev-8",
+    authorName: "Shamima Nasrin",
+    rating: 5,
+    date: "2 months ago",
+    comment: {
+      en: "Dr. Jesinta designed my aesthetic smile makeover with flawless precision. My smile looks completely natural and radiant now. The entire team is wonderful!",
+      bn: "ডা. জেসিন্টার কাছে এস্থেটিক স্মাইল মেকওভার করিয়েছি। আমার হাসি এখন একদম প্রাকৃতিক ও উজ্জ্বল দেখায়। ওনাদের আন্তরিকতা ও আধুনিক চিকিৎসা সত্যিই অতুলনীয়!",
+    },
+    treatment: {
+      en: "Aesthetic Smile Makeover",
+      bn: "এস্থেটিক স্মাইল মেকওভার",
+    },
+  },
 ];

@@ -18,6 +18,15 @@ import { fetchLiveDoctors } from "@/lib/api/db";
 import { useLanguage } from "@/context/LanguageContext";
 import { CtaBanner } from "@/components/home/CtaBanner";
 
+const LOCAL_DOCTOR_IMAGES: Record<string, string> = {
+  "dr-diean": "/images/doctors/dr-diean.jpg",
+  "dr-sanwar": "/images/doctors/DR. MD. SANWAR HOSSAIN.png",
+  "dr-fatema": "/images/doctors/dr-fatema.jpg",
+  "dr-bappy": "/images/doctors/dr-Bappy.png",
+  "dr-ratina": "/images/doctors/Dr Jesinta Islam.png",
+  "dr-rifat": "/images/doctors/Dr Rifat Rahman.png",
+};
+
 export default function DoctorsPage() {
   const { t, isBn } = useLanguage();
   const [doctorsList, setDoctorsList] = useState<Doctor[]>(DOCTORS);
@@ -65,8 +74,16 @@ export default function DoctorsPage() {
                 <div className="lg:col-span-4 flex flex-col items-center sm:items-start text-center sm:text-left">
                   <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden bg-zinc-200 border-2 border-zinc-300 shadow-md">
                     <img
-                      src={doc.photoUrl}
+                      src={doc.photoUrl || LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg"}
                       alt={t(doc.name)}
+                      loading="eager"
+                      decoding="async"
+                      onError={(e) => {
+                        const fallback = LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg";
+                        if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
+                          e.currentTarget.src = fallback;
+                        }
+                      }}
                       className="w-full h-full object-cover object-top"
                     />
                     {doc.isConfirmed && (
