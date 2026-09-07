@@ -93,7 +93,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
               <span className="flex items-center gap-2">
                 <span>{isBn ? "সকল বিভাগ ও সেবাসমূহ" : "Departments & Services"}</span>
                 <span className="px-2 py-0.5 text-[10px] font-bold bg-zinc-200 text-zinc-700 rounded-full">
-                  7
+                  {DEPARTMENTS.length}
                 </span>
               </span>
               <ChevronDown

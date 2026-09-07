@@ -220,11 +220,11 @@ export function DoctorPreview() {
   return (
     <section
       id="specialist-team"
-      className="py-12 sm:py-16 lg:py-20 bg-[#383C3E] text-white border-b border-white/10 overflow-hidden select-none relative"
+      className="py-12 sm:py-16 lg:py-20 bg-[#E9E8F0] text-zinc-900 border-b border-zinc-300/80 overflow-hidden select-none relative"
     >
       {/* Background ambient lighting accents */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-white/[0.03] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-black/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-white/50 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-100/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24">
         
@@ -232,8 +232,8 @@ export function DoctorPreview() {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 sm:mb-10 gap-6">
           <div className="max-w-3xl">
             {/* Category Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-200 mb-3 shadow-xs backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-zinc-300/80 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-800 mb-3 shadow-2xs backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>
                 {isBn
                   ? "অভিজ্ঞ চিকিৎসকগণ"
@@ -242,14 +242,14 @@ export function DoctorPreview() {
             </div>
 
             {/* Main Headline */}
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white tracking-tight leading-[1.14]">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-zinc-950 tracking-tight leading-[1.14]">
               {isBn
                 ? "বিশেষজ্ঞ চিকিৎসকদের তত্ত্বাবধানে পূর্ণাঙ্গ ও নির্ভরযোগ্য ডেন্টাল কেয়ার।"
                 : "Comprehensive, specialist-led dental care across the full spectrum of oral health."}
             </h2>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base text-zinc-300 mt-2.5 font-normal max-w-2xl leading-relaxed">
+            <p className="text-sm sm:text-base text-zinc-700 mt-2.5 font-normal max-w-2xl leading-relaxed">
               {isBn
                 ? "নিবেদিতপ্রাণ বিশেষজ্ঞ চিকিৎসক দল, লক্ষ্য একটাই — আপনার হাসির সুরক্ষা ও নিখুঁত চিকিৎসা।"
                 : "Dedicated specialists with one shared commitment to your smile. Every department is led by a doctor trained specifically in that field."}
@@ -259,7 +259,7 @@ export function DoctorPreview() {
             <div className="mt-5 flex items-center gap-3">
               <Link
                 href="/doctors"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-zinc-100 active:bg-zinc-200 text-zinc-900 text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all duration-200 active:scale-98 group"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#2D3134] hover:bg-zinc-900 active:bg-black text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all duration-200 active:scale-98 group"
               >
                 <span>{isBn ? "সকল বিশেষজ্ঞ চিকিৎসকদের তালিকা" : "View All Specialists"}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -272,17 +272,17 @@ export function DoctorPreview() {
             <button
               type="button"
               onClick={() => setIsPaused(!isPaused)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/15 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95 backdrop-blur-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-300/80 bg-white/80 hover:bg-white text-zinc-800 text-xs font-semibold transition-all shadow-2xs cursor-pointer active:scale-95 backdrop-blur-sm"
               title={isPaused ? "Play auto-sliding" : "Pause auto-sliding"}
             >
               {isPaused ? (
                 <>
-                  <Play className="w-3.5 h-3.5 fill-current text-white" />
+                  <Play className="w-3.5 h-3.5 fill-current text-zinc-800" />
                   <span>{isBn ? "চালু করুন" : "Play"}</span>
                 </>
               ) : (
                 <>
-                  <Pause className="w-3.5 h-3.5 fill-current text-white" />
+                  <Pause className="w-3.5 h-3.5 fill-current text-zinc-800" />
                   <span>{isBn ? "পজ করুন" : "Pause"}</span>
                 </>
               )}
@@ -292,7 +292,7 @@ export function DoctorPreview() {
               type="button"
               onClick={handlePrev}
               aria-label="Previous Doctor"
-              className="p-2 rounded-xl border border-white/15 bg-white/10 hover:bg-white/20 text-white transition-all shadow-xs cursor-pointer active:scale-95 backdrop-blur-sm"
+              className="p-2 rounded-xl border border-zinc-300/80 bg-white/80 hover:bg-white text-zinc-800 transition-all shadow-2xs cursor-pointer active:scale-95 backdrop-blur-sm"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -301,7 +301,7 @@ export function DoctorPreview() {
               type="button"
               onClick={handleNext}
               aria-label="Next Doctor"
-              className="p-2 rounded-xl border border-white/15 bg-white/10 hover:bg-white/20 text-white transition-all shadow-xs cursor-pointer active:scale-95 backdrop-blur-sm"
+              className="p-2 rounded-xl border border-zinc-300/80 bg-white/80 hover:bg-white text-zinc-800 transition-all shadow-2xs cursor-pointer active:scale-95 backdrop-blur-sm"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -334,12 +334,12 @@ export function DoctorPreview() {
               const isActive = idx === activeTrackIndex;
 
               if (isActive) {
-                // ACTIVE / EXPANDED CARD (Elevated White Showcase Card on Dark Charcoal Canvas)
+                // ACTIVE / EXPANDED CARD (Elevated White Showcase Card)
                 return (
                   <div
                     key={`doc-${idx}-${doc.id}`}
                     style={{ width: `${cardWidth}px` }}
-                    className="shrink-0 bg-white rounded-2xl border border-white/30 shadow-2xl ring-4 ring-black/15 overflow-hidden transition-all duration-300 z-20 flex flex-col select-none"
+                    className="shrink-0 bg-white rounded-2xl border border-zinc-200/90 shadow-2xl ring-4 ring-black/5 overflow-hidden transition-all duration-300 z-20 flex flex-col select-none"
                   >
                     {/* Top Eyebrow Bar: "Specialist" (left) | Schedule (right) */}
                     <div className="px-3.5 py-2.5 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between text-[11px] font-bold text-zinc-800">
@@ -401,7 +401,7 @@ export function DoctorPreview() {
                           onClick={(e) => {
                             if (hasMovedRef.current) e.preventDefault();
                           }}
-                          className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-[11px] font-bold shadow-xs hover:shadow-md transition-all active:scale-98 group shrink-0"
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-[#2D3134] hover:bg-zinc-900 active:bg-black text-white text-[11px] font-bold shadow-xs hover:shadow-md transition-all active:scale-98 group shrink-0"
                         >
                           <span>{isBn ? "প্রোফাইল" : "View Profile"}</span>
                           <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
@@ -423,7 +423,7 @@ export function DoctorPreview() {
                 );
               }
 
-              // INACTIVE CARDS (Dark Card Frames with Crisp White Typography)
+              // INACTIVE CARDS (Light Card Frames with Crisp Dark Typography)
               return (
                 <div
                   key={`doc-${idx}-${doc.id}`}
@@ -436,27 +436,27 @@ export function DoctorPreview() {
                   className="shrink-0 group cursor-pointer transition-all duration-300 flex flex-col select-none"
                 >
                   {/* Photo with EXACT 4/3 Aspect Ratio */}
-                  <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black/25 border border-white/15 group-hover:border-white/40 group-hover:shadow-xl transition-all duration-300">
+                  <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-white border border-zinc-300/80 group-hover:border-zinc-500 group-hover:shadow-xl transition-all duration-300 shadow-2xs">
                     <img
                       src={doc.photoUrl}
                       alt={t(doc.name)}
                       draggable={false}
-                      className="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 group-hover:scale-104 transition-all duration-400 select-none pointer-events-none"
+                      className="w-full h-full object-cover object-top opacity-90 group-hover:opacity-100 group-hover:scale-104 transition-all duration-400 select-none pointer-events-none"
                     />
-                    <div className="absolute inset-0 bg-black/15 group-hover:bg-transparent transition-colors" />
+                    <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
                     
                     {/* Small Doctor Number Badge */}
-                    <div className="absolute top-2 left-2 w-5 h-5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold flex items-center justify-center border border-white/20 shadow-xs">
+                    <div className="absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-900/80 backdrop-blur-xs text-white text-[10px] font-bold flex items-center justify-center border border-white/20 shadow-xs">
                       {(idx % baseCount) + 1}
                     </div>
                   </div>
 
-                  {/* Compact Bottom Label Under Image in High Contrast White */}
+                  {/* Compact Bottom Label Under Image in High Contrast Dark Typography */}
                   <div className="pt-2.5 px-1">
-                    <p className="text-xs font-bold text-white group-hover:text-zinc-200 transition-colors line-clamp-1">
+                    <p className="text-xs font-bold text-zinc-900 group-hover:text-black transition-colors line-clamp-1">
                       {t(doc.name)}
                     </p>
-                    <p className="text-[11px] text-zinc-300 font-medium line-clamp-1 mt-0.5">
+                    <p className="text-[11px] text-zinc-600 font-medium line-clamp-1 mt-0.5">
                       {t(doc.specialty)}
                     </p>
                   </div>
@@ -467,7 +467,7 @@ export function DoctorPreview() {
         </div>
 
         {/* Bottom Pagination & Navigation Guide */}
-        <div className="mt-2 flex items-center justify-between text-xs text-zinc-300">
+        <div className="mt-2 flex items-center justify-between text-xs text-zinc-700">
           {/* Round-Robin Indicators */}
           <div className="flex items-center gap-1.5">
             {doctorsList.map((_, i) => (
@@ -482,20 +482,20 @@ export function DoctorPreview() {
                 }}
                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                   i === currentDoctorIndex
-                    ? "w-7 bg-white shadow-xs"
-                    : "w-2 bg-white/30 hover:bg-white/50"
+                    ? "w-7 bg-zinc-900 shadow-xs"
+                    : "w-2 bg-zinc-400/60 hover:bg-zinc-500"
                 }`}
                 aria-label={`Go to doctor ${i + 1}`}
               />
             ))}
-            <span className="ml-2 text-[11px] font-medium text-zinc-300">
+            <span className="ml-2 text-[11px] font-medium text-zinc-700">
               {currentDoctorIndex + 1} / {baseCount}
             </span>
           </div>
 
           <Link
             href="/doctors"
-            className="font-semibold text-zinc-200 hover:text-white hover:underline inline-flex items-center gap-1 ml-auto"
+            className="font-semibold text-zinc-800 hover:text-black hover:underline inline-flex items-center gap-1 ml-auto"
           >
             <span>{isBn ? "সকল ডাক্তারের পূর্ণাঙ্গ শিডিউল" : "Complete Doctor Schedules"}</span>
             <ArrowRight className="w-3.5 h-3.5" />

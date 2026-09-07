@@ -28,7 +28,7 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
             {isBn ? "সকল ক্লিনিক্যাল বিভাগ" : "Clinical Specializations"}
           </span>
           <h3 className="text-lg font-bold text-zinc-900">
-            {isBn ? "কেজিএইচ ডেন্টালের ৭টি বিশেষায়িত বিভাগ" : "7 Specialized Departments at KGH Dental"}
+            {isBn ? "কেজিএইচ ডেন্টালের বিশেষায়িত বিভাগসমূহ" : "Specialized Clinical Departments at KGH Dental"}
           </h3>
         </div>
         <Link
@@ -63,8 +63,7 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
                 {t(dept.shortDesc)}
               </p>
               <div className="mt-1.5 flex items-center gap-1 text-[11px] font-medium text-zinc-600">
-                <span>{dept.subServices.length}</span>
-                <span>{isBn ? "টি বিশেষ চিকিৎসা" : "Specialized Treatments"}</span>
+                <span>{isBn ? "বিশেষায়িত চিকিৎসাসেবা" : "Specialized Clinical Care"}</span>
               </div>
             </div>
           </Link>

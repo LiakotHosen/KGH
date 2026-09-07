@@ -103,7 +103,7 @@ export default function AdminDashboardPage() {
               <Building2 className="w-5 h-5" />
             </div>
             <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-800 border border-zinc-200">
-              56 Services
+              {DEPARTMENTS.reduce((sum, d) => sum + d.subServices.length, 0)} Services
             </span>
           </div>
           <div className="text-2xl font-extrabold text-zinc-950">{DEPARTMENTS.length}</div>

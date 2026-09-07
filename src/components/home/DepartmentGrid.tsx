@@ -159,6 +159,28 @@ const DEPARTMENT_DETAILS: Record<string, ShowcaseDetails> = {
       bn: "মাড়ি রোগ বিশেষজ্ঞ চিকিৎসক দল",
     },
   },
+  "oral-medicine": {
+    categoryPill: {
+      en: "Oral Medicine & Clinical Diagnosis",
+      bn: "ওরাল মেডিসিন ও ক্লিনিক্যাল ডায়াগনোসিস",
+    },
+    headline: {
+      en: "Advanced Oral Mucosal Care, Ulcers & Cancer Screening",
+      bn: "মুখের জটিল ক্ষত, আলসার ও ক্যান্সার স্ক্রিনিং চিকিৎসা",
+    },
+    description: {
+      en: "Not all oral conditions are related to teeth alone. Our Oral Medicine specialist diagnoses and treats non-healing ulcers, precancerous lesions, OSMF, salivary gland disorders, and systemic conditions with advanced clinical precision.",
+      bn: "মুখের সব সমস্যা শুধুমাত্র দাঁতকেন্দ্রিক নয়। মুখের দীর্ঘস্থায়ী ঘা, প্রিক্যান্সারাস ক্ষত, ওএসএমএফ, বার্নিং মাউথ সিন্ড্রোম ও লালাগ্রন্থির জটিল রোগের আন্তর্জাতিক মানের চিকিৎসা দেন আমাদের বিশেষজ্ঞ।",
+    },
+    topTreatments: {
+      en: ["Oral Cancer Screening", "Precancerous Lesion Care", "OSMF & Ulcer Therapy", "Oral Biopsy Consultation"],
+      bn: ["ওরাল ক্যান্সার স্ক্রিনিং", "প্রিক্যান্সারাস ক্ষত চিকিৎসা", "ওএসএমএফ ও আলসার কেয়ার", "ওরাল বায়োপসি কনসালটেশন"],
+    },
+    specialistBadge: {
+      en: "Lead Consultant: Dr. Rifat Rahman (PhD, MSc)",
+      bn: "প্রধান বিশেষজ্ঞ: ডা. রিফাত রহমান (পিএইচডি, এমএসসি)",
+    },
+  },
   "general-consultation": {
     categoryPill: {
       en: "General Dentistry & Digital Diagnostics",
@@ -252,28 +274,28 @@ export function DepartmentGrid() {
   return (
     <section
       id="specialized-care"
-      className="w-full py-16 sm:py-24 lg:py-28 bg-[#474B4E] text-white transition-colors duration-300 relative overflow-hidden"
+      className="w-full py-16 sm:py-24 lg:py-28 bg-[#E9E8F0] text-zinc-900 transition-colors duration-300 relative overflow-hidden border-b border-zinc-300/80"
     >
-      {/* Section Header: Centered & High Contrast White Typography */}
+      {/* Section Header: Centered & High Contrast Dark Typography */}
       <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 mb-10 sm:mb-14">
         <div className="text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-100 mb-3.5 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 border border-zinc-300/80 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-800 mb-3.5 shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>{isBn ? "আমাদের সেবাসমূহ" : "Our Services"}</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-zinc-950 tracking-tight leading-[1.15]">
             {isBn ? UI_STRINGS.departmentsSection.title.bn : UI_STRINGS.departmentsSection.title.en}
           </h2>
 
-          <p className="text-base sm:text-lg lg:text-xl text-zinc-200 mt-4 leading-relaxed font-normal max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-zinc-700 mt-4 leading-relaxed font-normal max-w-3xl mx-auto">
             {isBn ? UI_STRINGS.departmentsSection.subtitle.bn : UI_STRINGS.departmentsSection.subtitle.en}
           </p>
 
           <div className="mt-6 flex items-center justify-center">
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-white hover:text-zinc-100 hover:gap-3 transition-all duration-200 border-b-2 border-white/80 pb-0.5"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-zinc-900 hover:text-black hover:gap-3 transition-all duration-200 border-b-2 border-zinc-900 pb-0.5"
             >
               <span>{isBn ? "সকল সেবার তালিকা দেখুন" : "Browse All Services"}</span>
               <ArrowRight className="w-4 h-4" />
@@ -283,67 +305,67 @@ export function DepartmentGrid() {
       </div>
 
       {/* Main Interactive Showcase: 100% Full-Bleed Edge-to-Edge Layout (NO Nested Card Box!) */}
-      <div className="w-full flex flex-col lg:flex-row items-center lg:items-stretch justify-between gap-8 lg:gap-0">
+      <div className="w-full flex flex-col lg:flex-row items-center lg:items-center justify-between gap-8 lg:gap-0">
         
-        {/* Left Column: Department Information & Actions */}
+        {/* Left Column: Department Information & Actions (Vertically Centered to Right Image & Lifted to Cover Half the Top Gap) */}
         <div
-          className={`w-full lg:w-1/2 xl:w-[48%] flex flex-col justify-center px-4 sm:px-8 lg:pl-12 lg:pr-8 xl:pl-16 xl:pr-12 2xl:pl-24 2xl:pr-16 py-4 lg:py-6 transition-opacity duration-300 ${
+          className={`w-full lg:w-1/2 xl:w-[48%] flex flex-col justify-center px-4 sm:px-8 lg:pl-12 lg:pr-8 xl:pl-16 xl:pr-12 2xl:pl-24 2xl:pr-16 py-2 lg:py-0 specialized-showcase-lift transition-all duration-300 ${
             isTransitioning ? "opacity-30" : "opacity-100"
           }`}
         >
           <div>
             {/* Topic / Category Pill with Left/Right Arrows */}
             <div className="flex items-center gap-2 mb-5 sm:mb-6">
-              <div className="inline-flex items-center bg-white/10 hover:bg-white/15 border border-white/20 rounded-full px-2.5 py-1 transition-colors shadow-sm">
+              <div className="inline-flex items-center bg-white/80 hover:bg-white border border-zinc-300/80 rounded-full px-2.5 py-1 transition-colors shadow-2xs">
                 <button
                   type="button"
                   onClick={handlePrev}
                   aria-label="Previous Specialty"
-                  className="p-1 rounded-full text-zinc-200 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+                  className="p-1 rounded-full text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/60 transition-all cursor-pointer"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
-                <span className="px-2.5 text-xs sm:text-sm font-semibold text-white tracking-wide select-none">
+                <span className="px-2.5 text-xs sm:text-sm font-bold text-zinc-900 tracking-wide select-none">
                   {isBn ? showcaseInfo.categoryPill.bn : showcaseInfo.categoryPill.en}
                 </span>
                 <button
                   type="button"
                   onClick={handleNext}
                   aria-label="Next Specialty"
-                  className="p-1 rounded-full text-zinc-200 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+                  className="p-1 rounded-full text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/60 transition-all cursor-pointer"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              <span className="text-xs font-semibold text-zinc-300">
+              <span className="text-xs font-semibold text-zinc-600">
                 {String(activeIndex + 1).padStart(2, "0")} / {String(deptList.length).padStart(2, "0")}
               </span>
             </div>
 
-            {/* Bold Headline in Crisp White */}
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white tracking-tight leading-[1.14] mb-4">
+            {/* Bold Headline in High-Contrast Dark Typography */}
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-zinc-950 tracking-tight leading-[1.14] mb-4">
               {isBn ? showcaseInfo.headline.bn : showcaseInfo.headline.en}
             </h3>
 
             {/* Body Description */}
-            <p className="text-sm sm:text-base lg:text-lg text-zinc-200 leading-relaxed mb-6 font-normal max-w-xl">
+            <p className="text-sm sm:text-base lg:text-lg text-zinc-700 leading-relaxed mb-6 font-normal max-w-xl">
               {isBn ? showcaseInfo.description.bn : showcaseInfo.description.en}
             </p>
 
             {/* Featured Procedures Pills */}
             <div className="mb-8">
-              <div className="text-xs font-bold uppercase tracking-wider text-zinc-300 mb-3 flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-zinc-200" />
+              <div className="text-xs font-bold uppercase tracking-wider text-zinc-700 mb-3 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-zinc-800" />
                 <span>{isBn ? "প্রধান বিশেষায়িত সেবাসমূহ" : "Key Specialized Treatments"}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {(isBn ? showcaseInfo.topTreatments.bn : showcaseInfo.topTreatments.en).map((item, idx) => (
                   <span
                     key={idx}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/25 hover:bg-black/35 border border-white/15 text-xs sm:text-sm font-medium text-white shadow-sm transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-zinc-300/80 text-xs sm:text-sm font-semibold text-zinc-800 shadow-2xs transition-colors hover:border-zinc-400"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span>{item}</span>
                   </span>
                 ))}
@@ -351,11 +373,11 @@ export function DepartmentGrid() {
             </div>
           </div>
 
-          {/* Action Buttons: High-Contrast White Primary + Translucent Secondary */}
-          <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/15">
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-zinc-300/80">
             <Link
               href={`/services/${activeDept.slug}`}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 active:scale-98 group"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#2D3134] hover:bg-zinc-900 active:bg-black text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all duration-200 active:scale-98 group"
             >
               <span>{isBn ? "চিকিৎসা ও সেবাসমূহ দেখুন" : "Explore Treatments"}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -363,15 +385,15 @@ export function DepartmentGrid() {
 
             <Link
               href={`/appointment?dept=${activeDept.slug}`}
-              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-semibold transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/80 hover:bg-white text-zinc-900 border border-zinc-300/80 text-xs sm:text-sm font-semibold transition-all duration-200 shadow-2xs"
             >
-              <Calendar className="w-4 h-4 text-zinc-200" />
+              <Calendar className="w-4 h-4 text-zinc-700" />
               <span>{isBn ? "অ্যাপয়েন্টমেন্ট নিন" : "Book with Specialist"}</span>
             </Link>
           </div>
         </div>
 
-        {/* Right Column: Thumbnail Rail + Large Showcase Image (Bleeds to Screen Edge) */}
+        {/* Right Column: Thumbnail Rail + Large Showcase Image */}
         <div className="w-full lg:w-1/2 xl:w-[52%] flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch px-4 sm:px-8 lg:pl-0 lg:pr-0">
           
           {/* Vertical Thumbnail Strip */}
@@ -386,11 +408,11 @@ export function DepartmentGrid() {
                   title={t(dept.name)}
                   className={`group relative rounded-xl overflow-hidden transition-all duration-200 text-left shrink-0 sm:shrink cursor-pointer ${
                     isActive
-                      ? "ring-2 ring-white ring-offset-2 ring-offset-[#474b4e] shadow-2xl scale-[1.03] opacity-100"
-                      : "opacity-60 hover:opacity-100 hover:scale-[1.03] border border-white/20"
+                      ? "ring-2 ring-zinc-900 ring-offset-2 ring-offset-[#E9E8F0] shadow-xl scale-[1.03] opacity-100"
+                      : "opacity-75 hover:opacity-100 hover:scale-[1.03] border border-zinc-300/80 shadow-2xs"
                   }`}
                 >
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-20 lg:h-20 xl:w-22 xl:h-22 relative bg-zinc-800">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-20 lg:h-20 xl:w-22 xl:h-22 relative bg-zinc-200">
                     <img
                       src={dept.imageUrl}
                       alt={t(dept.name)}
@@ -399,16 +421,16 @@ export function DepartmentGrid() {
                     {/* Overlay gradient */}
                     <div
                       className={`absolute inset-0 transition-opacity ${
-                        isActive ? "bg-black/10" : "bg-black/40 group-hover:bg-black/15"
+                        isActive ? "bg-black/10" : "bg-black/25 group-hover:bg-black/10"
                       }`}
                     />
                     {/* Miniature Icon Badge */}
                     <div className="absolute top-1.5 left-1.5 p-1 rounded-md bg-zinc-950/80 backdrop-blur-xs text-white shadow-2xs border border-white/20">
                       <DepartmentIcon name={dept.iconName} className="w-3 h-3" />
                     </div>
-                    {/* Active Indicator Bar in Bright White */}
+                    {/* Active Indicator Bar in Bright Zinc-900 */}
                     {isActive && (
-                      <div className="absolute bottom-0 inset-x-0 h-1 bg-white" />
+                      <div className="absolute bottom-0 inset-x-0 h-1 bg-zinc-900" />
                     )}
                   </div>
                 </button>
@@ -417,7 +439,7 @@ export function DepartmentGrid() {
           </div>
 
           {/* Big Showcase Image: Full Bleed to the Right Edge on Desktop */}
-          <div className="order-1 sm:order-2 flex-1 relative rounded-2xl sm:rounded-3xl lg:rounded-l-3xl lg:rounded-r-none overflow-hidden bg-zinc-800 border border-white/15 lg:border-r-0 shadow-2xl min-h-[340px] sm:min-h-[460px] lg:min-h-[560px] xl:min-h-[620px]">
+          <div className="order-1 sm:order-2 flex-1 relative rounded-2xl sm:rounded-3xl lg:rounded-l-3xl lg:rounded-r-none overflow-hidden bg-zinc-200 border border-zinc-300/80 lg:border-r-0 shadow-2xl min-h-[340px] sm:min-h-[460px] lg:min-h-[560px] xl:min-h-[620px]">
             <img
               key={activeDept.id}
               src={activeDept.imageUrl}
@@ -438,7 +460,7 @@ export function DepartmentGrid() {
               </div>
 
               <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full bg-zinc-950/80 backdrop-blur-md text-white text-[11px] font-semibold border border-white/20">
-                {activeDept.subServices.length} {isBn ? "টি বিশেষায়িত সেবা" : "Treatments"}
+                {isBn ? "বিশেষায়িত সেবা" : "Clinical Specialty"}
               </span>
             </div>
 
@@ -468,16 +490,16 @@ export function DepartmentGrid() {
 
       {/* Bottom Callout: "Not Sure Which Department? Start with a General Consultation" */}
       <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 mt-12 lg:mt-16">
-        <div className="border-t border-white/15 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="border-t border-zinc-300/80 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-white/10 text-amber-300 flex items-center justify-center shrink-0 shadow-xs border border-white/15">
+            <div className="w-12 h-12 rounded-2xl bg-white text-amber-500 flex items-center justify-center shrink-0 shadow-2xs border border-zinc-300/80">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-base sm:text-lg font-bold text-white">
+              <h4 className="text-base sm:text-lg font-bold text-zinc-950">
                 {isBn ? "নিশ্চিত নন কোন বিশেষজ্ঞের কাছে যাবেন?" : "Not Sure Which Department Fits Your Need?"}
               </h4>
-              <p className="text-xs sm:text-sm text-zinc-200 mt-0.5 max-w-2xl">
+              <p className="text-xs sm:text-sm text-zinc-700 mt-0.5 max-w-2xl">
                 {isBn
                   ? "জেনারেল কনসালটেশন নিন — আমাদের অভিজ্ঞ ডেন্টিস্ট পরীক্ষা করে সঠিক বিশেষজ্ঞের কাছে রেফার করবেন।"
                   : "Book a preliminary consultation. Our doctor will evaluate your case and guide you to the ideal specialist."}
@@ -487,7 +509,7 @@ export function DepartmentGrid() {
 
           <Link
             href="/appointment?dept=general-consultation"
-            className="shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs sm:text-sm font-bold transition-all duration-200 shadow-md hover:shadow-lg active:scale-98"
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#2D3134] hover:bg-zinc-900 active:bg-black text-white text-xs sm:text-sm font-bold transition-all duration-200 shadow-md hover:shadow-lg active:scale-98"
           >
             <span>{isBn ? "জেনারেল কনসালটেশন বুক করুন" : "Book General Consultation"}</span>
             <ArrowRight className="w-4 h-4" />

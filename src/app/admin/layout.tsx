@@ -34,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/appointments", label: "Appointments", icon: CalendarCheck },
     { href: "/admin/doctors", label: "Doctors Directory", icon: Users },
-    { href: "/admin/departments", label: "Departments & 56 Services", icon: Building2 },
+    { href: "/admin/departments", label: "Departments & 64 Services", icon: Building2 },
     { href: "/admin/blog", label: "Blog Articles (10)", icon: BookOpen },
     { href: "/admin/gallery", label: "Gallery Showcase", icon: ImageIcon },
     { href: "/admin/media", label: "Media Library", icon: FolderOpen },

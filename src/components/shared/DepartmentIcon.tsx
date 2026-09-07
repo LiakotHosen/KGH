@@ -7,6 +7,7 @@ import {
   Baby,
   Activity,
   FileCheck,
+  Microscope,
   LucideProps,
 } from "lucide-react";
 
@@ -30,6 +31,8 @@ export function DepartmentIcon({ name, className = "w-5 h-5", ...props }: Depart
       return <Activity className={className} {...props} />;
     case "FileCheck":
       return <FileCheck className={className} {...props} />;
+    case "Microscope":
+      return <Microscope className={className} {...props} />;
     default:
       return <Sparkles className={className} {...props} />;
   }

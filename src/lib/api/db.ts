@@ -22,7 +22,7 @@ export async function fetchLiveDoctors(): Promise<Doctor[]> {
       return DOCTORS;
     }
 
-    return data.map((d: any) => {
+    const liveDocs = data.map((d: any) => {
       const staticDoc = DOCTORS.find((s) => s.id === d.id);
       return {
         id: d.id,
@@ -42,6 +42,9 @@ export async function fetchLiveDoctors(): Promise<Doctor[]> {
         isActive: d.is_active ?? true,
       };
     });
+
+    const missingStaticDocs = DOCTORS.filter((s) => !liveDocs.some((l) => l.id === s.id));
+    return [...liveDocs, ...missingStaticDocs];
   } catch (err) {
     console.error("fetchLiveDoctors error:", err);
     return DOCTORS;
@@ -116,7 +119,7 @@ export async function fetchLiveDepartments(): Promise<Department[]> {
       return DEPARTMENTS;
     }
 
-    return deptData.map((d: any) => {
+    const liveDepts = deptData.map((d: any) => {
       const subsForDept = (subData || [])
         .filter((s: any) => s.department_id === d.id)
         .map((s: any) => ({
@@ -139,6 +142,9 @@ export async function fetchLiveDepartments(): Promise<Department[]> {
         subServices: subsForDept.length > 0 ? subsForDept : (DEPARTMENTS.find(dep => dep.id === d.id)?.subServices || []),
       };
     });
+
+    const missingStaticDepts = DEPARTMENTS.filter((s) => !liveDepts.some((l) => l.id === s.id));
+    return [...liveDepts, ...missingStaticDepts];
   } catch (err) {
     console.error("fetchLiveDepartments error:", err);
     return DEPARTMENTS;
@@ -166,6 +172,21 @@ export async function saveLiveDepartment(dept: Department): Promise<{ success: b
     return { success: true };
   } catch (err: any) {
     console.error("saveLiveDepartment error:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+export async function deleteLiveDepartment(id: string): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    // Remove linked sub-services first
+    await supabase.from("sub_services").delete().eq("department_id", id);
+    const { error } = await supabase.from("departments").delete().eq("id", id);
+    if (error) throw error;
+    return { success: true };
+  } catch (err: any) {
+    console.error("deleteLiveDepartment error:", err);
     return { success: false, error: err.message };
   }
 }

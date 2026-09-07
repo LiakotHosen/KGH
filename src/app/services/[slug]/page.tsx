@@ -6,10 +6,10 @@ import Link from "next/link";
 import { ArrowLeft, ChevronLeft, Calendar, ShieldCheck, UserCheck, ArrowRight } from "lucide-react";
 import { DEPARTMENTS } from "@/data/departments";
 import { DOCTORS } from "@/data/doctors";
-import { Doctor } from "@/types";
-import { fetchLiveDoctors } from "@/lib/api/db";
+import { Doctor, Department } from "@/types";
+import { fetchLiveDoctors, fetchLiveDepartments } from "@/lib/api/db";
 import { DepartmentIcon } from "@/components/shared/DepartmentIcon";
-import { SubServiceAccordion } from "@/components/services/SubServiceAccordion";
+import { SubServiceShowcase } from "@/components/services/SubServiceShowcase";
 import { useLanguage } from "@/context/LanguageContext";
 import { CtaBanner } from "@/components/home/CtaBanner";
 
@@ -18,6 +18,9 @@ export default function DepartmentDetailPage() {
   const slug = params?.slug as string;
   const { t, isBn } = useLanguage();
   const [doctorsList, setDoctorsList] = useState<Doctor[]>(DOCTORS);
+  const [department, setDepartment] = useState<Department | undefined>(() =>
+    DEPARTMENTS.find((d) => d.slug === slug)
+  );
 
   useEffect(() => {
     fetchLiveDoctors().then((docs) => {
@@ -25,9 +28,16 @@ export default function DepartmentDetailPage() {
         setDoctorsList(docs);
       }
     });
-  }, []);
 
-  const department = DEPARTMENTS.find((d) => d.slug === slug);
+    fetchLiveDepartments().then((depts) => {
+      if (depts && depts.length > 0) {
+        const liveDept = depts.find((d) => d.slug === slug);
+        if (liveDept) {
+          setDepartment(liveDept);
+        }
+      }
+    });
+  }, [slug]);
 
   if (!department) {
     notFound();
@@ -54,7 +64,7 @@ export default function DepartmentDetailPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-200/80 text-zinc-800 text-xs font-bold">
                 <DepartmentIcon name={department.iconName} className="w-3.5 h-3.5" />
                 <span>
-                  {department.subServices.length} {isBn ? "টি বিশেষ চিকিৎসা অন্তর্ভুক্ত" : "Specialized Treatments"}
+                  {isBn ? "বিশেষায়িত চিকিৎসা অন্তর্ভুক্ত" : "Specialized Treatments Included"}
                 </span>
               </div>
 
@@ -133,30 +143,11 @@ export default function DepartmentDetailPage() {
         </div>
       </section>
 
-      {/* Main Sub-Services Listing Section */}
-      <section id="treatment-list" className="py-14 sm:py-20 scroll-mt-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-10">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-600">
-              {isBn ? "চিকিৎসা নির্দেশিকা" : "Clinical Guidance"}
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-950 mt-1">
-              {isBn ? "সকল চিকিৎসা পদ্ধতি ও কার্যকারিতা" : "Procedures, Indications & Clinical Benefits"}
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-600 mt-2">
-              {isBn
-                ? "প্রতিটি চিকিৎসার বিস্তারিত বিবরণ, কখন করা প্রয়োজন এবং কী কী স্বাস্থ্যগত সুবিধা পাবেন তা নিচে দেওয়া হলো।"
-                : "Explore the clinical reasons, timely indications, and patient benefits for each individual procedure in this department."}
-            </p>
-          </div>
-
-          {/* Sub-Service Accordions */}
-          <SubServiceAccordion
-            subServices={department.subServices}
-            departmentSlug={department.slug}
-          />
-        </div>
-      </section>
+      {/* Main Interactive Sub-Services Showcase (Mirrored/Inverted Showcase) */}
+      <SubServiceShowcase
+        subServices={department.subServices}
+        department={department}
+      />
 
       <CtaBanner />
     </div>

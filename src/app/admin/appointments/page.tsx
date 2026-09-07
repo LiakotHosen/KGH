@@ -171,7 +171,7 @@ export default function AdminAppointmentsPage() {
             Appointment Bookings
           </h1>
           <p className="text-xs sm:text-sm text-zinc-600">
-            Review, confirm, or reschedule patient bookings across all 7 departments.
+            Review, confirm, or reschedule patient bookings across all 8 departments.
           </p>
         </div>
 

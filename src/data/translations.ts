@@ -35,8 +35,8 @@ export const UI_STRINGS = {
     stats: {
       specialists: { en: "6 Specialists", bn: "৬ জন বিশেষজ্ঞ" },
       specialistsSub: { en: "Board-certified doctors", bn: "অভিজ্ঞ চিকিৎসক" },
-      departments: { en: "7 Departments", bn: "৭টি বিভাগ" },
-      departmentsSub: { en: "56 Specialized treatments", bn: "৫৬টি বিশেষায়িত সেবা" },
+      departments: { en: "8 Departments", bn: "৮টি বিভাগ" },
+      departmentsSub: { en: "64 Specialized treatments", bn: "৬৪টি বিশেষায়িত সেবা" },
       satisfaction: { en: "100% Patient Focus", bn: "রোগীকেন্দ্রিক সেবা" },
       satisfactionSub: { en: "Zero guesswork care", bn: "স্বচ্ছ চিকিৎসা পরিকল্পনা" },
     },
@@ -122,8 +122,8 @@ export const UI_STRINGS = {
       bn: "আমাদের বিশেষজ্ঞদের সাথে পরিচিত হোন",
     },
     subtitle: {
-      en: "Five specialists, one shared commitment to your smile.",
-      bn: "পাঁচজন বিশেষজ্ঞ, লক্ষ্য একটাই — আপনার হাসির যত্ন।",
+      en: "Six specialists, one shared commitment to your smile.",
+      bn: "ছয়জন বিশেষজ্ঞ, লক্ষ্য একটাই — আপনার হাসির যত্ন।",
     },
     viewProfile: {
       en: "View Full Profile",

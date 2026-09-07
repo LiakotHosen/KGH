@@ -1124,6 +1124,223 @@ export const DEPARTMENTS: Department[] = [
     ],
   },
   {
+    id: "oral-medicine",
+    slug: "oral-medicine",
+    name: {
+      en: "Oral Medicine & Diagnosis",
+      bn: "ওরাল মেডিসিন ও ডায়াগনোসিস",
+    },
+    shortDesc: {
+      en: "Specialist diagnosis for oral ulcers, precancerous lesions, OSMF, and complex mucosal conditions.",
+      bn: "মুখের ঘা, প্রিক্যান্সারাস ক্ষত, ওএসএমএফ ও জটিল মিউকোসাল রোগের বিশেষজ্ঞ চিকিৎসা ও রোগ নির্ণয়।",
+    },
+    iconName: "Microscope",
+    leadDoctorId: "dr-rifat",
+    imageUrl: "/images/services-images-for-7-services/ORAL Medicine.jpeg",
+    subServices: [
+      {
+        id: "oral-cancer-screening-diagnosis",
+        number: 1,
+        name: {
+          en: "Oral Cancer Screening & Diagnosis",
+          bn: "ওরাল ক্যান্সার স্ক্রিনিং ও ডায়াগনোসিস",
+        },
+        why: {
+          en: "Identifies potentially malignant oral lesions and early cellular changes before they spread.",
+          bn: "ক্যান্সার হওয়ার মতো অস্বাভাবিক কোষ ও মুখের ক্ষতের লক্ষণ শুরুতেই নিশ্চিতভাবে শনাক্ত করতে।",
+        },
+        when: {
+          en: "Persistent non-healing ulcers, persistent red or white patches, or regular screening for tobacco/betel nut users.",
+          bn: "দুই সপ্তাহের বেশি না-সারা ঘা, তামাক বা জর্দা খাওয়ার অভ্যাস থাকলে কিংবা মুখে লাল-সাদা দাগ দেখা দিলে।",
+        },
+        benefit: {
+          en: "Life-saving early detection with high curability and non-invasive initial screening protocols.",
+          bn: "প্রাথমিক পর্যায়ে শনাক্ত হলে প্রায় শতভাগ সফল নিরাময় সম্ভব এবং জীবন রক্ষা পায়।",
+        },
+      },
+      {
+        id: "precancerous-lesion-management",
+        number: 2,
+        name: {
+          en: "Precancerous Lesion Management (Leukoplakia, Erythroplakia)",
+          bn: "প্রিক্যান্সারাস ক্ষত চিকিৎসা (লিউoplাকিয়া ও এরিথ্রোপ্লাকিয়া)",
+        },
+        why: {
+          en: "Treats and closely monitors mucosal white and red patches that carry a risk of turning into oral cancer.",
+          bn: "মুখে দেখা দেওয়া সাদা বা লালচে দাগ যা ভবিষ্যতে ক্যান্সারে রূপ নেওয়ার ঝুঁকি রাখে, তার সঠিক চিকিৎসা ও পর্যবেক্ষণ করতে।",
+        },
+        when: {
+          en: "Rough or raised white patches (leukoplakia) or velvety red lesions (erythroplakia) in the oral cavity.",
+          bn: "জিহ্বা, গালের ভেতর বা তালুতে খসখসে সাদাটে ছোপ বা লালচে দাগ দীর্ঘ সময় ধরে বিদ্যমান থাকলে।",
+        },
+        benefit: {
+          en: "Halts malignant transformation through tailored medical therapies, risk cessation, and expert surveillance.",
+          bn: "সময়মতো চিকিৎসার মাধ্যমে ক্যান্সার হওয়ার ঝুঁকি পুরোপুরি বন্ধ করা যায় এবং জটিল অপারেশন এড়ানো যায়।",
+        },
+      },
+      {
+        id: "osmf-management",
+        number: 3,
+        name: {
+          en: "Oral Submucous Fibrosis (OSMF) Management",
+          bn: "ওরাল সাবমিউকাস ফাইব্রোসিস (ওএসএমএফ) চিকিৎসা",
+        },
+        why: {
+          en: "Reverses progressive stiffening and burning sensation in mouth lining typically caused by areca nut/betel quid chewing.",
+          bn: "সুপারি বা জর্দা খাওয়ার কারণে মুখের ভেতরের চামড়া শক্ত হয়ে যাওয়া এবং মুখ খুলতে না পারার সমস্যা দূর করতে।",
+        },
+        when: {
+          en: "Difficulty opening the mouth fully, severe burning sensation when eating spicy foods, or blanching of inner cheeks.",
+          bn: "ঝাল খেলে অতিরিক্ত জ্বালাপোড়া হওয়া এবং আস্তে আস্তে স্বাভাবিকভাবে মুখ খোলার ক্ষমতা কমে গেলে।",
+        },
+        benefit: {
+          en: "Improves mouth opening span, alleviates burning discomfort, and drastically lowers oral malignancy risk.",
+          bn: "মুখের স্বাভাবিক খোলার পরিধি বাড়ায়, জ্বালাপোড়া কমায় এবং দীর্ঘমেয়াদী ক্যান্সারের ঝুঁকি কমিয়ে দেয়।",
+        },
+      },
+      {
+        id: "recurrent-oral-ulcers",
+        number: 4,
+        name: {
+          en: "Recurrent Oral Ulcer / Aphthous Ulcer Management",
+          bn: "বারবার হওয়া মুখের ঘা বা অ্যাপথাস আলসার চিকিৎসা",
+        },
+        why: {
+          en: "Addresses the underlying systemic, immune, or nutritional root causes of painful, recurring mouth sores.",
+          bn: "বারবার মুখের ঘা হওয়ার আসল কারণ (ইমিউন, পুষ্টির ঘাটতি বা মানসিক চাপ) শনাক্ত করে দীর্ঘস্থায়ী মুক্তি দিতে।",
+        },
+        when: {
+          en: "Frequent episodes of painful blisters or ulcers on tongue, lips, or cheeks interfering with eating and talking.",
+          bn: "নিয়মিত ঠোঁটের ভেতরের অংশ, জিহ্বা বা মাড়িতে তীব্র যন্ত্রণাদায়ক ঘা হয়ে খাওয়া-দাওয়া কষ্টকর হলে।",
+        },
+        benefit: {
+          en: "Rapid pain reduction, accelerated mucosal healing, and significant reduction in recurrence frequency.",
+          bn: "দ্রুত ব্যথাহীন আরাম এনে দেয়, দ্রুত ঘা শুকায় এবং বারবার ঘা ফিরে আসার প্রবণতা বন্ধ করে।",
+        },
+      },
+      {
+        id: "oral-lichen-planus",
+        number: 5,
+        name: {
+          en: "Oral Lichen Planus & Mucosal Lesion Management",
+          bn: "ওরাল লাইকেন প্ল্যানাস ও মিউকোসাল ক্ষত চিকিৎসা",
+        },
+        why: {
+          en: "Manages chronic inflammatory autoimmune conditions causing painful lacy white streaks and erosions in oral mucosa.",
+          bn: "শরীরের রোগ প্রতিরোধ ক্ষমতার ভারসাম্যহীনতায় মুখে হওয়া দীর্ঘমেয়াদী জ্বালাপোড়া ও জালিকার মতো দাগ নিরাময় করতে।",
+        },
+        when: {
+          en: "Lacy white patterns, redness, soreness, or burning in inner cheeks or gums while brushing or eating.",
+          bn: "গালের ভেতরে সাদা সূক্ষ্ম রেখা, তীব্র সংবেদনশীলতা কিংবা কোনো কিছু খাওয়ার সময় মাড়ি বা গাল জ্বলে উঠলে।",
+        },
+        benefit: {
+          en: "Sustained remission of painful symptoms, prevention of erosive ulcers, and expert long-term mucosal care.",
+          bn: "জ্বালা-যন্ত্রণা দূর করে দীর্ঘস্থায়ী আরাম দেয় এবং মাড়ি ও মুখের ভেতরের চামড়ার গভীর ক্ষয় রোধ করে।",
+        },
+      },
+      {
+        id: "burning-mouth-syndrome",
+        number: 6,
+        name: {
+          en: "Burning Mouth Syndrome Management",
+          bn: "বার্নিং মাউথ সিন্ড্রোম (মুখে তীব্র জ্বালাপোড়া) চিকিৎসা",
+        },
+        why: {
+          en: "Comprehensive neurological and mucosal workup to resolve mysterious, persistent oral scalding sensations.",
+          bn: "কোনো দৃশ্যমান ঘা ছাড়াই জিহ্বা বা পুরো মুখে দীর্ঘস্থায়ী গরম বা পোড়ার মতো অনুভূতি দূর করার চিকিৎসায়।",
+        },
+        when: {
+          en: "Constant burning sensation on tongue, lips, or roof of mouth without visible wounds, often with altered taste.",
+          bn: "জিহ্বা বা তালুতে সারাক্ষণ গরম ছ্যাঁকা লাগার মতো জ্বালা, স্বাদ পরিবর্তন বা মুখে শুষ্কতা অনুভূত হলে।",
+        },
+        benefit: {
+          en: "Targeted multi-modal relief restoring normal sensory comfort and dietary enjoyment.",
+          bn: "যথাযথ চিকিৎসার মাধ্যমে অস্বস্তিকর জ্বালাপোড়া থেকে মুক্তি মেলে এবং স্বাচ্ছন্দ্যে স্বাভাবিক খাবারে ফেরা যায়।",
+        },
+      },
+      {
+        id: "oral-biopsy-consultation",
+        number: 7,
+        name: {
+          en: "Oral Biopsy & Diagnostic Consultation",
+          bn: "ওরাল বায়োপসি ও ডায়াগনস্টিক কনসালটেশন",
+        },
+        why: {
+          en: "Microscopic histopathological analysis to establish a definitive diagnosis for unresolved oral lesions.",
+          bn: "মুখের সন্দেহজনক বা দীর্ঘস্থায়ী কোনো ক্ষতের আসল কারণ মাইক্রোস্কোপিক পরীক্ষার মাধ্যমে নিশ্চিত করতে।",
+        },
+        when: {
+          en: "Unexplained oral swellings, lumps, non-healing ulcers, or mucosal color changes unresponsive to routine medications.",
+          bn: "ওষুধ খাওয়ার পরও ঘা ভালো না হলে, মুখে ফোলাভাব বা অস্বাভাবিক মাংসপিণ্ড দেখা দিলে।",
+        },
+        benefit: {
+          en: "Gold-standard diagnosis with total clinical clarity, guiding the most precise medical or surgical roadmap.",
+          bn: "রোগের সঠিক ধরন শতভাগ নিশ্চিত করে এবং অপ্রয়োজনীয় বিভ্রান্তি দূর করে নির্ভুল চিকিৎসার পথ দেখায়।",
+        },
+      },
+      {
+        id: "oral-manifestations-systemic",
+        number: 8,
+        name: {
+          en: "Oral Manifestations of Systemic Disease Management",
+          bn: "শারীরিক জটিল রোগজনিত মুখের সমস্যার সমন্বিত চিকিৎসা",
+        },
+        why: {
+          en: "Diagnoses and co-manages oral complications arising from diabetes, anemia, autoimmune conditions, or medications.",
+          bn: "ডায়াবেটিস, রক্তশূন্যতা, লিভার বা কিডনির রোগ এবং দীর্ঘমেয়াদী ওষুধের পার্শ্বপ্রতিক্রিয়ায় মুখে হওয়া সমস্যার চিকিৎসায়।",
+        },
+        when: {
+          en: "Unusual oral symptoms occurring in tandem with general medical health conditions or drug therapies.",
+          bn: "সাধারণ শারীরিক অসুস্থতার সাথে মিলিয়ে মুখে বারবার ইনফেকশন, মাড়ির ঘা বা অপ্রত্যাশিত পরিবর্তন ঘটলে।",
+        },
+        benefit: {
+          en: "Holistic care coordinating with your physicians to ensure both mouth and body heal together.",
+          bn: "মূল শারীরিক রোগের সাথে সমন্বয় করে চিকিৎসা দেওয়ায় মুখের কষ্ট দ্রুত দূর হয় এবং সার্বিক স্বাস্থ্য উন্নত হয়।",
+        },
+      },
+      {
+        id: "salivary-gland-disorders",
+        number: 9,
+        name: {
+          en: "Salivary Gland Disorder Consultation (Dry Mouth / Xerostomia)",
+          bn: "লালাগ্রন্থির সমস্যা ও মুখ শুকিয়ে যাওয়া (জেরোস্টোমিয়া) চিকিৎসা",
+        },
+        why: {
+          en: "Investigates salivary gland dysfunction, stones, infections, and debilitating chronic dry mouth conditions.",
+          bn: "লালাগ্রন্থিতে পাথর, ইনফেকশন বা লালা তৈরি কমে গিয়ে মুখ শুকিয়ে যাওয়ার সমস্যা প্রতিকার করতে।",
+        },
+        when: {
+          en: "Severe mouth dryness, difficulty swallowing dry foods, salivary gland swelling while eating, or recurrent pain.",
+          bn: "মুখ অতিরিক্ত শুকিয়ে কাঠ হয়ে থাকা, গিলতে কষ্ট হওয়া বা খাবার খাওয়ার সময় চোয়ালের নিচে ফুলে উঠলে।",
+        },
+        benefit: {
+          en: "Restores comfortable saliva flow, prevents rapid rampant tooth decay, and eliminates swallowing distress.",
+          bn: "মুখে স্বাভাবিক লালা প্রবাহ ফিরিয়ে আনে, দাঁতের দ্রুত ক্ষয় রোধ করে এবং আরামে খাওয়া ও কথা বলার সুযোগ দেয়।",
+        },
+      },
+      {
+        id: "complex-oral-diagnosis",
+        number: 10,
+        name: {
+          en: "Second Opinion / Complex Oral Diagnosis Consultation",
+          bn: "জটিল ওরাল রোগের দ্বিতীয় মতামত (সেকেন্ড ওপিনিয়ন) ও পরামর্শ",
+        },
+        why: {
+          en: "Offers advanced specialist evaluation for rare, perplexing, or longstanding oral mucosal conditions.",
+          bn: "দীর্ঘদিন চিকিৎসা নিয়েও না সারা বা শনাক্ত না হওয়া মুখের জটিল ও দুর্লভ সমস্যায় অভিজ্ঞ বিশেষজ্ঞের মতামত নিতে।",
+        },
+        when: {
+          en: "Conflicting diagnoses from multiple clinics, unresolved oral symptoms, or before undergoing extensive oral surgery.",
+          bn: "রোগ নির্ণয়ে সংশয় থাকলে, আগে নেওয়া চিকিৎসায় ফল না পেলে কিংবা বড় কোনো সার্জারির সিদ্ধান্ত নেওয়ার আগে।",
+        },
+        benefit: {
+          en: "Unbiased, highly qualified specialist assessment providing peace of mind and the correct treatment direction.",
+          bn: "আন্তর্জাতিক প্রশিক্ষণপ্রাপ্ত বিশেষজ্ঞের সুচিন্তিত পরামর্শ যা রোগীকে সঠিক চিকিৎসাপদ্ধতি বেছে নেওয়ার পূর্ণ আস্থা দেয়।",
+        },
+      },
+    ],
+  },
+  {
     id: "general-consultation",
     slug: "general-consultation",
     name: {

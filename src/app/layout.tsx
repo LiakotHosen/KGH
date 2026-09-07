@@ -48,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${hindSiliguri.variable} scroll-smooth`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${hindSiliguri.variable} scroll-smooth`}>
       <body className="min-h-screen flex flex-col font-sans antialiased selection:bg-zinc-900 selection:text-white">
         <LanguageProvider>
           <Navbar />

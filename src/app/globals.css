@@ -117,3 +117,26 @@ html {
 .animate-marquee-smooth:hover {
   animation-play-state: paused;
 }
+
+/* Specialized Care Department Showcase: Lift left text block to cover half of the top empty space and align centered with the showcase image */
+.specialized-showcase-lift {
+  transform: translateY(0);
+}
+
+@media (min-width: 1024px) {
+  .specialized-showcase-lift {
+    transform: translateY(-80px);
+  }
+}
+
+@media (min-width: 1280px) {
+  .specialized-showcase-lift {
+    transform: translateY(-120px);
+  }
+}
+
+@media (min-width: 1536px) {
+  .specialized-showcase-lift {
+    transform: translateY(-160px);
+  }
+}

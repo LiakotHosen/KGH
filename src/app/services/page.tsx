@@ -49,12 +49,12 @@ export default function ServicesPage() {
               {isBn ? "সকল ক্লিনিক্যাল বিভাগ ও সেবা" : "Clinical Departments & Services"}
             </span>
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-zinc-950 mt-2 tracking-tight">
-              {isBn ? "কেজিএইচ ডেন্টালের সকল বিশেষায়িত সেবা" : "Comprehensive Dental Care Across 7 Specialties"}
+              {isBn ? "কেজিএইচ ডেন্টালের সকল বিশেষায়িত সেবা" : "Comprehensive Multi-Specialty Dental Care"}
             </h1>
             <p className="text-base sm:text-lg text-zinc-600 mt-4 leading-relaxed max-w-3xl">
               {isBn
                 ? "কেজিএইচ ডেন্টালে প্রতিটি চিকিৎসার জন্য আছেন আলাদা বিশেষজ্ঞ ডাক্তার। আপনার সমস্যা অনুযায়ী সঠিক বিভাগটি বেছে নিন এবং জেনে নিন আমাদের সেবাসমূহ।"
-                : "Explore our 7 specialized dental departments and 54 dedicated treatments. Every department is led by a specialist trained in that exact field."}
+                : "Explore our specialized clinical dental departments and dedicated treatments. Every department is led by a specialist trained in that exact field."}
             </p>
 
             {/* Treatment Search Bar */}
@@ -91,7 +91,7 @@ export default function ServicesPage() {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-600">
-                      {dept.subServices.length} {isBn ? "টি বিশেষ চিকিৎসা" : "Specialized Procedures"}
+                      {isBn ? "বিশেষায়িত চিকিৎসাসমূহ" : "Specialized Procedures"}
                     </span>
                     <h2 className="text-xl sm:text-2xl font-bold text-zinc-950 mt-0.5">
                       {t(dept.name)}
