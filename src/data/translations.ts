@@ -75,6 +75,9 @@ export const UI_STRINGS = {
     },
     items: [
       {
+        id: "specialists",
+        tag: { en: "Elite Faculty", bn: "বিশেষজ্ঞ ফ্যাকাল্টি" },
+        stat: { en: "8+ Specialists", bn: "৮+ বিশেষজ্ঞ" },
         title: {
           en: "Specialist-Led Care",
           bn: "বিশেষজ্ঞদের হাতে চিকিৎসা",
@@ -83,8 +86,18 @@ export const UI_STRINGS = {
           en: "Every department is led by a doctor trained specifically in that field — not a single general dentist trying to do everything.",
           bn: "প্রতিটা বিভাগ পরিচালনা করেন সেই নির্দিষ্ট বিষয়ে প্রশিক্ষিত ডাক্তার — একজন জেনারেল ডেন্টিস্ট দিয়ে সবকিছু করানো নয়।",
         },
+        highlights: {
+          en: ["FCPS & Masters Certified", "Dedicated Department Heads", "No Generalist Guesswork"],
+          bn: ["এফসিপিএস ও স্নাতকোত্তর ডিগ্রি", "নির্দিষ্ট বিভাগের স্বতন্ত্র প্রধান", "অনুমাননির্ভর চিকিৎসার সুযোগ নেই"],
+        },
+        cta: { en: "Meet Specialists", bn: "বিশেষজ্ঞদের দেখুন" },
+        ctaLink: "/#doctors-section",
+        image: "/images/why-choose-us/specialist-care.jpg",
       },
       {
+        id: "chamber",
+        tag: { en: "Hospital Grade", bn: "হাসপাতাল মান" },
+        stat: { en: "100% Sterile", bn: "১০০% জীবাণুমুক্ত" },
         title: {
           en: "Modern, Comfortable Chamber",
           bn: "আধুনিক ও আরামদায়ক চেম্বার",
@@ -93,8 +106,18 @@ export const UI_STRINGS = {
           en: "A clean, calm space designed around patient comfort, from your first visit to your last follow-up.",
           bn: "প্রথম ভিজিট থেকে শেষ ফলো-আপ পর্যন্ত, রোগীর স্বাচ্ছন্দ্যের কথা মাথায় রেখে সাজানো একটা পরিচ্ছন্ন, শান্ত পরিবেশ।",
         },
+        highlights: {
+          en: ["Ergonomic Memory-Foam Chairs", "Class-B Autoclave Protocol", "Zen Ambient Lighting"],
+          bn: ["আরামদায়ক মেমোরি-ফোম চেয়ার", "ক্লাস-বি অটোক্লেভ স্টেরিলাইজেশন", "শান্ত ও আরামদায়ক পরিবেশ"],
+        },
+        cta: { en: "View Facilities", bn: "চেম্বার সুবিধা দেখুন" },
+        ctaLink: "/gallery",
+        image: "/images/why-choose-us/modern-chamber.jpg",
       },
       {
+        id: "plans",
+        tag: { en: "Clear & Honest", bn: "স্বচ্ছ ও নির্ভরযোগ্য" },
+        stat: { en: "Zero Guesswork", bn: "সম্পূর্ণ স্বচ্ছতা" },
         title: {
           en: "Transparent Treatment Plans",
           bn: "স্পষ্ট চিকিৎসা পরিকল্পনা",
@@ -103,8 +126,18 @@ export const UI_STRINGS = {
           en: "We explain why a treatment is needed, when it's needed, and what to expect — before any decision is made.",
           bn: "কোনো সিদ্ধান্ত নেওয়ার আগেই আমরা বুঝিয়ে বলি কেন এই চিকিৎসা দরকার, কখন দরকার, আর তাতে কী উপকার পাবেন।",
         },
+        highlights: {
+          en: ["HD Intraoral Digital Camera", "Itemized Cost Breakdown", "Clear Step-by-Step Roadmap"],
+          bn: ["এইচডি ইন্ট্রাওরাল স্ক্রিনিং", "অগ্রিম খরচের স্বচ্ছ বিবরণ", "ধাপভিত্তিক স্পষ্ট পরিকল্পনা"],
+        },
+        cta: { en: "Explore Treatments", bn: "চিকিৎসা সেবাসমূহ" },
+        ctaLink: "/services",
+        image: "/images/why-choose-us/transparent-plans-hd.jpeg",
       },
       {
+        id: "booking",
+        tag: { en: "Instant & Smooth", bn: "সহজ ও দ্রুত" },
+        stat: { en: "< 2 Mins", bn: "২ মিনিটে বুকিং" },
         title: {
           en: "Easy Appointment Booking",
           bn: "সহজ অ্যাপয়েন্টমেন্ট বুকিং",
@@ -113,8 +146,91 @@ export const UI_STRINGS = {
           en: "Pick your doctor, pick your time — book online in a few taps, no phone tag or long waiting lines.",
           bn: "নিজের পছন্দের ডাক্তার আর সময় বেছে নিন — কয়েকটা ক্লিকেই বুকিং, বারবার ফোন করার ঝামেলা নেই।",
         },
+        highlights: {
+          en: ["Pick Doctor & Preferred Day", "Instant WhatsApp Confirmation", "Dedicated Coordinator"],
+          bn: ["ডাক্তার ও সুবিধাজনক দিন পছন্দ", "তাৎক্ষণিক হোয়াটসঅ্যাপ নিশ্চিতকরণ", "ডেডিকেটেড কেয়ার কোঅর্ডিনেটর"],
+        },
+        cta: { en: "Book Appointment", bn: "সিরিয়াল বুক করুন" },
+        ctaLink: "/appointment",
+        image: "/images/why-choose-us/easy-booking.jpg",
       },
     ],
+  },
+  clinicalQuoteBreaker: {
+    badge: {
+      en: "OUR CLINICAL CREED",
+      bn: "আমাদের চিকিৎসা দর্শন",
+    },
+    quotes: [
+      {
+        quote: {
+          en: "A genuine smile is the universal language of health, confidence, and human connection. We combine surgical mastery with compassionate gentleness — because modern dentistry isn't just about fixing teeth, it's about transforming how you live.",
+          bn: "একটি আত্মবিশ্বাসী ও সুন্দর হাসি মানুষের স্বাস্থ্য, মর্যাদা ও আত্মবিশ্বাসের প্রতীক। কেজিএইচ ডেন্টালে আমরা বিশেষায়িত সার্জিক্যাল দক্ষতা ও আন্তরিক সেবার মেলবন্ধন ঘটাই — কারণ আধুনিক ডেন্টাল কেয়ার শুধু দাঁত সারানো নয়, জীবনকে সহজ ও হাসিময় করে তোলা।",
+        },
+        highlight: {
+          en: "Transforming how you live and smile.",
+          bn: "আপনার জীবন ও হাসিতে নতুন আত্মবিশ্বাস।",
+        },
+        author: {
+          en: "Clinical Advisory Council",
+          bn: "ক্লিনিক্যাল অ্যাডভাইজরি কাউন্সিল",
+        },
+        role: {
+          en: "KGH Dental Multi-Specialty Chamber",
+          bn: "কেজিএইচ ডেন্টাল মাল্টি-স্পেশালিটি চেম্বার",
+        },
+      },
+      {
+        quote: {
+          en: "Zero guesswork, zero rushed decisions. From digital low-radiation imaging to high-magnification diagnosis, every patient sees what we see before any procedure begins.",
+          bn: "কোনো অনুমান নয়, তাড়াহুড়ো করে নেওয়া সিদ্ধান্ত নয়। ডিজিটাল লো-রেডিয়েশন এক্স-রে এবং স্পষ্ট স্ক্রিনিংয়ের মাধ্যমে রোগীকে আগে তার সমস্যাটি বোঝানো হয়, তারপর চিকিৎসা শুরু হয়।",
+        },
+        highlight: {
+          en: "Complete transparency before any decision.",
+          bn: "কোনো সিদ্ধান্তের আগেই সম্পূর্ণ স্বচ্ছতা।",
+        },
+        author: {
+          en: "Board of Department Leads",
+          bn: "বিভাগীয় প্রধান চিকিৎসক পরিষদ",
+        },
+        role: {
+          en: "Precision Diagnostics & Clinical Governance",
+          bn: "প্রেসিশন ডায়াগনস্টিকস ও ক্লিনিক্যাল গভর্ন্যান্স",
+        },
+      },
+      {
+        quote: {
+          en: "Every smile has unique anatomy. By bringing eight distinct surgical and clinical sub-disciplines under one unified roof, we ensure you receive the exact specialist your teeth deserve.",
+          bn: "প্রতিটি দাঁত ও হাসির গঠন সম্পূর্ণ আলাদা। আধুনিক ডেন্টিস্ট্রির আটটি ভিন্ন বিশেষায়িত বিভাগকে এক ছাদের নিচে এনে আমরা নিশ্চিত করি যে আপনি কেবল সঠিক বিশেষজ্ঞের হাতেই সেবা পাচ্ছেন।",
+        },
+        highlight: {
+          en: "Eight specialist fields under one unified roof.",
+          bn: "এক ছাদের নিচে আটটি বিশেষায়িত বিভাগ।",
+        },
+        author: {
+          en: "Consultant Dental Surgeons",
+          bn: "কনসালটেন্ট ডেন্টাল সার্জনবৃন্দ",
+        },
+        role: {
+          en: "Specialist Care Collaborative",
+          bn: "বিশেষজ্ঞ সমন্বিত চিকিৎসা দল",
+        },
+      },
+    ],
+    pills: [
+      { en: "100% Class-B Sterilization", bn: "১০০% ক্লাস-বি স্টেরিলাইজেশন" },
+      { en: "Low-Radiation Digital Scans", bn: "লো-রেডিয়েশন ডিজিটাল স্ক্যান" },
+      { en: "Painless Anesthesia Protocol", bn: "ব্যথামুক্ত এনেস্থেশিয়া প্রোটোকল" },
+      { en: "Transparent Written Estimates", bn: "স্বচ্ছ লিখিত খরচের হিসাব" },
+    ],
+    ctaPrimary: {
+      en: "Book an Appointment",
+      bn: "অ্যাপয়েন্টমেন্ট বুক করুন",
+    },
+    ctaSecondary: {
+      en: "Explore Our Departments",
+      bn: "বিভাগসমূহ দেখুন",
+    },
   },
   doctorsSection: {
     title: {

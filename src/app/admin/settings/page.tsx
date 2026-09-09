@@ -11,6 +11,8 @@ import {
   Plus,
   Trash2,
   AlertCircle,
+  QrCode,
+  ExternalLink,
 } from "lucide-react";
 import { CLINIC_SETTINGS } from "@/data/settings";
 import { ClinicSettings } from "@/types";
@@ -254,6 +256,114 @@ export default function AdminSettingsPage() {
                   className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 text-xs"
                 />
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Google Review URL & QR Code Card */}
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-zinc-200 shadow-sm space-y-4">
+          <div className="flex items-center gap-3 pb-3 border-b border-zinc-100">
+            <div className="p-2.5 bg-zinc-950 text-white rounded-xl">
+              <QrCode className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-zinc-950">Google Reviews & Live QR Code</h3>
+              <p className="text-xs text-zinc-500">Destination link for patient reviews and homepage QR generator</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            <div className="md:col-span-2 space-y-4 text-xs sm:text-sm">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
+                  Google Review Submission Link *
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="url"
+                    required
+                    value={settings.googleReviewUrl || ""}
+                    onChange={(e) =>
+                      setSettings({ ...settings, googleReviewUrl: e.target.value })
+                    }
+                    placeholder="https://g.page/r/..."
+                    className="flex-1 px-3.5 py-2.5 rounded-xl border border-zinc-300 font-mono text-xs"
+                  />
+                  {settings.googleReviewUrl && (
+                    <a
+                      href={settings.googleReviewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2.5 rounded-xl border border-zinc-300 hover:bg-zinc-100 text-zinc-700 transition-colors"
+                      title="Test Google Review Link"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
+                <p className="text-[11px] text-zinc-500 mt-1">
+                  Patients clicking &ldquo;Open Google Review Link&rdquo; or scanning the homepage QR code will be redirected here.
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-zinc-100 space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700">
+                  Social & Direct Chat Channels
+                </h4>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-zinc-600 mb-1">WhatsApp Direct Link</label>
+                    <input
+                      type="text"
+                      value={settings.socialLinks?.whatsapp || ""}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          socialLinks: { ...settings.socialLinks, whatsapp: e.target.value },
+                        })
+                      }
+                      placeholder="https://wa.me/8801700000000"
+                      className="w-full px-3 py-2 rounded-xl border border-zinc-300 font-mono text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-zinc-600 mb-1">Facebook Page Link</label>
+                    <input
+                      type="text"
+                      value={settings.socialLinks?.facebook || ""}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          socialLinks: { ...settings.socialLinks, facebook: e.target.value },
+                        })
+                      }
+                      placeholder="https://facebook.com/kghdental"
+                      className="w-full px-3 py-2 rounded-xl border border-zinc-300 font-mono text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Live QR Code Preview Card */}
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-center flex flex-col items-center justify-center">
+              <span className="text-[11px] font-bold text-zinc-600 mb-2 uppercase tracking-wide">
+                Live QR Preview
+              </span>
+              <div className="p-2 bg-white rounded-xl border border-zinc-200 shadow-2xs">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
+                    settings.googleReviewUrl || "https://kghdental.com"
+                  )}`}
+                  alt="Review QR Code Preview"
+                  className="w-28 h-28 object-contain mx-auto"
+                />
+              </div>
+              <span className="text-[10px] text-zinc-500 mt-2">
+                Dynamically rendered on homepage
+              </span>
             </div>
           </div>
         </div>

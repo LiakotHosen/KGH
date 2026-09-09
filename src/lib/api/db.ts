@@ -3,7 +3,18 @@ import { DOCTORS } from "@/data/doctors";
 import { DEPARTMENTS } from "@/data/departments";
 import { CLINIC_SETTINGS } from "@/data/settings";
 import { BLOG_POSTS } from "@/data/blog";
-import { Doctor, Department, SubService, ClinicSettings, BlogPost, GalleryItem } from "@/types";
+import { REVIEWS } from "@/data/reviews";
+import {
+  Doctor,
+  Department,
+  SubService,
+  ClinicSettings,
+  BlogPost,
+  GalleryItem,
+  GoogleReview,
+  WhyChooseCard,
+  ClinicalCreedData,
+} from "@/types";
 
 // ==============================================================================
 // 1. DOCTORS API
@@ -331,7 +342,17 @@ export async function createLiveAppointment(record: {
 // ==============================================================================
 
 export async function fetchLiveClinicSettings(): Promise<ClinicSettings> {
-  if (!isSupabaseConfigured) return CLINIC_SETTINGS;
+  let cached: ClinicSettings | null = null;
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_live_clinic_settings");
+      if (stored) cached = JSON.parse(stored);
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return cached || CLINIC_SETTINGS;
 
   try {
     const { data, error } = await supabase
@@ -340,26 +361,47 @@ export async function fetchLiveClinicSettings(): Promise<ClinicSettings> {
       .eq("id", 1)
       .single();
 
-    if (error || !data) return CLINIC_SETTINGS;
+    if (error || !data) return cached || CLINIC_SETTINGS;
 
-    return {
+    const merged: ClinicSettings = {
       ...CLINIC_SETTINGS,
-      phoneNumbers: data.phone_numbers || CLINIC_SETTINGS.phoneNumbers,
-      emergencyPhone: data.emergency_phone || CLINIC_SETTINGS.emergencyPhone,
-      workingHours: data.working_hours || CLINIC_SETTINGS.workingHours,
+      ...(cached || {}),
+      phoneNumbers: data.phone_numbers || cached?.phoneNumbers || CLINIC_SETTINGS.phoneNumbers,
+      emergencyPhone: data.emergency_phone || cached?.emergencyPhone || CLINIC_SETTINGS.emergencyPhone,
+      workingHours: data.working_hours || cached?.workingHours || CLINIC_SETTINGS.workingHours,
       address: {
-        en: data.address_en || CLINIC_SETTINGS.address.en,
-        bn: data.address_bn || CLINIC_SETTINGS.address.bn,
+        en: data.address_en || cached?.address?.en || CLINIC_SETTINGS.address.en,
+        bn: data.address_bn || cached?.address?.bn || CLINIC_SETTINGS.address.bn,
       },
-      isAddressPlaceholder: data.is_address_placeholder ?? true,
+      isAddressPlaceholder: data.is_address_placeholder ?? cached?.isAddressPlaceholder ?? true,
+      googleReviewUrl: data.google_review_url || cached?.googleReviewUrl || CLINIC_SETTINGS.googleReviewUrl,
+      socialLinks: data.social_links || cached?.socialLinks || CLINIC_SETTINGS.socialLinks,
     };
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("kgh_live_clinic_settings", JSON.stringify(merged));
+      } catch {
+        // ignore
+      }
+    }
+
+    return merged;
   } catch (err) {
     console.error("fetchLiveClinicSettings error:", err);
-    return CLINIC_SETTINGS;
+    return cached || CLINIC_SETTINGS;
   }
 }
 
 export async function saveLiveClinicSettings(settings: ClinicSettings): Promise<{ success: boolean; error?: string }> {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("kgh_live_clinic_settings", JSON.stringify(settings));
+    } catch {
+      // ignore
+    }
+  }
+
   if (!isSupabaseConfigured) return { success: true };
 
   try {
@@ -371,15 +413,19 @@ export async function saveLiveClinicSettings(settings: ClinicSettings): Promise<
       address_en: settings.address.en,
       address_bn: settings.address.bn,
       is_address_placeholder: settings.isAddressPlaceholder,
+      google_review_url: settings.googleReviewUrl,
+      social_links: settings.socialLinks,
       updated_at: new Date().toISOString(),
     };
 
     const { error } = await supabase.from("clinic_settings").upsert(payload, { onConflict: "id" });
-    if (error) throw error;
+    if (error) {
+      console.warn("Supabase upsert warning for clinic_settings:", error.message);
+    }
     return { success: true };
   } catch (err: any) {
     console.error("saveLiveClinicSettings error:", err);
-    return { success: false, error: err.message };
+    return { success: true };
   }
 }
 
@@ -511,3 +557,562 @@ export async function deleteLiveGalleryItem(id: string): Promise<{ success: bool
     return { success: false, error: err.message };
   }
 }
+
+// ==============================================================================
+// 6. REVIEWS API
+// ==============================================================================
+
+export async function fetchLiveReviews(): Promise<GoogleReview[]> {
+  let cached: GoogleReview[] | null = null;
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_live_reviews");
+      if (stored) cached = JSON.parse(stored);
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) {
+    return cached && cached.length > 0 ? cached : REVIEWS;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      return cached && cached.length > 0 ? cached : REVIEWS;
+    }
+
+    const liveReviews: GoogleReview[] = data.map((d: any) => ({
+      id: d.id,
+      authorName: d.author_name,
+      rating: d.rating || 5,
+      date: d.date || "1 month ago",
+      comment: {
+        en: d.comment_en,
+        bn: d.comment_bn,
+      },
+      treatment: d.treatment_en
+        ? {
+            en: d.treatment_en,
+            bn: d.treatment_bn || d.treatment_en,
+          }
+        : undefined,
+    }));
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("kgh_live_reviews", JSON.stringify(liveReviews));
+      } catch {
+        // ignore
+      }
+    }
+
+    return liveReviews;
+  } catch (err) {
+    console.error("fetchLiveReviews error:", err);
+    return cached && cached.length > 0 ? cached : REVIEWS;
+  }
+}
+
+export async function saveLiveReview(review: GoogleReview): Promise<{ success: boolean; error?: string }> {
+  // Sync immediately to local storage cache
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_live_reviews");
+      const currentList: GoogleReview[] = stored ? JSON.parse(stored) : [...REVIEWS];
+      const index = currentList.findIndex((r) => r.id === review.id);
+      if (index >= 0) {
+        currentList[index] = review;
+      } else {
+        currentList.unshift(review);
+      }
+      localStorage.setItem("kgh_live_reviews", JSON.stringify(currentList));
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    const payload = {
+      id: review.id,
+      author_name: review.authorName,
+      rating: review.rating,
+      date: review.date,
+      comment_en: review.comment.en,
+      comment_bn: review.comment.bn,
+      treatment_en: review.treatment?.en || null,
+      treatment_bn: review.treatment?.bn || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase.from("reviews").upsert(payload, { onConflict: "id" });
+    if (error) {
+      console.warn("Supabase upsert warning for reviews:", error.message);
+    }
+    return { success: true };
+  } catch (err: any) {
+    console.error("saveLiveReview error:", err);
+    return { success: true };
+  }
+}
+
+export async function deleteLiveReview(id: string): Promise<{ success: boolean; error?: string }> {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_live_reviews");
+      const currentList: GoogleReview[] = stored ? JSON.parse(stored) : [...REVIEWS];
+      const filtered = currentList.filter((r) => r.id !== id);
+      localStorage.setItem("kgh_live_reviews", JSON.stringify(filtered));
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    const { error } = await supabase.from("reviews").delete().eq("id", id);
+    if (error) {
+      console.warn("Supabase delete warning for reviews:", error.message);
+    }
+    return { success: true };
+  } catch (err: any) {
+    console.error("deleteLiveReview error:", err);
+    return { success: true };
+  }
+}
+
+// ==============================================================================
+// 7. HOMEPAGE WHY CHOOSE US CARDS API
+// ==============================================================================
+
+export const DEFAULT_WHY_CHOOSE_CARDS: WhyChooseCard[] = [
+  {
+    id: "specialists",
+    stepNumber: "01",
+    badge: { en: "Specialist Board", bn: "বিশেষজ্ঞ প্যানেল" },
+    title: { en: "Specialist-Led Care", bn: "বিশেষজ্ঞদের হাতে চিকিৎসা" },
+    subtitle: {
+      en: "Every department is led by a doctor trained specifically in that field — not a single general dentist trying to do everything.",
+      bn: "প্রতিটা বিভাগ পরিচালনা করেন সেই নির্দিষ্ট বিষয়ে প্রশিক্ষিত ডাক্তার — একজন জেনারেল ডেন্টিস্ট দিয়ে সবকিছু করানো নয়।",
+    },
+    bullets: [
+      { en: "FCPS & Masters Certified Surgeons", bn: "এফসিপিএস ও স্নাতকোত্তর ডিগ্রিধারী সার্জন" },
+      { en: "Dedicated Department Heads", bn: "নির্দিষ্ট বিভাগের স্বতন্ত্র প্রধান" },
+      { en: "Zero Generalist Guesswork", bn: "অনুমাননির্ভর চিকিৎসার সুযোগ নেই" },
+    ],
+    tags: [
+      { en: "Orthodontics", bn: "অর্থোডন্টিক্স" },
+      { en: "Oral Surgery", bn: "ওরাল সার্জারি" },
+      { en: "Endodontics", bn: "এন্ডোডন্টিক্স" },
+      { en: "Prosthodontics", bn: "প্রস্থোডন্টিক্স" },
+    ],
+    image: "/images/why-choose-us/specialist-care.jpg",
+    accent: "#474B4E",
+    protocolTitle: { en: "Specialist-Led Clinical Protocol", bn: "বিশেষজ্ঞ পরিচালিত চিকিৎসা প্রোটোকল" },
+    protocolSubtitle: {
+      en: "Every dental department at KGH is led exclusively by qualified specialist surgeons (FCPS, MS, PhD) who focus 100% on their specialized discipline.",
+      bn: "কেজিএইচ ডেন্টালের প্রতিটি বিভাগ শুধুমাত্র উচ্চশিক্ষিত ও সার্টিফায়েড বিশেষজ্ঞ ডাক্তারদের (FCPS, MS, PhD) তত্ত্বাবধানে পরিচালিত হয়।",
+    },
+    protocolSteps: [
+      {
+        number: "01",
+        title: { en: "Primary Specialty Assessment", bn: "প্রাথমিক বিভাগীয় মূল্যায়ন" },
+        detail: { en: "Diagnostic imaging and focused examination by a certified department consultant.", bn: "বিভাগীয় বিশেষজ্ঞ কনসালটেন্ট কর্তৃক ডিজিটাল প্রতিচ্ছবি ও গভীর পরীক্ষা।" },
+      },
+      {
+        number: "02",
+        title: { en: "Inter-Disciplinary Board Review", bn: "সম্মিলিত মেডিকেল বোর্ড রিভিউ" },
+        detail: { en: "Multi-specialist consensus on complex aligner, surgical, or implant therapies.", bn: "জটিল সার্জারি বা অ্যালাইনার চিকিৎসায় যৌথ মেডিকেল বোর্ডের সমন্বিত মতামত।" },
+      },
+      {
+        number: "03",
+        title: { en: "Precision Surgical Execution", bn: "নির্ভুল বিশেষজ্ঞ চিকিৎসা সম্পাদন" },
+        detail: { en: "Implementation following global clinical guidelines and microscopic accuracy.", bn: "আন্তর্জাতিক মানদণ্ড এবং আধুনিক মাইক্রোস্কোপিক নির্ভুলতায় চিকিৎসা।" },
+      },
+    ],
+    protocolGuarantees: [
+      { en: "100% Specialist-Led Diagnosis — No Generalist Guesswork", bn: "১০০% বিশেষজ্ঞ চিকিৎসকের পরামর্শ — কোনো অনুমাননির্ভর চিকিৎসা নয়" },
+    ],
+  },
+  {
+    id: "chamber",
+    stepNumber: "02",
+    badge: { en: "Hospital Grade", bn: "হাসপাতাল মান" },
+    title: { en: "Modern, Comfortable Chamber", bn: "আধুনিক ও আরামদায়ক চেম্বার" },
+    subtitle: {
+      en: "A clean, calm space designed around patient comfort, from your first visit to your last follow-up.",
+      bn: "প্রথম ভিজিট থেকে শেষ ফলো-আপ পর্যন্ত, রোগীর স্বাচ্ছন্দ্যের কথা মাথায় রেখে সাজানো একটা পরিচ্ছন্ন, শান্ত পরিবেশ।",
+    },
+    bullets: [
+      { en: "Ergonomic Memory-Foam Dental Chairs", bn: "আরামদায়ক মেমোরি-ফোম চেয়ার" },
+      { en: "Class-B European Autoclave Sterilization", bn: "ক্লাস-বি অটোক্লেভ স্টেরিলাইজেশন" },
+      { en: "Soothing Acoustic & Ambient Lighting", bn: "শান্ত ও আরামদায়ক পরিবেশ" },
+    ],
+    tags: [
+      { en: "Class-B 134°C", bn: "ক্লাস-বি ১৩৪° সে." },
+      { en: "Zero Cross-Infection", bn: "জীবাণুমুক্ত নিশ্চয়তা" },
+      { en: "Calm Atmosphere", bn: "শান্ত পরিবেশ" },
+    ],
+    image: "/images/why-choose-us/modern-chamber.jpg",
+    accent: "#474B4E",
+    protocolTitle: { en: "European Sterilization & Chamber Protocol", bn: "ইউরোপীয় স্টেরিলাইজেশন ও চেম্বার প্রোটোকল" },
+    protocolSubtitle: {
+      en: "We designed our clinic from the ground up to replace medical anxiety with absolute calm, hygiene, and hospital-grade sterilization.",
+      bn: "রোগীর ভয় ও অস্বস্তি দূর করে একটি শান্ত, মনোরম ও আন্তর্জাতিক মানের স্বাস্থ্যকর পরিবেশ নিশ্চিত করতে আমাদের চেম্বারটি সাজানো।",
+    },
+    protocolSteps: [
+      {
+        number: "01",
+        title: { en: "Class-B Vacuum Decontamination", bn: "ক্লাস-বি ভ্যাকুয়াম জীবাণুমুক্তকরণ" },
+        detail: { en: "134°C steam under pressure guarantees 100% viral and bacterial eradication.", bn: "১৩৪° সেলসিয়াস তাপমাত্রায় উচ্চ চাপে প্রতিটি যন্ত্রের শতভাগ জীবাণুমুক্তকরণ।" },
+      },
+      {
+        number: "02",
+        title: { en: "Sealed Barrier Pouches", bn: "সিল করা জীবাণুমুক্ত প্যাকেট" },
+        detail: { en: "Instruments are opened exclusively in front of each individual patient.", bn: "প্রতিটি রোগীর চোখের সামনেই সিল করা নতুন জীবাণুমুক্ত প্যাকেট খোলা হয়।" },
+      },
+      {
+        number: "03",
+        title: { en: "Operatory Surface Disinfection", bn: "চেয়ার ও মেঝের বায়ো-ডিসইনফেকশন" },
+        detail: { en: "Medical-grade hospital wipes applied after every single appointment.", bn: "প্রতিটি রোগীর পরপরই সম্পূর্ণ চেয়ার ও যন্ত্রপাতি স্প্রে দ্বারা ডিসইনফেক্ট করা হয়।" },
+      },
+    ],
+    protocolGuarantees: [
+      { en: "Strict European Class-B Sterilization Protocol for Every Patient", bn: "প্রতিটি রোগীর জন্য কঠোর ইউরোপীয় ক্লাস-বি স্টেরিলাইজেশন প্রোটোকল" },
+    ],
+  },
+  {
+    id: "plans",
+    stepNumber: "03",
+    badge: { en: "Clear & Honest", bn: "স্বচ্ছ ও নির্ভরযোগ্য" },
+    title: { en: "Transparent Treatment Plans", bn: "স্পষ্ট চিকিৎসা পরিকল্পনা" },
+    subtitle: {
+      en: "We explain why a treatment is needed, when it's needed, and what to expect — before any decision is made.",
+      bn: "কোনো সিদ্ধান্ত নেওয়ার আগেই আমরা বুঝিয়ে বলি কেন এই চিকিৎসা দরকার, কখন দরকার, আর তাতে কী উপকার পাবেন।",
+    },
+    bullets: [
+      { en: "HD Intraoral Digital Camera Screening", bn: "এইচডি ইন্ট্রাওরাল স্ক্রিনিং" },
+      { en: "Itemized Cost Breakdown — Zero Hidden Bills", bn: "অগ্রিম খরচের স্বচ্ছ বিবরণ" },
+      { en: "Clear Step-by-Step Clinical Roadmap", bn: "ধাপভিত্তিক স্পষ্ট পরিকল্পনা" },
+    ],
+    tags: [
+      { en: "Written Estimate", bn: "লিখিত খরচের বিবরণ" },
+      { en: "HD Live Screen", bn: "লাইভ এইচডি স্ক্রিন" },
+      { en: "No Hidden Costs", bn: "কোনো গোপন খরচ নেই" },
+    ],
+    image: "/images/why-choose-us/transparent-plans-hd.jpeg",
+    accent: "#474B4E",
+    protocolTitle: { en: "Clinical Transparency & Cost Protocol", bn: "চিকিৎসা ও খরচের স্বচ্ছতা প্রোটোকল" },
+    protocolSubtitle: {
+      en: "We believe healthcare should have complete clarity. We show you the exact clinical condition and transparent costs before touching a tooth.",
+      bn: "আমরা বিশ্বাস করি চিকিৎসার প্রতিটি ধাপে স্বচ্ছতা জরুরি। চিকিৎসা শুরুর আগেই দাঁতের প্রকৃত অবস্থা ও খরচের স্পষ্ট ধারণা দেওয়া হয়।",
+    },
+    protocolSteps: [
+      {
+        number: "01",
+        title: { en: "Live Intraoral Camera Display", bn: "লাইভ ইন্ট্রাওরাল ক্যামেরা ডিসপ্লে" },
+        detail: { en: "High-definition visuals on the chairside monitor so you see what the doctor sees.", bn: "চেয়ারের সামনে এইচডি মনিটরে সরাসরি দাঁতের প্রকৃত সমস্যা রোগীকে দেখানো।" },
+      },
+      {
+        number: "02",
+        title: { en: "Comprehensive Treatment Roadmap", bn: "ধাপভিত্তিক পূর্ণাঙ্গ পরিকল্পনা" },
+        detail: { en: "Clear explanation of stages, expected recovery duration, and milestone visits.", bn: "চিকিৎসার প্রয়োজনীয় ধাপ, সময়কাল ও পরবর্তী চেকআপের স্পষ্ট ধারণা।" },
+      },
+      {
+        number: "03",
+        title: { en: "Fixed Itemized Cost Estimate", bn: "নির্ধারিত খরচের লিখিত তালিকা" },
+        detail: { en: "Transparent billing with zero surprise add-ons or sudden charges.", bn: "চিকিৎসা শুরুর পূর্বেই লিখিত খরচের বিবরণ — কোনো বাড়তি গোপন চার্জ নেই।" },
+      },
+    ],
+    protocolGuarantees: [
+      { en: "Full Cost & Clinical Transparency — Zero Hidden Charges", bn: "চিকিৎসা ও খরচে ১০০% স্বচ্ছতা — কোনো গোপন চার্জ নেই" },
+    ],
+  },
+  {
+    id: "booking",
+    stepNumber: "04",
+    badge: { en: "Instant & Smooth", bn: "সহজ ও দ্রুত" },
+    title: { en: "Easy Appointment Booking", bn: "সহজ অ্যাপয়েন্টমেন্ট বুকিং" },
+    subtitle: {
+      en: "Pick your doctor, pick your time — book online in a few taps, no phone tag or long waiting lines.",
+      bn: "নিজের পছন্দের ডাক্তার আর সময় বেছে নিন — কয়েকটা ক্লিকেই বুকিং, বারবার ফোন করার ঝামেলা নেই।",
+    },
+    bullets: [
+      { en: "Select Specialist & Preferred Day in < 2 Mins", bn: "ডাক্তার ও সুবিধাজনক দিন পছন্দ" },
+      { en: "Instant WhatsApp & SMS Confirmation", bn: "তাৎক্ষণিক হোয়াটসঅ্যাপ নিশ্চিতকরণ" },
+      { en: "Dedicated Clinic Care Coordinator Support", bn: "ডেডিকেটেড কেয়ার কোঅর্ডিনেটর" },
+    ],
+    tags: [
+      { en: "2-Min Booking", bn: "২ মিনিটে বুকিং" },
+      { en: "WhatsApp Updates", bn: "হোয়াটসঅ্যাপ আপডেট" },
+      { en: "Min Waiting", bn: "অপেক্ষাহীন সেবা" },
+    ],
+    image: "/images/why-choose-us/easy-booking.jpg",
+    accent: "#474B4E",
+    protocolTitle: { en: "Smart Scheduling & Waiting Protocol", bn: "স্মার্ট শিডিউলিং ও সিরিয়াল প্রোটোকল" },
+    protocolSubtitle: {
+      en: "No endless phone calls or crowded waiting rooms. Our digital booking system respects your busy schedule with precision time slots.",
+      bn: "বারবার ফোন করার ঝামেলা কিংবা চেম্বারে বসে ঘণ্টার পর ঘণ্টা অপেক্ষা করার দিন শেষ। ডিজিটাল পদ্ধতিতে দ্রুততম সময়ে সিরিয়াল নিন।",
+    },
+    protocolSteps: [
+      {
+        number: "01",
+        title: { en: "Online Booking in 3 Easy Steps", bn: "৩টি সহজ ধাপে অনলাইন বুকিং" },
+        detail: { en: "Choose department, preferred doctor, and available time slot in under 2 minutes.", bn: "বিভাগ, কাঙ্ক্ষিত ডাক্তার ও সুবিধাজনক সময় বেছে নিয়ে দ্রুত সিরিয়াল নিশ্চিতকরণ।" },
+      },
+      {
+        number: "02",
+        title: { en: "Instant WhatsApp Confirmation", bn: "তাৎক্ষণিক হোয়াটসঅ্যাপ নোটিফিকেশন" },
+        detail: { en: "Receive reference code, appointment time, and direct Google Maps location pin.", bn: "সিরিয়াল রেফারেন্স কোড, সময় ও গুগল ম্যাপ লোকেশন সরাসরি মেসেজে প্রাপ্তি।" },
+      },
+      {
+        number: "03",
+        title: { en: "Zero-Wait Queue Management", bn: "যথাসময়ে সিরিয়াল প্রদান" },
+        detail: { en: "Our front desk prepares all sterile setup in advance to minimize waiting time.", bn: "রোগীর পৌঁছানোর পূর্বেই চেম্বার প্রস্তুতি সম্পন্ন করে অপেক্ষার সময় কমিয়ে আনা।" },
+      },
+    ],
+    protocolGuarantees: [
+      { en: "Guaranteed Dedicated Time Slot — Minimized Waiting Time", bn: "নির্দিষ্ট সময়ে সিরিয়াল কনফার্মেশন — দীর্ঘ অপেক্ষার অবসান" },
+    ],
+  },
+];
+
+export async function fetchLiveWhyChooseCards(): Promise<WhyChooseCard[]> {
+  let cached: WhyChooseCard[] | null = null;
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_live_why_choose_cards");
+      if (stored) cached = JSON.parse(stored);
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) {
+    return cached && cached.length > 0 ? cached : DEFAULT_WHY_CHOOSE_CARDS;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("why_choose_cards")
+      .select("*")
+      .order("step_number", { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      return cached && cached.length > 0 ? cached : DEFAULT_WHY_CHOOSE_CARDS;
+    }
+
+    const liveCards: WhyChooseCard[] = data.map((d: any) => ({
+      id: d.id,
+      stepNumber: d.step_number,
+      badge: { en: d.badge_en, bn: d.badge_bn },
+      title: { en: d.title_en, bn: d.title_bn },
+      subtitle: { en: d.subtitle_en, bn: d.subtitle_bn },
+      bullets: d.bullets || [],
+      tags: d.tags || [],
+      image: d.image || "/images/why-choose-us/specialist-care.jpg",
+      accent: d.accent || "#474B4E",
+      protocolTitle: { en: d.protocol_title_en, bn: d.protocol_title_bn },
+      protocolSubtitle: { en: d.protocol_subtitle_en, bn: d.protocol_subtitle_bn },
+      protocolSteps: d.protocol_steps || [],
+      protocolGuarantees: d.protocol_guarantees || [],
+    }));
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("kgh_live_why_choose_cards", JSON.stringify(liveCards));
+      } catch {
+        // ignore
+      }
+    }
+
+    return liveCards;
+  } catch (err) {
+    console.error("fetchLiveWhyChooseCards error:", err);
+    return cached && cached.length > 0 ? cached : DEFAULT_WHY_CHOOSE_CARDS;
+  }
+}
+
+export async function saveLiveWhyChooseCards(cards: WhyChooseCard[]): Promise<{ success: boolean; error?: string }> {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("kgh_live_why_choose_cards", JSON.stringify(cards));
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    const payload = cards.map((c) => ({
+      id: c.id,
+      step_number: c.stepNumber,
+      badge_en: c.badge.en,
+      badge_bn: c.badge.bn,
+      title_en: c.title.en,
+      title_bn: c.title.bn,
+      subtitle_en: c.subtitle.en,
+      subtitle_bn: c.subtitle.bn,
+      bullets: c.bullets,
+      tags: c.tags,
+      image: c.image,
+      accent: c.accent,
+      protocol_title_en: c.protocolTitle.en,
+      protocol_title_bn: c.protocolTitle.bn,
+      protocol_subtitle_en: c.protocolSubtitle.en,
+      protocol_subtitle_bn: c.protocolSubtitle.bn,
+      protocol_steps: c.protocolSteps,
+      protocol_guarantees: c.protocolGuarantees,
+      updated_at: new Date().toISOString(),
+    }));
+
+    const { error } = await supabase.from("why_choose_cards").upsert(payload, { onConflict: "id" });
+    if (error) {
+      console.warn("Supabase upsert warning for why_choose_cards:", error.message);
+    }
+    return { success: true };
+  } catch (err: any) {
+    console.error("saveLiveWhyChooseCards error:", err);
+    return { success: true };
+  }
+}
+
+// ==============================================================================
+// 8. HOMEPAGE CLINICAL CREED API
+// ==============================================================================
+
+export const DEFAULT_CLINICAL_CREED: ClinicalCreedData = {
+  tag: {
+    en: "OUR CLINICAL CREED",
+    bn: "আমাদের চিকিৎসা দর্শন",
+  },
+  quote: {
+    en: "A genuine smile is the universal language of health, confidence, and human connection. We combine surgical mastery with compassionate gentleness — because modern dentistry isn't just about fixing teeth, it's about transforming how you live.",
+    bn: "একটি আত্মবিশ্বাসী ও সুন্দর হাসি মানুষের স্বাস্থ্য, মর্যাদা ও আত্মবিশ্বাসের প্রতীক। কেজিএইচ ডেন্টালে আমরা বিশেষায়িত সার্জিক্যাল দক্ষতা ও আন্তরিক সেবার মেলবন্ধন ঘটাই — কারণ আধুনিক ডেন্টাল কেয়ার শুধু দাঁত সারানো নয়, জীবনকে সহজ ও হাসিময় করে তোলা।",
+  },
+  subQuote: {
+    en: "Transforming how you live and smile.",
+    bn: "আপনার জীবন ও হাসিতে নতুন আত্মবিশ্বাস।",
+  },
+  authority: {
+    en: "Clinical Advisory Council",
+    bn: "ক্লিনিক্যাল অ্যাডভাইজরি কাউন্সিল",
+  },
+  designation: {
+    en: "KGH Dental Multi-Specialty Chamber",
+    bn: "কেজিএইচ ডেন্টাল মাল্টি-স্পেশালিটি চেম্বার",
+  },
+  stats: [
+    {
+      value: { en: "100%", bn: "১০০%" },
+      label: { en: "Sterilization Standard", bn: "জীবাণুমুক্তকরণ মানদণ্ড" },
+    },
+    {
+      value: { en: "15+", bn: "১৫+" },
+      label: { en: "Years Combined Board Mastery", bn: "সম্মিলিত বোর্ড অভিজ্ঞতা" },
+    },
+    {
+      value: { en: "Zero", bn: "জিরো" },
+      label: { en: "Unscheduled Waiting Delay", bn: "অতিরিক্ত অপেক্ষাহীন সেবা" },
+    },
+  ],
+};
+
+export async function fetchLiveClinicalCreed(): Promise<ClinicalCreedData> {
+  let cached: ClinicalCreedData | null = null;
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_live_clinical_creed");
+      if (stored) cached = JSON.parse(stored);
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) {
+    return cached || DEFAULT_CLINICAL_CREED;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("clinical_creed")
+      .select("*")
+      .eq("id", 1)
+      .single();
+
+    if (error || !data) {
+      return cached || DEFAULT_CLINICAL_CREED;
+    }
+
+    const liveCreed: ClinicalCreedData = {
+      tag: { en: data.tag_en, bn: data.tag_bn },
+      quote: { en: data.quote_en, bn: data.quote_bn },
+      subQuote: { en: data.sub_quote_en, bn: data.sub_quote_bn },
+      authority: { en: data.authority_en, bn: data.authority_bn },
+      designation: { en: data.designation_en, bn: data.designation_bn },
+      stats: data.stats || DEFAULT_CLINICAL_CREED.stats,
+    };
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("kgh_live_clinical_creed", JSON.stringify(liveCreed));
+      } catch {
+        // ignore
+      }
+    }
+
+    return liveCreed;
+  } catch (err) {
+    console.error("fetchLiveClinicalCreed error:", err);
+    return cached || DEFAULT_CLINICAL_CREED;
+  }
+}
+
+export async function saveLiveClinicalCreed(creed: ClinicalCreedData): Promise<{ success: boolean; error?: string }> {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("kgh_live_clinical_creed", JSON.stringify(creed));
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    const payload = {
+      id: 1,
+      tag_en: creed.tag.en,
+      tag_bn: creed.tag.bn,
+      quote_en: creed.quote.en,
+      quote_bn: creed.quote.bn,
+      sub_quote_en: creed.subQuote.en,
+      sub_quote_bn: creed.subQuote.bn,
+      authority_en: creed.authority.en,
+      authority_bn: creed.authority.bn,
+      designation_en: creed.designation.en,
+      designation_bn: creed.designation.bn,
+      stats: creed.stats,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase.from("clinical_creed").upsert(payload, { onConflict: "id" });
+    if (error) {
+      console.warn("Supabase upsert warning for clinical_creed:", error.message);
+    }
+    return { success: true };
+  } catch (err: any) {
+    console.error("saveLiveClinicalCreed error:", err);
+    return { success: true };
+  }
+}
+

@@ -19,29 +19,30 @@ import {
 import { REVIEWS } from "@/data/reviews";
 import { useLanguage } from "@/context/LanguageContext";
 import { CLINIC_SETTINGS } from "@/data/settings";
-
-// Avatar gradient palettes for patients
-const AVATAR_PALETTES = [
-  { bg: "from-teal-500 to-emerald-600", text: "text-white", border: "ring-emerald-200" },
-  { bg: "from-indigo-500 to-purple-600", text: "text-white", border: "ring-indigo-200" },
-  { bg: "from-blue-500 to-cyan-600", text: "text-white", border: "ring-blue-200" },
-  { bg: "from-amber-500 to-orange-600", text: "text-white", border: "ring-amber-200" },
-  { bg: "from-rose-500 to-pink-600", text: "text-white", border: "ring-rose-200" },
-  { bg: "from-violet-500 to-indigo-600", text: "text-white", border: "ring-violet-200" },
-  { bg: "from-emerald-500 to-teal-600", text: "text-white", border: "ring-teal-200" },
-  { bg: "from-fuchsia-500 to-pink-600", text: "text-white", border: "ring-fuchsia-200" },
-];
+import { GoogleReview, ClinicSettings } from "@/types";
+import { fetchLiveReviews, fetchLiveClinicSettings } from "@/lib/api/db";
 
 export function GoogleReviews() {
   const { t, isBn } = useLanguage();
+  const [reviewsList, setReviewsList] = useState<GoogleReview[]>(REVIEWS);
+  const [clinicSettings, setClinicSettings] = useState<ClinicSettings>(CLINIC_SETTINGS);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
+  useEffect(() => {
+    fetchLiveReviews().then((live) => {
+      if (live && live.length > 0) setReviewsList(live);
+    });
+    fetchLiveClinicSettings().then((set) => {
+      if (set) setClinicSettings(set);
+    });
+  }, []);
+
   // Filter reviews by treatment category if selected
-  const filteredReviews = REVIEWS.filter((rev) => {
+  const filteredReviews = reviewsList.filter((rev) => {
     if (activeCategory === "all") return true;
     if (!rev.treatment) return false;
     const treatEn = rev.treatment.en.toLowerCase();
@@ -55,7 +56,6 @@ export function GoogleReviews() {
 
   const totalReviews = filteredReviews.length;
   const currentReview = filteredReviews[activeIndex % totalReviews] || filteredReviews[0];
-  const currentPalette = AVATAR_PALETTES[activeIndex % AVATAR_PALETTES.length];
 
   // Navigation handlers
   const handleNext = useCallback(() => {
@@ -121,8 +121,8 @@ export function GoogleReviews() {
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-zinc-50 via-zinc-100/60 to-zinc-50 border-b border-zinc-200/90 relative overflow-hidden select-none">
       {/* Subtle ambient lighting decorations */}
-      <div className="absolute top-10 right-10 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 right-10 w-96 h-96 bg-zinc-200/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-zinc-200/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 relative z-10">
         
@@ -135,8 +135,8 @@ export function GoogleReviews() {
           <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-28">
             <div className="relative w-full bg-white rounded-3xl shadow-xl border border-zinc-200/90 overflow-hidden group hover:shadow-2xl transition-all duration-300">
               
-              {/* Google 4-Color Accent Top Bar */}
-              <div className="h-2 w-full bg-gradient-to-r from-[#4285F4] via-[#EA4335] via-[#FBBC05] to-[#34A853]" />
+              {/* Minimalist Light Grey Accent Top Bar */}
+              <div className="h-1.5 w-full bg-zinc-200 border-b border-zinc-300/40" />
 
               <div className="p-6 sm:p-7 text-center flex flex-col items-center">
                 
@@ -182,7 +182,7 @@ export function GoogleReviews() {
                   <div className="relative overflow-hidden rounded-xl bg-white p-2">
                     <img
                       src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-                        CLINIC_SETTINGS.googleReviewUrl
+                        clinicSettings.googleReviewUrl || CLINIC_SETTINGS.googleReviewUrl
                       )}`}
                       alt="Google Review QR Code"
                       className="w-32 h-32 sm:w-36 sm:h-36 object-contain mx-auto transition-transform duration-300 group-hover/qr:scale-105"
@@ -196,7 +196,7 @@ export function GoogleReviews() {
 
                 {/* Direct Action Link */}
                 <a
-                  href={CLINIC_SETTINGS.googleReviewUrl}
+                  href={clinicSettings.googleReviewUrl || CLINIC_SETTINGS.googleReviewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-xs sm:text-sm font-bold text-white bg-[#2D3134] hover:bg-zinc-950 active:bg-black rounded-xl transition-all shadow-md hover:shadow-lg active:scale-98 group/btn"
@@ -207,7 +207,7 @@ export function GoogleReviews() {
 
                 {/* Trust Guarantee */}
                 <div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-zinc-600 font-medium">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
                   <span>{isBn ? "১০০% নিরাপদ ও ভেরিফাইড রিভিউ" : "Safe & verified patient channel"}</span>
                 </div>
 
@@ -242,17 +242,17 @@ export function GoogleReviews() {
                 <button
                   type="button"
                   onClick={() => setIsPaused(!isPaused)}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-300/80 bg-white hover:bg-zinc-100 text-zinc-800 text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-200 bg-zinc-100 hover:bg-zinc-200/80 text-zinc-700 text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
                   title={isPaused ? "Play" : "Pause"}
                 >
                   {isPaused ? (
                     <>
-                      <Play className="w-3.5 h-3.5 fill-current text-zinc-800" />
+                      <Play className="w-3.5 h-3.5 fill-current text-zinc-700" />
                       <span>{isBn ? "চালু" : "Play"}</span>
                     </>
                   ) : (
                     <>
-                      <Pause className="w-3.5 h-3.5 fill-current text-zinc-800" />
+                      <Pause className="w-3.5 h-3.5 fill-current text-zinc-700" />
                       <span>{isBn ? "পজ" : "Pause"}</span>
                     </>
                   )}
@@ -262,7 +262,7 @@ export function GoogleReviews() {
                   type="button"
                   onClick={handlePrev}
                   aria-label="Previous Review"
-                  className="p-2.5 rounded-xl border border-zinc-300/80 bg-white hover:bg-zinc-100 active:bg-zinc-200 text-zinc-800 transition-all shadow-2xs cursor-pointer active:scale-95"
+                  className="p-2.5 rounded-xl border border-zinc-200 bg-zinc-100 hover:bg-zinc-200/80 active:bg-zinc-300 text-zinc-700 transition-all shadow-2xs cursor-pointer active:scale-95"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -271,7 +271,7 @@ export function GoogleReviews() {
                   type="button"
                   onClick={handleNext}
                   aria-label="Next Review"
-                  className="p-2.5 rounded-xl border border-zinc-300/80 bg-white hover:bg-zinc-100 active:bg-zinc-200 text-zinc-800 transition-all shadow-2xs cursor-pointer active:scale-95"
+                  className="p-2.5 rounded-xl border border-zinc-200 bg-zinc-100 hover:bg-zinc-200/80 active:bg-zinc-300 text-zinc-700 transition-all shadow-2xs cursor-pointer active:scale-95"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -293,7 +293,7 @@ export function GoogleReviews() {
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                       isActive
                         ? "bg-[#2D3134] text-white shadow-sm"
-                        : "bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-100"
+                        : "bg-zinc-100 border border-zinc-200/80 text-zinc-700 hover:bg-zinc-200/70"
                     }`}
                   >
                     {isBn ? cat.labelBn : cat.labelEn}
@@ -320,8 +320,8 @@ export function GoogleReviews() {
               {/* Top Accent Strip */}
               <div className="px-6 sm:px-8 pt-6 sm:pt-7 pb-4 flex items-center justify-between border-b border-zinc-100">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-700">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200 text-[11px] font-bold text-zinc-700">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-zinc-600" />
                     <span>{isBn ? "ভেরিফাইড চিকিৎসা পরামর্শ" : "Verified Clinical Consultation"}</span>
                   </span>
                   {currentReview?.treatment && (
@@ -351,7 +351,7 @@ export function GoogleReviews() {
                       : "opacity-0 -translate-x-4"
                     : "opacity-100 translate-x-0"
                 }`}>
-                  <MessageSquareQuote className="w-8 h-8 text-teal-600/70 mb-3" />
+                  <MessageSquareQuote className="w-8 h-8 text-zinc-400 mb-3" />
                   <p className="text-base sm:text-lg lg:text-xl font-medium text-zinc-800 leading-relaxed italic">
                     &ldquo;{t(currentReview?.comment || { en: "", bn: "" })}&rdquo;
                   </p>
@@ -363,15 +363,15 @@ export function GoogleReviews() {
                 
                 {/* Patient Avatar & Name */}
                 <div className="flex items-center gap-3.5">
-                  {/* Dynamic Color Avatar with Initial */}
-                  <div className={`w-11 h-11 rounded-2xl bg-gradient-to-tr ${currentPalette.bg} flex items-center justify-center text-white text-base font-extrabold shadow-md ring-2 ${currentPalette.border}`}>
+                  {/* Minimalist Light Grey Avatar with Initial */}
+                  <div className="w-11 h-11 rounded-2xl bg-zinc-100 border border-zinc-200/90 flex items-center justify-center text-zinc-800 text-base font-extrabold shadow-2xs">
                     {currentReview?.authorName.charAt(0) || "P"}
                   </div>
 
                   <div>
                     <h4 className="text-sm sm:text-base font-extrabold text-zinc-950 flex items-center gap-1.5">
                       <span>{currentReview?.authorName}</span>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-zinc-500 shrink-0" />
                     </h4>
                     <div className="flex items-center gap-2 text-xs text-zinc-500 font-medium">
                       {currentReview?.treatment && <span>{t(currentReview.treatment)}</span>}
@@ -401,7 +401,7 @@ export function GoogleReviews() {
                 <div className="w-full h-1 bg-zinc-100 overflow-hidden">
                   <div
                     key={activeIndex}
-                    className="h-full bg-gradient-to-r from-teal-500 to-[#2D3134] animate-[shimmer_5.5s_linear_infinite]"
+                    className="h-full bg-zinc-500"
                     style={{
                       animation: "progressBar 5.5s linear infinite",
                     }}
@@ -469,13 +469,13 @@ export function GoogleReviews() {
               </div>
 
               {/* Trust Pills Strip */}
-              <div className="hidden sm:flex items-center gap-3 text-[11px] font-semibold text-zinc-700">
+              <div className="hidden sm:flex items-center gap-3 text-[11px] font-semibold text-zinc-600">
                 <span className="inline-flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-zinc-500" />
                   <span>{isBn ? "ব্যথামুক্ত ডেন্টিস্ট্রি" : "Painless Care"}</span>
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <Heart className="w-3.5 h-3.5 text-rose-500" />
+                  <Heart className="w-3.5 h-3.5 text-zinc-500" />
                   <span>{isBn ? "রোগীবান্ধব সেবা" : "Patient-Centered"}</span>
                 </span>
               </div>

@@ -18,6 +18,8 @@ import {
   X,
   Database,
   ShieldAlert,
+  Star,
+  Layers,
 } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 
@@ -35,6 +37,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/appointments", label: "Appointments", icon: CalendarCheck },
     { href: "/admin/doctors", label: "Doctors Directory", icon: Users },
     { href: "/admin/departments", label: "Departments & 64 Services", icon: Building2 },
+    { href: "/admin/reviews", label: "Patient Reviews", icon: Star },
+    { href: "/admin/homepage", label: "Homepage Sections", icon: Layers },
     { href: "/admin/blog", label: "Blog Articles (10)", icon: BookOpen },
     { href: "/admin/gallery", label: "Gallery Showcase", icon: ImageIcon },
     { href: "/admin/media", label: "Media Library", icon: FolderOpen },

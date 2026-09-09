@@ -123,3 +123,39 @@ export interface GalleryItem {
   imageUrl: string;
 }
 
+export interface ProtocolStep {
+  number: string;
+  title: BilingualText;
+  detail: BilingualText;
+}
+
+export interface WhyChooseCard {
+  id: string;
+  stepNumber: string;
+  badge: BilingualText;
+  title: BilingualText;
+  subtitle: BilingualText;
+  bullets: BilingualText[];
+  tags: BilingualText[];
+  image: string;
+  accent: string;
+  protocolTitle: BilingualText;
+  protocolSubtitle: BilingualText;
+  protocolSteps: ProtocolStep[];
+  protocolGuarantees: BilingualText[];
+}
+
+export interface ClinicalCreedStat {
+  value: BilingualText;
+  label: BilingualText;
+}
+
+export interface ClinicalCreedData {
+  tag: BilingualText;
+  quote: BilingualText;
+  subQuote: BilingualText;
+  authority: BilingualText;
+  designation: BilingualText;
+  stats: ClinicalCreedStat[];
+}
+

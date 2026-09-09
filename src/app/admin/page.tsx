@@ -11,14 +11,25 @@ import {
   ArrowRight,
   Plus,
   Clock,
+  Star,
+  Layers,
 } from "lucide-react";
 import { DOCTORS } from "@/data/doctors";
 import { DEPARTMENTS } from "@/data/departments";
 import { BLOG_POSTS } from "@/data/blog";
+import { REVIEWS } from "@/data/reviews";
+import { fetchLiveReviews } from "@/lib/api/db";
 
 export default function AdminDashboardPage() {
   const [appointmentsCount, setAppointmentsCount] = useState(14);
   const [pendingCount, setPendingCount] = useState(3);
+  const [reviewsCount, setReviewsCount] = useState(REVIEWS.length);
+
+  useEffect(() => {
+    fetchLiveReviews().then((revs) => {
+      if (revs && revs.length > 0) setReviewsCount(revs.length);
+    });
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -56,7 +67,7 @@ export default function AdminDashboardPage() {
 
 
       {/* Stats Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {/* Appointments Card */}
         <Link
           href="/admin/appointments"
@@ -127,6 +138,42 @@ export default function AdminDashboardPage() {
           <div className="text-2xl font-extrabold text-zinc-950">{BLOG_POSTS.length}</div>
           <div className="text-xs font-bold text-zinc-700 mt-1">Published Articles</div>
           <div className="text-[11px] text-zinc-500 mt-0.5">Educational Patient Topics</div>
+        </Link>
+
+        {/* Google Reviews Card */}
+        <Link
+          href="/admin/reviews"
+          className="p-6 rounded-2xl bg-white border border-zinc-200 hover:border-zinc-400 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-xl bg-zinc-100 group-hover:bg-zinc-950 group-hover:text-white transition-colors text-zinc-900">
+              <Star className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+              5.0 Rating
+            </span>
+          </div>
+          <div className="text-2xl font-extrabold text-zinc-950">{reviewsCount}</div>
+          <div className="text-xs font-bold text-zinc-700 mt-1">Patient Google Reviews</div>
+          <div className="text-[11px] text-zinc-500 mt-0.5">Testimonials & Ratings</div>
+        </Link>
+
+        {/* Homepage Sections Card */}
+        <Link
+          href="/admin/homepage"
+          className="p-6 rounded-2xl bg-white border border-zinc-200 hover:border-zinc-400 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-xl bg-zinc-100 group-hover:bg-zinc-950 group-hover:text-white transition-colors text-zinc-900">
+              <Layers className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-800 border border-zinc-200">
+              4 Cards + Creed
+            </span>
+          </div>
+          <div className="text-2xl font-extrabold text-zinc-950">4 Cards</div>
+          <div className="text-xs font-bold text-zinc-700 mt-1">Why Choose Us & Creed</div>
+          <div className="text-[11px] text-zinc-500 mt-0.5">Stacking Cards & Philosophy</div>
         </Link>
       </div>
 
