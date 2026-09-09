@@ -1,273 +1,482 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Calendar, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import { Calendar, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { UI_STRINGS } from "@/data/translations";
 
-export function Hero() {
-  const { isBn } = useLanguage();
-  const desktopContainerRef = useRef<HTMLDivElement>(null);
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
+type Position = "left" | "center" | "right";
 
-  // Scroll Progress Tracking for Smooth Scroll-Driven Zoom
-  useEffect(() => {
-    let animationFrameId: number;
+interface StageContent {
+  image: string;
+  position: Position;
+  mainText: { en: string; bn: string };
+  bullets?: { en: string[]; bn: string[] };
+  differential?: { en: string; bn: string };
+  callout?: { en: string; bn: string };
+}
 
-    const handleScroll = () => {
-      // Calculate scroll progress from window scroll for universal mobile & desktop support
-      const scrollY = window.scrollY;
-      const windowH = window.innerHeight;
-      const progress = Math.min(Math.max(scrollY / (windowH * 0.8), 0), 1);
-      setScrollProgress(progress);
-    };
+const STAGES: StageContent[] = [
+  {
+    image: "/images/hero/stage-1-healthy.webp",
+    position: "center",
+    mainText: {
+      en: "Healthy teeth looks like this.",
+      bn: "সুস্থ দাঁত দেখতে এইরকম হয়।",
+    },
+    differential: {
+      en: "But every smile faces different challenges — and needs different experts.",
+      bn: "কিন্তু প্রতিটি দাঁত ভিন্ন চ্যালেঞ্জের মুখোমুখি হয় — আর প্রয়োজন হয় ভিন্ন বিশেষজ্ঞের।",
+    },
+  },
+  {
+    image: "/images/hero/stage-2-endo.webp",
+    position: "left",
+    mainText: {
+      en: "A hidden cavity, quietly turning into pain.",
+      bn: "দাঁতে ক্ষয় বা গর্ত, নীরবে ব্যথায় রূপ নিচ্ছে।",
+    },
+    bullets: {
+      en: ["Dental Filling (Composite)", "Root Canal Treatment (RCT)", "Pulp Capping", "Post & Core Build-up"],
+      bn: ["ডেন্টাল ফিলিং (কম্পোজিট)", "রুট ক্যানেল ট্রিটমেন্ট (RCT)", "পাল্প ক্যাপিং", "পোস্ট ও কোর বিল্ড-আপ"],
+    },
+    differential: {
+      en: "Tooth sensitivity, throbbing pain, swelling near the root, or a blackened tooth — see an Endodontist right away.",
+      bn: "দাঁত শিরশির করা, ব্যথায় দপদপ করা, দাঁতের মাড়ির কাছে ফোলাভাব, বা দাঁত কালো হয়ে যাওয়া — এসব লক্ষণ থাকলে দ্রুত এন্ডোডন্টিস্টের কাছে যাওয়া দরকার।",
+    },
+    callout: { en: "Cavity", bn: "দাঁতের ক্ষয়" },
+  },
+  {
+    image: "/images/hero/stage-3-maxillo.webp",
+    position: "right",
+    mainText: {
+      en: "A deep infection, silently damaging the tooth and bone beneath.",
+      bn: "একটি গভীর ইনফেকশন, নীরবে দাঁত ও হাড়ের ক্ষতি করছে।",
+    },
+    bullets: {
+      en: ["Tooth Extraction", "Apicectomy (Root-End Surgery)", "Impacted Tooth Removal", "Cyst & Abscess Management", "Facial Trauma Treatment"],
+      bn: ["দাঁত তোলা (এক্সট্র্যাকশন)", "এপিসেক্টমি (রুটের ডগা অপারেশন)", "আটকে থাকা দাঁত অপসারণ", "সিস্ট ও ইনফেকশন চিকিৎসা", "মুখমণ্ডলের আঘাতের চিকিৎসা"],
+    },
+    differential: {
+      en: "Facial swelling, severe pain at the root, pus formation, or fever — see an Oral & Maxillofacial Surgeon without delay.",
+      bn: "মুখ ফুলে যাওয়া, দাঁতের গোড়ায় প্রচণ্ড ব্যথা, পুঁজ জমা, বা জ্বর — এসব হলে দেরি না করে ওরাল অ্যান্ড ম্যাক্সিলোফেসিয়াল সার্জনের কাছে যেতে হবে।",
+    },
+    callout: { en: "Abscess", bn: "সংক্রমণজনিত ফোলা" },
+  },
+  {
+    image: "/images/hero/stage-4-prostho.webp",
+    position: "center",
+    mainText: {
+      en: "A missing tooth is more than just a gap.",
+      bn: "একটি হারানো দাঁত শুধু একটি ফাঁকা জায়গা নয়।",
+    },
+    bullets: {
+      en: ["Dental Implants", "Crowns & Bridges", "Dentures (Full & Partial)", "Veneers", "Smile Makeover"],
+      bn: ["ডেন্টাল ইমপ্লান্ট", "ক্রাউন ও ব্রিজ", "ডেনচার (সম্পূর্ণ ও আংশিক)", "ভিনিয়ার", "স্মাইল মেকওভার"],
+    },
+    differential: {
+      en: "A missing tooth, difficulty chewing, shifting of neighboring teeth, or feeling self-conscious about your smile — a Prosthodontist solves exactly this.",
+      bn: "দাঁত পড়ে যাওয়া, চিবাতে কষ্ট হওয়া, পাশের দাঁত সরে যাওয়া, বা হাসতে গিয়ে সংকোচ বোধ করা — এসব সমস্যায় প্রস্থোডন্টিস্টই সমাধান দিতে পারেন।",
+    },
+    callout: { en: "Implant", bn: "ইমপ্লান্ট" },
+  },
+  {
+    image: "/images/hero/stage-5-ortho.webp",
+    position: "left",
+    mainText: {
+      en: "Crooked or crowded teeth affect more than your smile.",
+      bn: "আঁকাবাঁকা বা একসাথে ভিড় করে থাকা দাঁত শুধু হাসির সৌন্দর্যই নষ্ট করে না।",
+    },
+    bullets: {
+      en: ["Metal & Ceramic Braces", "Clear Aligners", "Retainers", "Bite Correction", "Space Maintainers (for kids)"],
+      bn: ["মেটাল ও সিরামিক ব্রেসেস", "ক্লিয়ার অ্যালাইনার", "রিটেইনার", "কামড় সংশোধন", "স্পেস মেইনটেইনার (শিশুদের জন্য)"],
+    },
+    differential: {
+      en: "Crooked teeth, a misaligned jaw, hesitating to smile freely, jaw pain, difficulty speaking or chewing, or food constantly getting stuck between teeth — these call for an Orthodontist.",
+      bn: "দাঁত আঁকাবাঁকা থাকা, চোয়াল আঁকাবাঁকা হয়ে যাওয়া, প্রাণ খুলে হাসতে না পারা, চোয়ালে ব্যথা, কথা বলতে বা চিবাতে সমস্যা, কিংবা দাঁতে খাবার আটকে থাকা — এসব হলে অর্থোডন্টিস্টের পরামর্শ প্রয়োজন।",
+    },
+    callout: { en: "Crowding", bn: "দাঁতের ভিড়" },
+  },
+  {
+    image: "/images/hero/stage-6-perio.webp",
+    position: "right",
+    mainText: {
+      en: "When the gums pull back, the tooth loses its foundation.",
+      bn: "মাড়ি সরে গেলে দাঁত তার ভিত্তি হারায়।",
+    },
+    bullets: {
+      en: ["Scaling & Root Planing (Deep Cleaning)", "Gum Surgery", "Gum Grafting", "Treatment of Gum Recession", "Crown Lengthening"],
+      bn: ["স্কেলিং ও রুট প্ল্যানিং (ডিপ ক্লিনিং)", "মাড়ির সার্জারি", "গাম গ্রাফটিং", "মাড়ি সরে যাওয়ার চিকিৎসা", "ক্রাউন লেংদেনিং"],
+    },
+    differential: {
+      en: "Exposed tooth roots, sensitivity to hot and cold, bleeding gums, or loose teeth — see a Periodontist.",
+      bn: "দাঁতের গোড়া বেরিয়ে আসা, ঠান্ডা-গরমে শিরশির করা, মাড়ি থেকে রক্ত পড়া, বা দাঁত নড়বড়ে হয়ে যাওয়া — এসব লক্ষণে পেরিওডন্টিস্ট দেখানো জরুরি।",
+    },
+    callout: { en: "Gum Recession", bn: "মাড়ি সরে যাওয়া" },
+  },
+  {
+    image: "/images/hero/stage-7-oral-medicine.webp",
+    position: "center",
+    mainText: {
+      en: "Unusual patches or sores in the mouth are never just ‘nothing’.",
+      bn: "মুখের ভেতরের অস্বাভাবিক দাগ বা ঘা কখনোই সাধারণ কিছু নয়।",
+    },
+    bullets: {
+      en: ["Oral Lesion & Ulcer Diagnosis", "Oral & Dental Cancer Screening", "Tumor & Growth Evaluation", "Management of Oral Lichen Planus", "Treatment of Habit-Related Damage", "Dry Mouth & Burning Mouth Treatment"],
+      bn: ["মুখের ঘা ও দাগ নির্ণয়", "ওরাল ও দাঁতের ক্যান্সার স্ক্রিনিং", "টিউমার ও অস্বাভাবিক বৃদ্ধি পরীক্ষা", "ওরাল লাইকেন প্ল্যানাসের চিকিৎসা", "পান-জর্দা/তামাকজনিত ক্ষতির চিকিৎসা", "মুখ শুকিয়ে যাওয়া ও জ্বালাপোড়ার চিকিৎসা"],
+    },
+    differential: {
+      en: "White or red patches, a sore that won't heal for over two weeks, an unusual lump or tumor, difficulty opening the mouth, or a persistent burning sensation — see an Oral Medicine specialist without delay.",
+      bn: "মুখের ভেতরে সাদা বা লালচে দাগ, দুই সপ্তাহের বেশি সময় ধরে না শুকানো ঘা, মুখের ভেতরে অস্বাভাবিক চাকা বা টিউমার, মুখ খুলতে কষ্ট হওয়া, বা মুখ জ্বালাপোড়া করা — এসব হলে দেরি না করে ওরাল মেডিসিন বিশেষজ্ঞের কাছে যান।",
+    },
+    callout: { en: "Oral Lesion", bn: "মুখের ক্ষত" },
+  },
+];
 
-    const onScroll = () => {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = requestAnimationFrame(handleScroll);
-    };
+const TOTAL_WAYPOINTS = STAGES.length + 1; // 7 stages + final convergence waypoint
+const VH_PER_STAGE = 170; // larger = slower, more readable pacing per stage
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    handleScroll();
+/** Small animated "pointing up at the photo" indicator — used only on Stage 1. */
+function PointerArrow() {
+  return (
+    <ChevronUp
+      className="w-6 h-6 lg:w-7 lg:h-7 text-[#474B4E] animate-bounce drop-shadow-[0_1px_2px_rgba(255,255,255,0.7)]"
+      strokeWidth={3}
+    />
+  );
+}
 
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
+/** Desktop pinned-stage text: headline+differential+bullets all centered. */
+function DesktopStageTextBlock({
+  stage,
+  isBn,
+  opacity,
+  isFirstStage,
+}: {
+  stage: StageContent;
+  isBn: boolean;
+  opacity: number;
+  isFirstStage?: boolean;
+}) {
+  return (
+    <div
+      style={{ opacity, transition: "opacity 400ms ease-out" }}
+      className="absolute top-[54%] left-1/2 -translate-x-1/2 w-[90%] lg:w-[70%] flex flex-col items-center gap-3 pointer-events-none text-center"
+    >
+      {isFirstStage && <PointerArrow />}
+      <h2 className="text-2xl lg:text-3xl xl:text-4xl font-extrabold leading-tight text-[#2b2b2b] drop-shadow-[0_1px_3px_rgba(255,255,255,0.85)] max-w-3xl">
+        {isBn ? stage.mainText.bn : stage.mainText.en}
+      </h2>
 
-  // Shared Animation Parameters
-  const imageScale = 1.0 + scrollProgress * 0.15;
-  const desktopTopLeftTranslateX = scrollProgress * -15;
-  const desktopTopRightTranslateX = scrollProgress * 15;
-  const desktopBottomSlideX = (1 - Math.min(1, 0.4 + scrollProgress * 1.2)) * 20;
-  const desktopBottomOpacity = Math.min(1, 0.75 + scrollProgress * 0.25);
+      {stage.differential && (
+        <p className="text-xs lg:text-sm text-[#4a4a4a] font-medium leading-relaxed max-w-xl">
+          {isBn ? stage.differential.bn : stage.differential.en}
+        </p>
+      )}
 
+      {stage.bullets && (
+        <ul className="flex flex-wrap justify-center gap-2 text-xs lg:text-sm font-semibold text-[#3a3a3a] w-full">
+          {(isBn ? stage.bullets.bn : stage.bullets.en).map((b, i) => (
+            <li key={i} className="px-3 py-1 rounded-full bg-white/70 backdrop-blur-sm border border-[#474B4E]/20">
+              {b}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Scroll-down hint, shown until the final CTA stage scrolls into view.
+ *  Mobile: bottom-center. Desktop: parked on the side so it never
+ *  collides with the always-centered headline/bullets. */
+function ScrollHint({ isBn, visible, side }: { isBn: boolean; visible: boolean; side?: boolean }) {
+  const positionClass = side
+    ? "right-4 xl:right-8 top-1/2 -translate-y-1/2 flex-col"
+    : "bottom-4 left-1/2 -translate-x-1/2 flex-col";
+  return (
+    <div
+      style={{ opacity: visible ? 1 : 0, transition: "opacity 400ms ease-out" }}
+      className={`absolute z-30 flex items-center gap-1 pointer-events-none text-[#474B4E] ${positionClass}`}
+    >
+      <span
+        className={`text-[10px] lg:text-xs font-semibold tracking-wide drop-shadow-[0_1px_2px_rgba(255,255,255,0.5)] ${
+          side ? "[writing-mode:vertical-rl] rotate-180" : ""
+        }`}
+      >
+        {isBn ? "নিচে স্ক্রল করুন" : "Scroll Down"}
+      </span>
+      <ChevronDown className="w-5 h-5 lg:w-6 lg:h-6 animate-bounce drop-shadow-[0_1px_2px_rgba(255,255,255,0.5)]" />
+    </div>
+  );
+}
+
+function FinalCta({ isBn }: { isBn: boolean }) {
   return (
     <>
-      {/* ========================================================================= */}
-      {/* 1. MOBILE & TABLET (< lg): Full Bleed, Zero Dead Gaps, Natural Snug Flow */}
-      {/* ========================================================================= */}
-      <section className="block lg:hidden relative w-full bg-[#181a1c] text-white overflow-hidden border-b border-white/10 pt-3 pb-5">
-        
-        {/* Subtle ambient backdrop */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-          <img
-            src="/images/doctors/doctor_team.jpeg"
-            alt=""
-            aria-hidden="true"
-            className="w-full h-full object-cover blur-3xl opacity-20 scale-125"
-          />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-
-        <div className="relative z-10 w-full flex flex-col items-center text-center">
-          
-          {/* TITLE BLOCK: Sits comfortably under navbar, tight and snug directly above photo */}
-          <div className="w-full max-w-xl px-4 sm:px-6 space-y-1.5 mb-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-semibold text-zinc-200 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-              <span>{isBn ? "অভিজ্ঞ বিশেষজ্ঞ চিকিৎসক দল" : "Multi-Specialty Dental Care in One Chamber"}</span>
-            </div>
-
-            <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-[1.18] drop-shadow-md">
-              {isBn ? "আপনার হাসির যত্নে আছি আমরা পুরো একটি টিম" : "A Full Team of Dedicated Specialists for Your Smile"}
-            </h1>
-          </div>
-
-          {/* 100% FULL-BLEED PHOTO: Bleeds edge-to-edge with NO gaps, NO borders, shows all 4 doctors with scroll zoom! */}
-          <div className="w-full relative aspect-[16/9] overflow-hidden my-0 select-none">
-            <img
-              src="/images/doctors/doctor_team.jpeg"
-              alt="KGH Dental Specialist Doctors Team"
-              style={{
-                transform: `scale(${imageScale})`,
-                transformOrigin: "center 45%",
-                transition: "transform 100ms cubic-bezier(0.2, 0.8, 0.4, 1)",
-              }}
-              className="w-full h-full object-cover object-center"
-            />
-          </div>
-
-          {/* DESCRIPTION: Snug right below photo floor, NO CARD CONTAINER, clean unboxed text! */}
-          <div className="w-full max-w-xl px-4 sm:px-6 mt-1.5">
-            <p className="text-xs sm:text-sm text-zinc-200 font-normal leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-              {isBn
-                ? "অর্থোডন্টিক্স থেকে শুরু করে ওরাল সার্জারি — কেজিএইচ ডেন্টালে প্রতিটি বিভাগের জন্য আছেন আলাদা বিশেষজ্ঞ ডাক্তার। তাই আপনার প্রতিটি চিকিৎসাই হবে সেই বিষয়ে সত্যিকারের অভিজ্ঞ একজনের হাতে।"
-                : "From orthodontics to oral surgery, KGH Dental brings together specialist dentists across every field — so every treatment you need is handled by someone who's an expert in exactly that."}
-            </p>
-          </div>
-
-          {/* BUTTONS: Snug right below description */}
-          <div className="w-full max-w-xl px-4 sm:px-6 flex items-center justify-center gap-2.5 mt-3">
-            <Link
-              href="/appointment"
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#474B4E] hover:bg-[#373a3c] text-white text-xs sm:text-sm font-bold shadow-lg border border-white/20 transition-all active:scale-98"
-            >
-              <Calendar className="w-3.5 h-3.5 text-white" />
-              <span>{isBn ? UI_STRINGS.hero.primaryCta.bn : UI_STRINGS.hero.primaryCta.en}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-
-            <Link
-              href="/services"
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs sm:text-sm font-bold shadow-md transition-all active:scale-98"
-            >
-              <span>{isBn ? UI_STRINGS.hero.secondaryCta.bn : UI_STRINGS.hero.secondaryCta.en}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          {/* TRUST BADGES */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-2 px-4 text-[10px] sm:text-xs font-medium text-zinc-300">
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/40 border border-white/10">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-              <span>{isBn ? "কোনো লুকানো খরচ নেই" : "No Hidden Costs"}</span>
-            </div>
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/40 border border-white/10">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-              <span>{isBn ? "জীবাণুমুক্ত আধুনিক চেম্বার" : "Clean & Sterile Chamber"}</span>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 2. DESKTOP LAYOUT (>= lg): Pinned 4-Corner Cinematic Scroll Zoom          */}
-      {/* ========================================================================= */}
-      <div
-        ref={desktopContainerRef}
-        className="hidden lg:block relative w-full h-[200vh] bg-zinc-950"
-      >
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between select-none">
-          
-          {/* Desktop Full-Bleed Background Layer with Scroll-Driven Zoom */}
-          <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-            <img
-              src="/images/doctors/doctor_team.jpeg"
-              alt="KGH Dental Specialist Doctors Team"
-              style={{
-                transform: `scale(${imageScale})`,
-                transformOrigin: "center 45%",
-                transition: "transform 100ms cubic-bezier(0.2, 0.8, 0.4, 1)",
-              }}
-              className="w-full h-full object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-black/15 backdrop-brightness-95" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_45%,_rgba(0,0,0,0.55)_100%)]" />
-            <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-black/70 via-black/25 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
-          </div>
-
-          {/* 4-CORNER CONTENT CONTAINER */}
-          <div className="relative z-20 w-full h-full px-8 lg:px-12 xl:px-16 2xl:px-24 pt-28 lg:pt-32 pb-10 lg:pb-14 flex flex-col justify-between pointer-events-none">
-            
-            {/* TOP ROW: Top-Left Title & Top-Right Description */}
-            <div className="grid grid-cols-12 gap-6 items-start relative z-20">
-              <div
-                style={{
-                  transform: `translateX(${desktopTopLeftTranslateX}px)`,
-                  transition: "transform 150ms ease-out",
-                }}
-                className="col-span-7 xl:col-span-6 pointer-events-auto space-y-3.5"
-              >
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 shadow-lg text-white text-xs sm:text-sm font-semibold">
-                  <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-                  <span>{isBn ? "অভিজ্ঞ বিশেষজ্ঞ চিকিৎসক দল" : "Multi-Specialty Dental Care in One Chamber"}</span>
-                </div>
-
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white tracking-tight leading-[1.12] drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
-                  {isBn ? "আপনার হাসির যত্নে আছি আমরা পুরো একটি টিম" : "A Full Team of Dedicated Specialists for Your Smile"}
-                </h1>
-              </div>
-
-              <div
-                style={{
-                  transform: `translateX(${desktopTopRightTranslateX}px)`,
-                  transition: "transform 150ms ease-out",
-                }}
-                className="col-span-5 xl:col-span-6 text-right pointer-events-auto flex justify-end"
-              >
-                <p className="max-w-xl text-base lg:text-lg text-white font-normal leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
-                  {isBn
-                    ? "অর্থোডন্টিক্স থেকে শুরু করে ওরাল সার্জারি — কেজিএইচ ডেন্টালে প্রতিটি বিভাগের জন্য আছেন আলাদা বিশেষজ্ঞ ডাক্তার। তাই আপনার প্রতিটি চিকিৎসাই হবে সেই বিষয়ে সত্যিকারের অভিজ্ঞ একজনের হাতে।"
-                    : "From orthodontics to oral surgery, KGH Dental brings together specialist dentists across every field — so every treatment you need is handled by someone who's an expert in exactly that."}
-                </p>
-              </div>
-            </div>
-
-            {/* BOTTOM ROW: Bottom-Left Button & Bottom-Right Button */}
-            <div className="grid grid-cols-12 gap-6 items-end relative z-20">
-              <div
-                style={{
-                  transform: `translateX(-${desktopBottomSlideX}px)`,
-                  opacity: desktopBottomOpacity,
-                  transition: "transform 180ms ease-out, opacity 180ms ease-out",
-                }}
-                className="col-span-6 pointer-events-auto space-y-3"
-              >
-                <div className="flex items-center gap-3">
-                  <Link
-                    href="/appointment"
-                    className="inline-flex items-center gap-2.5 px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl bg-[#474B4E] hover:bg-[#373a3c] active:bg-[#2b2d2f] text-white text-sm sm:text-base font-bold transition-all shadow-xl hover:shadow-2xl active:scale-98 border border-white/20 backdrop-blur-sm group"
-                  >
-                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                    <span>{isBn ? UI_STRINGS.hero.primaryCta.bn : UI_STRINGS.hero.primaryCta.en}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs sm:text-sm font-medium text-white">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/15 shadow-sm">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>{isBn ? "কোনো লুকানো খরচ নেই" : "No Hidden Costs"}</span>
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/15 shadow-sm">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>{isBn ? "জীবাণুমুক্ত আধুনিক চেম্বার" : "Clean & Sterile Chamber"}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  transform: `translateX(${desktopBottomSlideX}px)`,
-                  opacity: desktopBottomOpacity,
-                  transition: "transform 180ms ease-out, opacity 180ms ease-out",
-                }}
-                className="col-span-6 text-right pointer-events-auto flex justify-end"
-              >
-                <div className="space-y-2.5">
-                  <Link
-                    href="/services"
-                    className="inline-flex items-center gap-2 px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-sm sm:text-base font-bold transition-all shadow-xl hover:shadow-2xl active:scale-98 border border-white/60 group"
-                  >
-                    <span>{isBn ? UI_STRINGS.hero.secondaryCta.bn : UI_STRINGS.hero.secondaryCta.en}</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  <div className="text-xs text-zinc-200 font-medium text-right flex items-center justify-end gap-1.5 drop-shadow-sm">
-                    <span>{isBn ? "স্ক্রল করে ডাক্তারদের সাথে পরিচিত হন" : "Scroll to explore our clinic"}</span>
-                    <span className="animate-bounce">↓</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Scroll Progress Bar indicator along the bottom */}
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-white/15 z-30">
-            <div
-              style={{ width: `${scrollProgress * 100}%` }}
-              className="h-full bg-white transition-all duration-75 shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-            />
-          </div>
-
-        </div>
+      <h1 className="text-2xl sm:text-4xl lg:text-6xl font-extrabold text-[#242424] leading-tight max-w-4xl drop-shadow-[0_2px_6px_rgba(255,255,255,0.8)]">
+        {isBn ? UI_STRINGS.hero.headline.bn : UI_STRINGS.hero.headline.en}
+      </h1>
+      <div className="flex flex-col sm:flex-row items-center gap-3 mt-6 lg:mt-10 pointer-events-auto">
+        <Link
+          href="/appointment"
+          className="inline-flex items-center gap-2 px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl bg-[#474B4E] hover:bg-[#373a3c] text-white text-sm sm:text-base font-bold shadow-xl transition-all active:scale-98"
+        >
+          <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>{isBn ? UI_STRINGS.hero.primaryCta.bn : UI_STRINGS.hero.primaryCta.en}</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+        <Link
+          href="/doctors"
+          className="inline-flex items-center gap-2 px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-sm sm:text-base font-bold shadow-lg border border-black/10 transition-all active:scale-98"
+        >
+          <span>{isBn ? UI_STRINGS.hero.secondaryCta.bn : UI_STRINGS.hero.secondaryCta.en}</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     </>
   );
+}
+
+/** Mobile pinned-stage text: overlays directly ON the image, anchored right
+ *  at / slightly over the teeth's lower border — reads as one continuous
+ *  photo+text layer, not a separate section underneath. */
+function MobileStageTextBlock({
+  stage,
+  isBn,
+  opacity,
+  isFirstStage,
+}: {
+  stage: StageContent;
+  isBn: boolean;
+  opacity: number;
+  isFirstStage?: boolean;
+}) {
+  return (
+    <div
+      style={{ opacity, transition: "opacity 400ms ease-out" }}
+      className="w-full px-5 flex flex-col items-center gap-2 pointer-events-none text-center"
+    >
+      {isFirstStage && <PointerArrow />}
+      <h2 className="text-2xl font-extrabold leading-tight text-[#2b2b2b] drop-shadow-[0_1px_3px_rgba(255,255,255,0.85)]">
+        {isBn ? stage.mainText.bn : stage.mainText.en}
+      </h2>
+
+      {stage.differential && (
+        <p className="text-xs text-[#4a4a4a] font-medium leading-relaxed max-w-xs drop-shadow-[0_1px_2px_rgba(255,255,255,0.7)]">
+          {isBn ? stage.differential.bn : stage.differential.en}
+        </p>
+      )}
+
+      {stage.bullets && (
+        <ul className="flex flex-wrap justify-center gap-1.5 text-[10px] font-semibold text-[#3a3a3a]">
+          {(isBn ? stage.bullets.bn : stage.bullets.en).map((b, i) => (
+            <li key={i} className="px-2 py-0.5 rounded-full bg-white/85 backdrop-blur-sm border border-[#474B4E]/20">
+              {b}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** ============================================================
+ *  UNIFIED PINNED HERO — same scroll-driven zoom/crossfade
+ *  mechanic on both desktop and mobile, only crop/text placement
+ *  differ per viewport.
+ *  ============================================================ */
+function PinnedHero({ isBn, isDesktop }: { isBn: boolean; isDesktop: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  // Measure the site header so the image/text can start right below it
+  // (header stays visible/clickable — we never hide or cover it).
+  useEffect(() => {
+    const header = document.querySelector("header");
+    if (!header) return;
+    const update = () => setHeaderHeight(header.getBoundingClientRect().height);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(header);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let raf = 0;
+
+    const compute = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const scrollable = el.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) {
+        setProgress(0);
+        return;
+      }
+      const scrolled = Math.min(Math.max(-rect.top, 0), scrollable);
+      setProgress(scrolled / scrollable);
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(compute);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    compute();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  const safeProgress = Number.isFinite(progress) ? progress : 0;
+  const rawIndex = safeProgress * (TOTAL_WAYPOINTS - 1);
+  const currentIndex = Math.min(Math.floor(rawIndex), TOTAL_WAYPOINTS - 2);
+  const localT = Math.min(Math.max(rawIndex - currentIndex, 0), 1);
+  const isFinalStage = currentIndex === STAGES.length - 1 && localT > 0.5;
+
+  const currentStage = STAGES[currentIndex];
+  const nextStage = currentIndex + 1 < STAGES.length ? STAGES[currentIndex + 1] : STAGES[0];
+
+  // Continuous "zoom into the tooth" crossfade between two consecutive images.
+  const currentScale = 1 + localT * 0.12;
+  const currentOpacity = 1 - localT;
+  const nextScale = 1.05 - localT * 0.05;
+  const nextOpacity = localT;
+
+  const activeTextStage = localT < 0.5 ? currentStage : nextStage;
+  const activeTextOpacity = localT < 0.5 ? 1 - localT * 2 : (localT - 0.5) * 2;
+
+  if (!isDesktop) {
+    // ================================================================
+    // MOBILE: image confined to a square-ish box (not full h-screen) so
+    // object-fit:cover doesn't need an extreme 9:16 crop — this keeps the
+    // central incisors centered with several neighboring teeth + gum
+    // visible, while still using the SAME pin+zoom+crossfade mechanic.
+    // Text sits immediately below the image box, not floating over it.
+    // ================================================================
+    const mobileImgH = "min(92vw, 58vh)";
+    return (
+      <div
+        ref={containerRef}
+        className="relative w-full bg-[#e8eaf4]"
+        style={{ height: `${TOTAL_WAYPOINTS * VH_PER_STAGE}vh` }}
+      >
+        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#e8eaf4]">
+          {/* Shifted down by the header's height — header stays visible/clickable,
+              never covered, and this reveals the gum area that used to sit behind it. */}
+          <div className="absolute left-0 right-0" style={{ top: headerHeight, height: "100vh" }}>
+            <div className="relative w-full" style={{ height: mobileImgH }}>
+              <img
+                src={currentStage.image}
+                alt=""
+                style={{ transform: `scale(${currentScale})`, opacity: currentOpacity, transformOrigin: "center 30%" }}
+                className="absolute inset-0 w-full h-full object-cover object-[center_18%] transition-none"
+              />
+              <img
+                src={nextStage.image}
+                alt=""
+                style={{ transform: `scale(${nextScale})`, opacity: nextOpacity, transformOrigin: "center 30%" }}
+                className="absolute inset-0 w-full h-full object-cover object-[center_18%] transition-none"
+              />
+            </div>
+
+            {/* Text overlays the image, anchored right at (slightly over) the teeth's lower border */}
+            <div className="absolute left-0 w-full" style={{ top: `calc(${mobileImgH} - 92px)` }}>
+              {!isFinalStage && (
+                <MobileStageTextBlock
+                  stage={activeTextStage}
+                  isBn={isBn}
+                  opacity={activeTextOpacity}
+                  isFirstStage={activeTextStage === STAGES[0]}
+                />
+              )}
+            </div>
+          </div>
+
+          <div
+            style={{ opacity: isFinalStage ? Math.min((localT - 0.5) * 2, 1) : 0 }}
+            className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none transition-opacity duration-300"
+          >
+            <FinalCta isBn={isBn} />
+          </div>
+
+          <ScrollHint isBn={isBn} visible={!isFinalStage} />
+        </div>
+      </div>
+    );
+  }
+
+  // ================================================================
+  // DESKTOP: full-bleed wide frame, cinematic pin+zoom+crossfade.
+  // ================================================================
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full bg-[#e8eaf4]"
+      style={{ height: `${TOTAL_WAYPOINTS * VH_PER_STAGE}vh` }}
+    >
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {/* Shifted down by the header's height — header stays visible/clickable,
+            never covered, and this reveals content (e.g. gum/abscess) that used
+            to render behind it. Crop/zoom math is unchanged, just repositioned. */}
+        <div className="absolute left-0 right-0" style={{ top: headerHeight, height: "100vh" }}>
+          <img
+            src={currentStage.image}
+            alt=""
+            style={{ transform: `scale(${currentScale})`, opacity: currentOpacity, transformOrigin: "center 40%" }}
+            className="absolute inset-0 w-full h-full object-cover object-center transition-none"
+          />
+          <img
+            src={nextStage.image}
+            alt=""
+            style={{ transform: `scale(${nextScale})`, opacity: nextOpacity, transformOrigin: "center 40%" }}
+            className="absolute inset-0 w-full h-full object-cover object-center transition-none"
+          />
+          {!isFinalStage && (
+            <DesktopStageTextBlock
+              stage={activeTextStage}
+              isBn={isBn}
+              opacity={activeTextOpacity}
+              isFirstStage={activeTextStage === STAGES[0]}
+            />
+          )}
+        </div>
+
+        <div
+          style={{ opacity: isFinalStage ? Math.min((localT - 0.5) * 2, 1) : 0 }}
+          className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 lg:px-16 pointer-events-none transition-opacity duration-300"
+        >
+          <FinalCta isBn={isBn} />
+        </div>
+
+        <ScrollHint isBn={isBn} visible={!isFinalStage} side />
+      </div>
+    </div>
+  );
+}
+
+export function Hero() {
+  const { isBn } = useLanguage();
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  // Resolve viewport before first meaningful paint so only one crop config mounts.
+  if (isDesktop === null) return <div className="w-full h-screen bg-[#e8eaf4]" />;
+
+  return <PinnedHero isBn={isBn} isDesktop={isDesktop} />;
 }

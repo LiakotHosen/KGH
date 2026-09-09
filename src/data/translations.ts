@@ -17,20 +17,20 @@ export const UI_STRINGS = {
       bn: "একটি চেম্বারে সব ধরনের ডেন্টাল কেয়ার",
     },
     headline: {
-      en: "A Full Team of Dedicated Specialists for Your Smile",
-      bn: "আপনার হাসির যত্নে আছি আমরা পুরো একটি টিম",
+      en: "Whatever Your Dental Problem Is — We Have The Specialist.",
+      bn: "আপনার দাঁতের যেই সমস্যাই হোক না কেন — আমাদের আছে সেই বিশেষজ্ঞ।",
     },
     subhead: {
       en: "From orthodontics to oral surgery, KGH Dental brings together specialist dentists across every field — so every treatment you need is handled by someone who's an expert in exactly that.",
       bn: "অর্থোডন্টিক্স থেকে শুরু করে ওরাল সার্জারি — কেজিএইচ ডেন্টালে প্রতিটা বিভাগের জন্য আছেন আলাদা বিশেষজ্ঞ ডাক্তার। তাই আপনার প্রতিটা চিকিৎসাই হবে সেই বিষয়ে সত্যিকারের অভিজ্ঞ একজনের হাতে।",
     },
     primaryCta: {
-      en: "Book an Appointment",
+      en: "Book Your Appointment",
       bn: "অ্যাপয়েন্টমেন্ট বুক করুন",
     },
     secondaryCta: {
-      en: "Explore Our Services",
-      bn: "আমাদের সেবাসমূহ দেখুন",
+      en: "Meet Our Specialists",
+      bn: "আমাদের বিশেষজ্ঞদের সাথে পরিচিত হন",
     },
     stats: {
       specialists: { en: "6 Specialists", bn: "৬ জন বিশেষজ্ঞ" },
