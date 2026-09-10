@@ -45,6 +45,10 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   const navItems = [
     { href: "/", label: UI_STRINGS.nav.home },
     {

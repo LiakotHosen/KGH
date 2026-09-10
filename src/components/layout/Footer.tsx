@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Phone, Mail, MapPin, Clock, Star, ArrowUpRight, ShieldCheck } from "lucide-react";
 import { DEPARTMENTS } from "@/data/departments";
 import { CLINIC_SETTINGS } from "@/data/settings";
@@ -10,8 +11,13 @@ import { useLanguage } from "@/context/LanguageContext";
 import { ReviewQrModal } from "@/components/shared/ReviewQrModal";
 
 export function Footer() {
+  const pathname = usePathname();
   const { t, isBn } = useLanguage();
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <footer className="bg-[#474B4E] text-zinc-200 border-t border-white/10">
