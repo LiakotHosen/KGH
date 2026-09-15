@@ -257,6 +257,24 @@ export default function AdminSettingsPage() {
                 />
               </div>
             </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
+                Google Maps Pin / Direction URL
+              </label>
+              <input
+                type="url"
+                value={settings.googleMapUrl || ""}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    googleMapUrl: e.target.value,
+                  })
+                }
+                placeholder="https://maps.app.goo.gl/..."
+                className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 text-xs font-mono"
+              />
+            </div>
           </div>
         </div>
 

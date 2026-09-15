@@ -15,10 +15,12 @@ export const DEPARTMENTS: Department[] = [
     iconName: "Smile",
     leadDoctorId: "dr-fatema",
     imageUrl: "/images/services-images-for-7-services/Orthodontics.jpeg",
+    coverBannerUrl: "/images/Service-page-banner-cover/01. Orthodontics Cover Banner.png",
     subServices: [
       {
         id: "metal-braces",
         number: 1,
+        imageUrl: "/images/SubServices-images/1. A. Metal Traditional Braces.png",
         name: {
           en: "Metal (Traditional) Braces",
           bn: "মেটাল (ট্রেডিশনাল) ব্রেসেস",
@@ -39,6 +41,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "clear-aligners",
         number: 2,
+        imageUrl: "/images/SubServices-images/1. B. Clear Aligners.png",
         name: {
           en: "Clear Aligners / Invisible Braces",
           bn: "ক্লিয়ার অ্যালাইনার / অদৃশ্য ব্রেসেস",
@@ -59,6 +62,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "smile-design",
         number: 3,
+        imageUrl: "/images/SubServices-images/1. c. Smile Design.png",
         name: {
           en: "Smile Design / Smile Makeover",
           bn: "স্মাইল ডিজাইন / স্মাইল মেকওভার",
@@ -79,6 +83,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "retainers",
         number: 4,
+        imageUrl: "/images/SubServices-images/1. d. Retainers.png",
         name: {
           en: "Retainers (Post-Treatment)",
           bn: "রিটেইনার (চিকিৎসা পরবর্তী যত্ন)",
@@ -99,6 +104,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "space-maintainers",
         number: 5,
+        imageUrl: "/images/SubServices-images/1. e. Space Maintainers.png",
         name: {
           en: "Space Maintainers",
           bn: "স্পেস মেইনটেইনার",
@@ -119,6 +125,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "myofunctional-appliances",
         number: 6,
+        imageUrl: "/images/SubServices-images/1. f. Habit Correction Appliances.png",
         name: {
           en: "Myofunctional / Habit-Correction Appliances",
           bn: "মায়োফাংশনাল ও অভ্যাস সংশোধনকারী অ্যাপ্লায়েন্স",
@@ -139,6 +146,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "interceptive-orthodontics",
         number: 7,
+        imageUrl: "/images/SubServices-images/1. g. KIDS orthodontics.png",
         name: {
           en: "Interceptive / Early Orthodontic Treatment (Kids)",
           bn: "ইন্টারসেপ্টিভ / শিশুদের প্রাথমিক অর্থোডন্টিক চিকিৎসা",
@@ -172,10 +180,12 @@ export const DEPARTMENTS: Department[] = [
     iconName: "Stethoscope",
     leadDoctorId: "dr-sanwar",
     imageUrl: "/images/services-images-for-7-services/Oral & Maxillofacial Surgery.png",
+    coverBannerUrl: "/images/Service-page-banner-cover/02. Oral & Maxillo Cover Bannaer.png",
     subServices: [
       {
         id: "simple-extraction",
         number: 1,
+        imageUrl: "/images/SubServices-images/2.1. Simple Tooth Extraction.png",
         name: {
           en: "Simple Tooth Extraction",
           bn: "সিম্পল টুথ এক্সট্রাকশন (দাঁত তোলা)",
@@ -196,6 +206,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "wisdom-tooth-surgery",
         number: 2,
+        imageUrl: "/images/SubServices-images/2.2. Impacted Wisdom Tooth.png",
         name: {
           en: "Surgical / Impacted Wisdom Tooth Extraction",
           bn: "সার্জিক্যাল ও ইমপ্যাক্টেড উইজডম টুথ অপসারণ",
@@ -216,6 +227,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "dental-implant-surgery",
         number: 3,
+        imageUrl: "/images/SubServices-images/2.3. Dental Implant Surgery.png",
         name: {
           en: "Dental Implant Surgery",
           bn: "ডেন্টাল ইমপ্ল্যান্ট সার্জারি",
@@ -236,6 +248,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "facial-trauma",
         number: 4,
+        imageUrl: "/images/SubServices-images/2.4. Facial Trauma & Fracture Treatment.png",
         name: {
           en: "Facial Trauma & Fracture Treatment",
           bn: "ফেসিয়াল ট্রমা ও ফ্র্যাকচার চিকিৎসা",
@@ -256,6 +269,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "tmj-disorder",
         number: 5,
+        imageUrl: "/images/SubServices-images/2.5.  TMJ Jaw Joint Disorder Treatment.png",
         name: {
           en: "TMJ (Jaw Joint) Disorder Treatment",
           bn: "টিএমজে (চোয়ালের জয়েন্ট) ডিসঅর্ডার চিকিৎসা",
@@ -276,6 +290,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "cyst-tumor-removal",
         number: 6,
+        imageUrl: "/images/SubServices-images/2.6. Oral Cyst & Tumor Removal.png",
         name: {
           en: "Oral Cyst & Tumor Removal",
           bn: "ওরাল সিস্ট ও টিউমার অপসারণ",
@@ -296,6 +311,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "oral-biopsy",
         number: 7,
+        imageUrl: "/images/SubServices-images/2.7. Oral Biopsy.png",
         name: {
           en: "Biopsy (Oral Lesion)",
           bn: "ওরাল বায়োপসি (মুখের ক্ষত পরীক্ষা)",
@@ -316,6 +332,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "abscess-management",
         number: 8,
+        imageUrl: "/images/SubServices-images/2.8. Space Infection Abscess Management.png",
         name: {
           en: "Space Infection / Abscess Management",
           bn: "স্পেস ইনফেকশন ও পুঁজ অপসারণ",
@@ -336,6 +353,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "oral-ulcer",
         number: 9,
+        imageUrl: "/images/SubServices-images/2.9. Oral Ulcer Management.png",
         name: {
           en: "Oral Ulcer Management",
           bn: "মুখের আলসার ও ক্ষতের চিকিৎসা",
@@ -369,10 +387,12 @@ export const DEPARTMENTS: Department[] = [
     iconName: "ShieldCheck",
     leadDoctorId: "dr-bappy",
     imageUrl: "/images/services-images-for-7-services/Conservative Dentistry & Endodontics.jpeg",
+    coverBannerUrl: "/images/Service-page-banner-cover/03. Endodontics Cover banner.png",
     subServices: [
       {
         id: "root-canal",
         number: 1,
+        imageUrl: "/images/SubServices-images/3. 1. Root Canal Treatment.png",
         name: {
           en: "Root Canal Treatment (RCT)",
           bn: "রুট ক্যানেল ট্রিটমেন্ট (আরসিটি)",
@@ -393,6 +413,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "re-root-canal",
         number: 2,
+        imageUrl: "/images/SubServices-images/3. 2. Re-Root Canal Treatment.png",
         name: {
           en: "Re-Root Canal Treatment (Retreatment)",
           bn: "রি-রুট ক্যানেল ট্রিটমেন্ট",
@@ -413,6 +434,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "composite-filling",
         number: 3,
+        imageUrl: "/images/SubServices-images/3. 3. Composite (Tooth-Colored) Filling.png",
         name: {
           en: "Composite (Tooth-Colored) Filling",
           bn: "কম্পোজিট (দাঁতের রঙের) ফিলিং",
@@ -433,6 +455,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "gic-filling",
         number: 4,
+        imageUrl: "/images/SubServices-images/3. 4. GIC (Glass Ionomer) Filling.png",
         name: {
           en: "GIC (Glass Ionomer) Filling",
           bn: "জিআইসি (গ্লাস আয়োনোমার) ফিলিং",
@@ -453,6 +476,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "inlay-onlay",
         number: 5,
+        imageUrl: "/images/SubServices-images/3. 5. Inlay_Onlay Restoration.png",
         name: {
           en: "Inlay / Onlay Restoration",
           bn: "ইনলে / অনলে রিস্টোরেশন",
@@ -473,6 +497,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "cracked-tooth",
         number: 6,
+        imageUrl: "/images/SubServices-images/3. 6. Cracked Tooth Treatment.png",
         name: {
           en: "Cracked Tooth Treatment",
           bn: "ক্র্যাকড টুথ (ফাটা দাঁত) চিকিৎসা",
@@ -493,6 +518,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "apicoectomy",
         number: 7,
+        imageUrl: "/images/SubServices-images/3. 7. Post & Core Build-Up.png",
         name: {
           en: "Apicoectomy (Root-End Surgery)",
           bn: "অ্যাপিকোএক্টমি (রুট-এন্ড সার্জারি)",
@@ -513,6 +539,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "post-core",
         number: 8,
+        imageUrl: "/images/SubServices-images/3. 8. Post & Core Build-Up.png",
         name: {
           en: "Post & Core Build-Up (After RCT)",
           bn: "পোস্ট অ্যান্ড কোর বিল্ড-আপ (আরসিটির পর)",
@@ -533,6 +560,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "teeth-whitening",
         number: 9,
+        imageUrl: "/images/SubServices-images/3. 9. Toothe whitening.png",
         name: {
           en: "Teeth Whitening / Bleaching",
           bn: "টিথ হোয়াইটেনিং / ব্লিচিং",
@@ -566,10 +594,12 @@ export const DEPARTMENTS: Department[] = [
     iconName: "Sparkles",
     leadDoctorId: "dr-diean",
     imageUrl: "/images/services-images-for-7-services/Prosthodontics.jpeg",
+    coverBannerUrl: "/images/Service-page-banner-cover/04. Prosthodontics Cover banner.png",
     subServices: [
       {
         id: "dental-crowns",
         number: 1,
+        imageUrl: "/images/SubServices-images/4. 1. Dental Crowns.png",
         name: {
           en: "Dental Crowns (Zirconia / Porcelain / PFM)",
           bn: "ডেন্টাল ক্রাউন (জিরকোনিয়া / পোরসেলিন / পিএফএম ক্যাপ)",
@@ -590,6 +620,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "dental-bridges",
         number: 2,
+        imageUrl: "/images/SubServices-images/4. 2. Dental Bridges.png",
         name: {
           en: "Dental Bridges",
           bn: "ডেন্টাল ব্রিজ",
@@ -610,6 +641,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "complete-dentures",
         number: 3,
+        imageUrl: "/images/SubServices-images/4. 3. Complete Dentures.png",
         name: {
           en: "Complete Dentures (Full)",
           bn: "কমপ্লিট ডেনচার (সম্পূর্ণ বাঁধাই দাঁত)",
@@ -630,6 +662,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "partial-dentures",
         number: 4,
+        imageUrl: "/images/SubServices-images/4. 4.  Partial Dentures.png",
         name: {
           en: "Partial Dentures (Removable)",
           bn: "পার্শিয়াল ডেনচার (খোলার সুবিধাযুক্ত দাঁত)",
@@ -650,6 +683,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "implant-supported-crown",
         number: 5,
+        imageUrl: "/images/SubServices-images/4. 5. Implant-Supported Crown.png",
         name: {
           en: "Implant-Supported Crown / Bridge",
           bn: "ইমপ্ল্যান্ট-সাপোর্টেড ক্রাউন ও ব্রিজ",
@@ -670,6 +704,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "implant-supported-denture",
         number: 6,
+        imageUrl: "/images/SubServices-images/4.6. Implant-Supported Denture.png",
         name: {
           en: "Implant-Supported Denture (Overdenture)",
           bn: "ইমপ্ল্যান্ট-সাপোর্টেড ওভারডেনচার",
@@ -690,6 +725,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "veneers",
         number: 7,
+        imageUrl: "/images/SubServices-images/4.7. Dental venners.png",
         name: {
           en: "Veneers (Porcelain / Composite)",
           bn: "ভিনিয়ার্স (পোরসেলিন / কম্পোজিট ভিনিয়ার)",
@@ -710,6 +746,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "maxillofacial-prosthesis",
         number: 8,
+        imageUrl: "/images/SubServices-images/4.8. Maxillofacial Prosthesis.png",
         name: {
           en: "Maxillofacial Prosthesis",
           bn: "ম্যাক্সিলোফেসিয়াল প্রস্থেসিস",
@@ -743,10 +780,12 @@ export const DEPARTMENTS: Department[] = [
     iconName: "Baby",
     leadDoctorId: "dr-diean",
     imageUrl: "/images/services-images-for-7-services/Pediatric Dentistry.jpeg",
+    coverBannerUrl: "/images/Service-page-banner-cover/05. Pediatric Dentistry COver banner.png",
     subServices: [
       {
         id: "pulpotomy",
         number: 1,
+        imageUrl: "/images/SubServices-images/5. 1. Pulpotomy.png",
         name: {
           en: "Pulpotomy",
           bn: "পাল্পোটমি (শিশুর প্রাথমিক আরসিটি)",
@@ -767,6 +806,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "pulpectomy",
         number: 2,
+        imageUrl: "/images/SubServices-images/5. 2. Pulpectomy.png",
         name: {
           en: "Pulpectomy",
           bn: "পাল্পেক্টমি (শিশুর সম্পূর্ণ রুট ক্যানেল)",
@@ -787,6 +827,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "pediatric-extraction",
         number: 3,
+        imageUrl: "/images/SubServices-images/5. 3. Pediatric Tooth Extraction.png",
         name: {
           en: "Pediatric Tooth Extraction",
           bn: "শিশুর দাঁত তোলা (পেডিয়াট্রিক এক্সট্রাকশন)",
@@ -807,6 +848,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "pit-fissure-sealants",
         number: 4,
+        imageUrl: "/images/SubServices-images/5.4. Pit & Fissure Sealants.png",
         name: {
           en: "Pit & Fissure Sealants",
           bn: "পিট অ্যান্ড ফিশার সিল্যান্টস",
@@ -827,6 +869,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "kids-space-maintainer",
         number: 5,
+        imageUrl: "/images/SubServices-images/5. 5. Space Maintainers.png",
         name: {
           en: "Space Maintainers (Kids)",
           bn: "স্পেস মেইনটেইনার (শিশুদের)",
@@ -847,6 +890,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "habit-breaking",
         number: 6,
+        imageUrl: "/images/SubServices-images/5.6. Habit-Breaking Appliances'.png",
         name: {
           en: "Habit-Breaking Appliances",
           bn: "অভ্যাস নিরোধক অ্যাপ্লায়েন্স (আঙুল চোষা বন্ধের ডিভাইস)",
@@ -867,6 +911,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "early-caries",
         number: 7,
+        imageUrl: "/images/SubServices-images/5.7. Early Caries Management.png",
         name: {
           en: "Early Cavity / Caries Management",
           bn: "প্রাথমিক ক্যাভিটি ও ক্যারিজ চিকিৎসা",
@@ -887,6 +932,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "child-checkup",
         number: 8,
+        imageUrl: "/images/SubServices-images/5.8. Child Dental Check-up & Preventive Counselling.png",
         name: {
           en: "Child Dental Check-up & Preventive Counselling",
           bn: "শিশু দন্ত চেকআপ ও প্রতিরোধমূলক কাউন্সেলিং",
@@ -907,6 +953,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "pediatric-trauma",
         number: 9,
+        imageUrl: "/images/SubServices-images/5.9. Dental Trauma Management.png",
         name: {
           en: "Dental Trauma Management (Kids)",
           bn: "শিশুর দাঁতে আঘাতজনিত জরুরি চিকিৎসা",
@@ -940,10 +987,12 @@ export const DEPARTMENTS: Department[] = [
     iconName: "Activity",
     leadDoctorId: "dr-sanwar",
     imageUrl: "/images/services-images-for-7-services/Periodontics.jpeg",
+    coverBannerUrl: "/images/Service-page-banner-cover/06. Periodontics Cover banner.png",
     subServices: [
       {
         id: "scaling-polishing",
         number: 1,
+        imageUrl: "/images/SubServices-images/6. 1. Scaling & Polishing (Cleaning).jpeg",
         name: {
           en: "Scaling & Polishing (Cleaning)",
           bn: "স্কেলিং ও পলিশিং (দাঁতের পেশাদার ক্লিনিং)",
@@ -964,6 +1013,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "deep-cleaning",
         number: 2,
+        imageUrl: "/images/SubServices-images/6.2. Deep Cleaning _ Root Planing.png",
         name: {
           en: "Deep Cleaning / Root Planing",
           bn: "ডিপ ক্লিনিং / রুট প্ল্যানিং",
@@ -984,6 +1034,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "periodontitis-treatment",
         number: 3,
+        imageUrl: "/images/SubServices-images/6. 3. Gum Disease.png",
         name: {
           en: "Gum Disease (Periodontitis) Treatment",
           bn: "উন্নত মাড়ির রোগ (পেরিওডন্টাইটিস) চিকিৎসা",
@@ -1004,6 +1055,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "gum-contouring",
         number: 4,
+        imageUrl: "/images/SubServices-images/6. 4. Gummy Smile Correction.png",
         name: {
           en: "Gum Contouring / Gummy Smile Correction",
           bn: "গাম কনট্যুরিং / গামি স্মাইল সংশোধন",
@@ -1024,6 +1076,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "flap-surgery",
         number: 5,
+        imageUrl: "/images/SubServices-images/6. 5. Flap Surgery.png",
         name: {
           en: "Flap Surgery",
           bn: "ফ্ল্যাপ সার্জারি",
@@ -1044,6 +1097,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "gum-grafting",
         number: 6,
+        imageUrl: "/images/SubServices-images/6. 6. Gum Grafting.png",
         name: {
           en: "Gum Grafting",
           bn: "গাম গ্রাফটিং (মাড়ি প্রতিস্থাপন)",
@@ -1064,6 +1118,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "crown-lengthening",
         number: 7,
+        imageUrl: "/images/SubServices-images/6. 7. Crown Lengthening.png",
         name: {
           en: "Crown Lengthening",
           bn: "ক্রাউন লেন্থেনিং (দাঁতের দৃশ্যমান অংশ বাড়ানো)",
@@ -1084,6 +1139,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "halitosis-management",
         number: 8,
+        imageUrl: "/images/SubServices-images/6. 8. Bad Breath (Halitosis) Management.png",
         name: {
           en: "Bad Breath (Halitosis) Management",
           bn: "মুখের দুর্গন্ধ (হ্যালিটোসিস) চিকিৎসা",
@@ -1104,6 +1160,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "mobile-teeth-splinting",
         number: 9,
+        imageUrl: "/images/SubServices-images/6. 9. Management of Mobile Teeth by Splinting.png",
         name: {
           en: "Management of Mobile Teeth by Splinting",
           bn: "স্প্লিন্টিং দ্বারা নড়বড়ে দাঁতের চিকিৎসা",
@@ -1137,10 +1194,12 @@ export const DEPARTMENTS: Department[] = [
     iconName: "Microscope",
     leadDoctorId: "dr-rifat",
     imageUrl: "/images/services-images-for-7-services/ORAL Medicine.jpeg",
+    coverBannerUrl: "/images/Service-page-banner-cover/07. Oral Medicine & Diagnosis Cover Banner.png",
     subServices: [
       {
         id: "oral-cancer-screening-diagnosis",
         number: 1,
+        imageUrl: "/images/SubServices-images/7. 1. Oral Cancer Screening & Diagnosis.png",
         name: {
           en: "Oral Cancer Screening & Diagnosis",
           bn: "ওরাল ক্যান্সার স্ক্রিনিং ও ডায়াগনোসিস",
@@ -1161,6 +1220,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "precancerous-lesion-management",
         number: 2,
+        imageUrl: "/images/SubServices-images/7. 2. Precancerous Lesion Management (Leukoplakia, Erythroplakia).png",
         name: {
           en: "Precancerous Lesion Management (Leukoplakia, Erythroplakia)",
           bn: "প্রিক্যান্সারাস ক্ষত চিকিৎসা (লিউoplাকিয়া ও এরিথ্রোপ্লাকিয়া)",
@@ -1181,6 +1241,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "osmf-management",
         number: 3,
+        imageUrl: "/images/SubServices-images/7. 3. Oral Submucous Fibrosis (OSMF) Management.png",
         name: {
           en: "Oral Submucous Fibrosis (OSMF) Management",
           bn: "ওরাল সাবমিউকাস ফাইব্রোসিস (ওএসএমএফ) চিকিৎসা",
@@ -1201,6 +1262,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "recurrent-oral-ulcers",
         number: 4,
+        imageUrl: "/images/SubServices-images/7. 4. Recurrent Oral Ulcer _ Aphthous Ulcer Management.png",
         name: {
           en: "Recurrent Oral Ulcer / Aphthous Ulcer Management",
           bn: "বারবার হওয়া মুখের ঘা বা অ্যাপথাস আলসার চিকিৎসা",
@@ -1221,6 +1283,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "oral-lichen-planus",
         number: 5,
+        imageUrl: "/images/SubServices-images/7. 5. Oral Lichen Planus & Mucosal Lesion Management.png",
         name: {
           en: "Oral Lichen Planus & Mucosal Lesion Management",
           bn: "ওরাল লাইকেন প্ল্যানাস ও মিউকোসাল ক্ষত চিকিৎসা",
@@ -1241,6 +1304,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "burning-mouth-syndrome",
         number: 6,
+        imageUrl: "/images/SubServices-images/7. 6. Burning Mouth Syndrome Management.png",
         name: {
           en: "Burning Mouth Syndrome Management",
           bn: "বার্নিং মাউথ সিন্ড্রোম (মুখে তীব্র জ্বালাপোড়া) চিকিৎসা",
@@ -1261,6 +1325,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "oral-biopsy-consultation",
         number: 7,
+        imageUrl: "/images/SubServices-images/7.7. Oral Biopsy & Diagnostic Consultation.png",
         name: {
           en: "Oral Biopsy & Diagnostic Consultation",
           bn: "ওরাল বায়োপসি ও ডায়াগনস্টিক কনসালটেশন",
@@ -1281,6 +1346,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "oral-manifestations-systemic",
         number: 8,
+        imageUrl: "/images/SubServices-images/7.8. Oral Manifestations of Systemic Disease Management.png",
         name: {
           en: "Oral Manifestations of Systemic Disease Management",
           bn: "শারীরিক জটিল রোগজনিত মুখের সমস্যার সমন্বিত চিকিৎসা",
@@ -1301,6 +1367,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "salivary-gland-disorders",
         number: 9,
+        imageUrl: "/images/SubServices-images/7.9. Salivary Gland Disorder.png",
         name: {
           en: "Salivary Gland Disorder Consultation (Dry Mouth / Xerostomia)",
           bn: "লালাগ্রন্থির সমস্যা ও মুখ শুকিয়ে যাওয়া (জেরোস্টোমিয়া) চিকিৎসা",
@@ -1321,6 +1388,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "complex-oral-diagnosis",
         number: 10,
+        imageUrl: "/images/SubServices-images/7.10. Second Opinion _ Complex Oral Diagnosis Consultation.png",
         name: {
           en: "Second Opinion / Complex Oral Diagnosis Consultation",
           bn: "জটিল ওরাল রোগের দ্বিতীয় মতামত (সেকেন্ড ওপিনিয়ন) ও পরামর্শ",
@@ -1354,10 +1422,12 @@ export const DEPARTMENTS: Department[] = [
     iconName: "FileCheck",
     leadDoctorId: "dr-diean",
     imageUrl: "/images/services-images-for-7-services/Consultation.jpeg",
+    coverBannerUrl: "/images/Service-page-banner-cover/08. General Consultation & Diagnostics Cover banner.png",
     subServices: [
       {
         id: "general-checkup",
         number: 1,
+        imageUrl: "/images/SubServices-images/8.1 General Dental Check-up & Consultation.jpeg",
         name: {
           en: "General Dental Check-up & Consultation",
           bn: "জেনারেল ডেন্টাল চেকআপ ও কনসালটেশন",
@@ -1378,6 +1448,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "digital-xray-opg",
         number: 2,
+        imageUrl: "/images/SubServices-images/8. 2, Digital X-Ray.png",
         name: {
           en: "Digital X-Ray / OPG (Panoramic Radiography)",
           bn: "ডিজিটাল এক্স-রে ও ওপিজি (প্যানোরামিক এক্স-রে)",
@@ -1398,6 +1469,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "intraoral-scanning",
         number: 3,
+        imageUrl: "/images/SubServices-images/8. 3. Intraoral Scanning (Digital Impression).png",
         name: {
           en: "Intraoral Scanning (Digital Impression)",
           bn: "ইন্ট্রাওরাল স্ক্যানিং (ডিজিটাল ইমপ্রেশন)",
@@ -1418,6 +1490,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "oral-cancer-screening",
         number: 4,
+        imageUrl: "/images/SubServices-images/8. 4. Oral Cancer Screening.png",
         name: {
           en: "Oral Cancer Screening",
           bn: "ওরাল ক্যান্সার স্ক্রিনিং (প্রাথমিক পরীক্ষা)",
@@ -1438,6 +1511,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "emergency-care",
         number: 5,
+        imageUrl: "/images/SubServices-images/8. 5. Emergency Dental Care.png",
         name: {
           en: "Emergency Dental Care",
           bn: "জরুরি ডেন্টাল কেয়ার (ইমার্জেন্সি সেবা)",

@@ -37,6 +37,8 @@ export async function GET() {
       { dir: path.join(process.cwd(), "public", "images", "uploads"), prefix: "/images/uploads" },
       { dir: path.join(process.cwd(), "public", "images", "departments"), prefix: "/images/departments" },
       { dir: path.join(process.cwd(), "public", "images", "services-images-for-7-services"), prefix: "/images/services-images-for-7-services" },
+      { dir: path.join(process.cwd(), "public", "images", "Service-page-banner-cover"), prefix: "/images/Service-page-banner-cover" },
+      { dir: path.join(process.cwd(), "public", "images", "SubServices-images"), prefix: "/images/SubServices-images" },
       { dir: path.join(process.cwd(), "public", "images", "doctors"), prefix: "/images/doctors" },
       { dir: path.join(process.cwd(), "public", "images", "logos"), prefix: "/images/logos" },
     ];

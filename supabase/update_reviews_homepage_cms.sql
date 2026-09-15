@@ -470,13 +470,14 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- 4. CLINIC SETTINGS TABLE (ADD REVIEW URL & SOCIAL LINKS)
 -- ------------------------------------------------------------------------------
+ALTER TABLE public.clinic_settings ADD COLUMN IF NOT EXISTS google_map_url TEXT DEFAULT 'https://maps.app.goo.gl/aztfz8BxL5vug12L7';
 ALTER TABLE public.clinic_settings ADD COLUMN IF NOT EXISTS google_review_url TEXT DEFAULT 'https://g.page/r/kgh-dental-review';
 ALTER TABLE public.clinic_settings ADD COLUMN IF NOT EXISTS social_links JSONB DEFAULT '{"facebook": "https://facebook.com/kghdental", "whatsapp": "https://wa.me/8801700000000"}'::jsonb;
 
 -- Ensure row 1 exists or update it
 INSERT INTO public.clinic_settings (
     id, phone_numbers, emergency_phone, working_hours, address_en, address_bn,
-    is_address_placeholder, google_review_url, social_links
+    is_address_placeholder, google_map_url, google_review_url, social_links
 )
 VALUES (
     1,
@@ -492,13 +493,18 @@ VALUES (
             "hours": {"en": "5:00 PM – 9:30 PM", "bn": "বিকাল ৫:০০ – রাত ৯:৩০"}
         }
     ]'::jsonb,
-    '[Address to be updated — Central Dhaka Location, Dhaka, Bangladesh]',
-    '[ঠিকানা শীঘ্রই আপডেট করা হবে — সেন্ট্রাল ঢাকা লোকেশন, ঢাকা, বাংলাদেশ]',
-    true,
+    'Level 4, Chandiwala Mansion, House 32, Road 11, Block G, Banani, Dhaka-1213, Bangladesh',
+    'লেভেল ৪, চান্দীওয়ালা ম্যানশন, বাড়ি ৩২, রোড ১১, ব্লক জি, বনানী, ঢাকা ১২১৩, বাংলাদেশ',
+    false,
+    'https://maps.app.goo.gl/aztfz8BxL5vug12L7',
     'https://g.page/r/kgh-dental-review',
     '{"facebook": "https://facebook.com/kghdental", "whatsapp": "https://wa.me/8801700000000"}'::jsonb
 )
 ON CONFLICT (id) DO UPDATE SET
+    address_en = EXCLUDED.address_en,
+    address_bn = EXCLUDED.address_bn,
+    is_address_placeholder = EXCLUDED.is_address_placeholder,
+    google_map_url = COALESCE(public.clinic_settings.google_map_url, EXCLUDED.google_map_url),
     google_review_url = COALESCE(public.clinic_settings.google_review_url, EXCLUDED.google_review_url),
     social_links = COALESCE(public.clinic_settings.social_links, EXCLUDED.social_links);
 

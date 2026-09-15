@@ -80,7 +80,14 @@ export function Footer() {
             <div className="space-y-2 pt-2 text-xs text-zinc-200">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
-                <span className="text-zinc-300">{t(CLINIC_SETTINGS.address)}</span>
+                <a
+                  href={CLINIC_SETTINGS.googleMapUrl || "https://maps.app.goo.gl/aztfz8BxL5vug12L7"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-zinc-300 hover:text-white transition-colors"
+                >
+                  {t(CLINIC_SETTINGS.address)}
+                </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-zinc-400 shrink-0" />

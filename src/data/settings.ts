@@ -10,10 +10,11 @@ export const CLINIC_SETTINGS: ClinicSettings = {
   emergencyPhone: "+880 1700-000000",
   email: "care@kghdental.com",
   address: {
-    en: "[Address to be updated — Central Dhaka Location, Dhaka, Bangladesh]",
-    bn: "[ঠিকানা শীঘ্রই আপডেট করা হবে — সেন্ট্রাল ঢাকা লোকেশন, ঢাকা, বাংলাদেশ]",
+    en: "Level 4, Chandiwala Mansion, House 32, Road 11, Block G, Banani, Dhaka-1213, Bangladesh",
+    bn: "লেভেল ৪, চান্দীওয়ালা ম্যানশন, বাড়ি ৩২, রোড ১১, ব্লক জি, বনানী, ঢাকা ১২১৩, বাংলাদেশ",
   },
-  isAddressPlaceholder: true,
+  isAddressPlaceholder: false,
+  googleMapUrl: "https://maps.app.goo.gl/aztfz8BxL5vug12L7",
   workingHours: [
     {
       days: {

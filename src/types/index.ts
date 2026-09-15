@@ -13,6 +13,7 @@ export interface SubService {
   when: BilingualText;
   benefit: BilingualText;
   imagePlaceholder?: string;
+  imageUrl?: string;
 }
 
 export interface Department {
@@ -23,6 +24,7 @@ export interface Department {
   iconName: string;
   leadDoctorId?: string;
   imageUrl: string;
+  coverBannerUrl?: string;
   subServices: SubService[];
 }
 
@@ -103,6 +105,7 @@ export interface ClinicSettings {
   email: string;
   address: BilingualText;
   isAddressPlaceholder: boolean;
+  googleMapUrl?: string;
   workingHours: {
     days: BilingualText;
     hours: BilingualText;

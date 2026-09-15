@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -27,45 +27,85 @@ const LOCAL_DOCTOR_IMAGES: Record<string, string> = {
   "dr-rifat": "/images/doctors/Dr Rifat Rahman.png",
 };
 
+// Global image cache to keep pre-decoded Image objects alive in memory across scroll and route navigation
+const globalImageCache: Record<string, HTMLImageElement> = {};
+
+function preloadDoctorImages() {
+  if (typeof window === "undefined") return;
+  Object.entries(LOCAL_DOCTOR_IMAGES).forEach(([id, src]) => {
+    if (!globalImageCache[id]) {
+      const img = new window.Image();
+      img.src = src;
+      globalImageCache[id] = img;
+    }
+  });
+}
+
+// Immediately initiate preload when module loads in client
+if (typeof window !== "undefined") {
+  preloadDoctorImages();
+}
+
 export function DoctorPreview() {
   const { t, isBn } = useLanguage();
   const [doctorsList, setDoctorsList] = useState<Doctor[]>(DOCTORS);
+  const [isInView, setIsInView] = useState<boolean>(true);
 
-  // Preload all doctor images immediately in the browser cache so they appear with 0ms delay
+  // Preload all images on component mount as well
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      Object.values(LOCAL_DOCTOR_IMAGES).forEach((src) => {
-        const img = new window.Image();
-        img.src = encodeURI(src);
-      });
-    }
+    preloadDoctorImages();
   }, []);
 
-  // Repeat array 5 times to form an infinite looping circular track
-  const REPEAT_COUNT = 5;
-  const extendedDoctors = Array.from({ length: REPEAT_COUNT }, () => doctorsList).flat();
+  // Repeat array 3 times to form a lightweight, perfectly seamless infinite looping circular track
+  const REPEAT_COUNT = 3;
+  const extendedDoctors = useMemo(() => {
+    return Array.from({ length: REPEAT_COUNT }, () => doctorsList).flat();
+  }, [doctorsList]);
   const baseCount = doctorsList.length;
 
-  // Start with middle set (index = baseCount * 2) so we can slide left/right freely
-  const [activeTrackIndex, setActiveTrackIndex] = useState<number>(baseCount * 2);
+  // Start with middle set (index = baseCount) so we can slide left/right freely
+  const [activeTrackIndex, setActiveTrackIndex] = useState<number>(baseCount);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(true);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragOffset, setDragOffset] = useState<number>(0);
 
+  const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(1200);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Sync with Supabase only if data actually changes
   useEffect(() => {
     fetchLiveDoctors().then((docs) => {
       if (docs && docs.length > 0) {
-        setDoctorsList(docs);
+        // Compare IDs to avoid redundant re-renders
+        const sameDocs =
+          docs.length === DOCTORS.length &&
+          docs.every((d, i) => d.id === DOCTORS[i]?.id);
+        if (!sameDocs) {
+          setDoctorsList(docs);
+        }
       }
     });
   }, []);
 
-  // Measure container width
+  // IntersectionObserver: Pause auto-play when section is not visible in viewport (prevents image purge & background thrashing)
+  useEffect(() => {
+    if (!sectionRef.current || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Measure container width with resize observer for responsive accuracy
   useEffect(() => {
     if (!containerRef.current) return;
     const updateWidth = () => {
@@ -79,7 +119,6 @@ export function DoctorPreview() {
   }, []);
 
   // Determine card width based on screen width
-  // Full-bleed responsive scaling: 7 cards on 3xl+, 6 on 2xl, 5 on xl, 4 on lg, etc.
   const is3xl = containerWidth >= 2100;
   const is2xl = containerWidth >= 1650 && containerWidth < 2100;
   const isXl = containerWidth >= 1250 && containerWidth < 1650;
@@ -95,8 +134,8 @@ export function DoctorPreview() {
   // Seamless infinite track reset when reaching boundaries
   const handleTransitionEnd = () => {
     if (baseCount === 0) return;
-    // If we've drifted into the 4th set, silently snap back to 2nd set
-    if (activeTrackIndex >= baseCount * 3) {
+    // If we've drifted into the 3rd set, silently snap back to 2nd (middle) set
+    if (activeTrackIndex >= baseCount * 2) {
       setIsTransitioning(false);
       setActiveTrackIndex((prev) => prev - baseCount);
     } else if (activeTrackIndex < baseCount) {
@@ -115,9 +154,12 @@ export function DoctorPreview() {
     setActiveTrackIndex((prev) => prev - 1);
   }, []);
 
-  // Auto-slide round-robin right-to-left every 4.5s
+  // Auto-slide round-robin right-to-left every 4.5s (ONLY when in viewport and not paused)
   useEffect(() => {
-    if (isPaused || isDragging || baseCount === 0) return;
+    if (isPaused || isDragging || !isInView || baseCount === 0) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
+    }
 
     timerRef.current = setInterval(() => {
       handleNext();
@@ -126,7 +168,7 @@ export function DoctorPreview() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isPaused, isDragging, baseCount, handleNext]);
+  }, [isPaused, isDragging, isInView, baseCount, handleNext]);
 
   // Touch & Mouse Drag handlers for smooth tactile swipe
   const isDraggingRef = useRef<boolean>(false);
@@ -136,7 +178,6 @@ export function DoctorPreview() {
   const pointerIdRef = useRef<number | null>(null);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    // Only primary button (left click) or touch
     if (e.pointerType === "mouse" && e.button !== 0) return;
 
     isDraggingRef.current = true;
@@ -154,7 +195,7 @@ export function DoctorPreview() {
     const deltaX = currentX - dragStartXRef.current;
     const deltaY = currentY - dragStartYRef.current;
 
-    // Check if user is scrolling vertically on touch screen
+    // Vertical scroll tolerance on touch screens
     if (!hasMovedRef.current && Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 8) {
       isDraggingRef.current = false;
       setIsDragging(false);
@@ -210,16 +251,12 @@ export function DoctorPreview() {
     }
 
     if (didMove) {
-      // Responsive swipe trigger threshold (35px)
       if (currentOffset < -35) {
-        // Swiped left -> advance next
         handleNext();
       } else if (currentOffset > 35) {
-        // Swiped right -> advance prev
         handlePrev();
       }
 
-      // Temporarily retain hasMoved flag so click events are ignored right after a drag
       setTimeout(() => {
         hasMovedRef.current = false;
       }, 100);
@@ -233,11 +270,12 @@ export function DoctorPreview() {
   const baseTranslate = -(activeTrackIndex * (cardWidth + gap)) + centerOffset;
   const currentTranslate = baseTranslate + dragOffset;
 
-  // Active doctor normalized index (0 to 4)
+  // Active doctor normalized index (0 to baseCount - 1)
   const currentDoctorIndex = baseCount > 0 ? activeTrackIndex % baseCount : 0;
 
   return (
     <section
+      ref={sectionRef}
       id="specialist-team"
       className="py-12 sm:py-16 lg:py-20 bg-[#E9E8F0] text-zinc-900 border-b border-zinc-300/80 overflow-hidden select-none relative"
     >
@@ -254,9 +292,7 @@ export function DoctorPreview() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-zinc-300/80 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-800 mb-3 shadow-2xs backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>
-                {isBn
-                  ? "অভিজ্ঞ চিকিৎসকগণ"
-                  : "Specialist Doctors"}
+                {isBn ? "অভিজ্ঞ চিকিৎসকগণ" : "Specialist Doctors"}
               </span>
             </div>
 
@@ -340,28 +376,39 @@ export function DoctorPreview() {
           <div
             className="flex items-start"
             style={{
-              transform: `translateX(${currentTranslate}px)`,
+              transform: `translate3d(${currentTranslate}px, 0, 0)`,
+              willChange: isTransitioning || isDragging ? "transform" : "auto",
               transition: isTransitioning
-                ? "transform 600ms cubic-bezier(0.25, 1, 0.5, 1)"
+                ? "transform 550ms cubic-bezier(0.25, 1, 0.5, 1)"
                 : "none",
               gap: `${gap}px`,
               touchAction: "pan-y",
+              backfaceVisibility: "hidden",
             }}
             onTransitionEnd={handleTransitionEnd}
           >
             {extendedDoctors.map((doc, idx) => {
               const isActive = idx === activeTrackIndex;
+              const photoSrc = LOCAL_DOCTOR_IMAGES[doc.id] || doc.photoUrl || "/images/doctors/dr-diean.jpg";
 
-              if (isActive) {
-                // ACTIVE / EXPANDED CARD (Elevated White Showcase Card)
-                return (
-                  <div
-                    key={`doc-${idx}-${doc.id}`}
-                    style={{ width: `${cardWidth}px` }}
-                    className="shrink-0 bg-white rounded-2xl border border-zinc-200/90 shadow-2xl ring-4 ring-black/5 overflow-hidden transition-all duration-300 z-20 flex flex-col select-none"
-                  >
-                    {/* Top Eyebrow Bar: "Specialist" (left) | Schedule (right) */}
-                    <div className="px-3.5 py-2.5 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between text-[11px] font-bold text-zinc-800">
+              return (
+                <div
+                  key={`doc-${idx}-${doc.id}`}
+                  style={{ width: `${cardWidth}px` }}
+                  onClick={() => {
+                    if (isActive || hasMovedRef.current) return;
+                    setIsTransitioning(true);
+                    setActiveTrackIndex(idx);
+                  }}
+                  className={`shrink-0 flex flex-col select-none transition-all duration-300 ${
+                    isActive
+                      ? "bg-white rounded-2xl border border-zinc-200/90 shadow-2xl ring-4 ring-black/5 overflow-hidden z-20"
+                      : "group cursor-pointer opacity-90 hover:opacity-100"
+                  }`}
+                >
+                  {/* Top Eyebrow Bar (Only shown on active card) */}
+                  {isActive ? (
+                    <div className="px-3.5 py-2.5 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between text-[11px] font-bold text-zinc-800 animate-in fade-in duration-200">
                       <span className="uppercase tracking-wider flex items-center gap-1 text-zinc-900">
                         <UserCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span className="truncate">{isBn ? "বিশেষজ্ঞ" : "Specialist"}</span>
@@ -373,49 +420,60 @@ export function DoctorPreview() {
                         </span>
                       </span>
                     </div>
+                  ) : null}
 
-                    {/* Doctor Photo - Natural Aspect Ratio (4/3), NOT Stretched! */}
-                    <div className="relative w-full aspect-[4/3] bg-zinc-100 overflow-hidden border-b border-zinc-100">
-                      <img
-                        src={doc.photoUrl || LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg"}
-                        alt={t(doc.name)}
-                        draggable={false}
-                        loading="eager"
-                        decoding="async"
-                        onError={(e) => {
-                          const fallback = LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg";
-                          if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
-                            e.currentTarget.src = fallback;
-                          }
-                        }}
-                        className="w-full h-full object-cover object-top select-none pointer-events-none"
-                      />
-                      {doc.designation && (
-                        <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-bold text-zinc-900 shadow-xs border border-white/60">
-                          {t(doc.designation)}
+                  {/* Doctor Photo - Persistent 4/3 Aspect Ratio Container that NEVER unmounts image */}
+                  <div
+                    className={`relative w-full aspect-[4/3] bg-zinc-100 overflow-hidden ${
+                      isActive
+                        ? "border-b border-zinc-100"
+                        : "rounded-2xl border border-zinc-300/80 group-hover:border-zinc-500 group-hover:shadow-xl shadow-2xs transition-all duration-300"
+                    }`}
+                  >
+                    <img
+                      src={photoSrc}
+                      alt={t(doc.name)}
+                      draggable={false}
+                      loading="eager"
+                      decoding="sync"
+                      className={`w-full h-full object-cover object-top select-none pointer-events-none transition-transform duration-400 ${
+                        !isActive ? "group-hover:scale-104 opacity-95 group-hover:opacity-100" : ""
+                      }`}
+                    />
+
+                    {/* Badge Overlay */}
+                    {isActive && doc.designation ? (
+                      <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-bold text-zinc-900 shadow-xs border border-white/60">
+                        {t(doc.designation)}
+                      </div>
+                    ) : null}
+
+                    {!isActive ? (
+                      <>
+                        <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors pointer-events-none" />
+                        <div className="absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-900/80 backdrop-blur-xs text-white text-[10px] font-bold flex items-center justify-center border border-white/20 shadow-xs pointer-events-none">
+                          {(idx % baseCount) + 1}
                         </div>
-                      )}
-                    </div>
+                      </>
+                    ) : null}
+                  </div>
 
-                    {/* Content Flowing Downwards Below the Photo */}
-                    <div className="p-4 flex-1 flex flex-col justify-between">
+                  {/* Bottom Content Area */}
+                  {isActive ? (
+                    <div className="p-4 flex-1 flex flex-col justify-between animate-in fade-in duration-200">
                       <div>
-                        {/* Specialty Heading */}
                         <h3 className="text-sm sm:text-base font-extrabold text-zinc-950 tracking-tight leading-snug line-clamp-2">
                           {t(doc.specialty)}
                         </h3>
 
-                        {/* Doctor Name */}
                         <h4 className="text-xs sm:text-sm font-bold text-zinc-800 mt-1 mb-1">
                           {t(doc.name)}
                         </h4>
 
-                        {/* Degrees */}
                         <p className="text-[11px] font-semibold text-zinc-600 mb-2 line-clamp-1">
                           {t(doc.degrees)}
                         </p>
 
-                        {/* Bio Paragraph */}
                         <p className="text-[11px] text-zinc-600 leading-relaxed line-clamp-3 mb-4 font-normal">
                           {t(doc.bio)}
                         </p>
@@ -446,55 +504,16 @@ export function DoctorPreview() {
                         </Link>
                       </div>
                     </div>
-                  </div>
-                );
-              }
-
-              // INACTIVE CARDS (Light Card Frames with Crisp Dark Typography)
-              return (
-                <div
-                  key={`doc-${idx}-${doc.id}`}
-                  style={{ width: `${cardWidth}px` }}
-                  onClick={() => {
-                    if (hasMovedRef.current) return;
-                    setIsTransitioning(true);
-                    setActiveTrackIndex(idx);
-                  }}
-                  className="shrink-0 group cursor-pointer transition-all duration-300 flex flex-col select-none"
-                >
-                  {/* Photo with EXACT 4/3 Aspect Ratio */}
-                  <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-white border border-zinc-300/80 group-hover:border-zinc-500 group-hover:shadow-xl transition-all duration-300 shadow-2xs">
-                    <img
-                      src={doc.photoUrl || LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg"}
-                      alt={t(doc.name)}
-                      draggable={false}
-                      loading="eager"
-                      decoding="async"
-                      onError={(e) => {
-                        const fallback = LOCAL_DOCTOR_IMAGES[doc.id] || "/images/doctors/dr-diean.jpg";
-                        if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
-                          e.currentTarget.src = fallback;
-                        }
-                      }}
-                      className="w-full h-full object-cover object-top opacity-90 group-hover:opacity-100 group-hover:scale-104 transition-all duration-400 select-none pointer-events-none"
-                    />
-                    <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
-                    
-                    {/* Small Doctor Number Badge */}
-                    <div className="absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-900/80 backdrop-blur-xs text-white text-[10px] font-bold flex items-center justify-center border border-white/20 shadow-xs">
-                      {(idx % baseCount) + 1}
+                  ) : (
+                    <div className="pt-2.5 px-1">
+                      <p className="text-xs font-bold text-zinc-900 group-hover:text-black transition-colors line-clamp-1">
+                        {t(doc.name)}
+                      </p>
+                      <p className="text-[11px] text-zinc-600 font-medium line-clamp-1 mt-0.5">
+                        {t(doc.specialty)}
+                      </p>
                     </div>
-                  </div>
-
-                  {/* Compact Bottom Label Under Image in High Contrast Dark Typography */}
-                  <div className="pt-2.5 px-1">
-                    <p className="text-xs font-bold text-zinc-900 group-hover:text-black transition-colors line-clamp-1">
-                      {t(doc.name)}
-                    </p>
-                    <p className="text-[11px] text-zinc-600 font-medium line-clamp-1 mt-0.5">
-                      {t(doc.specialty)}
-                    </p>
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -511,7 +530,6 @@ export function DoctorPreview() {
                 type="button"
                 onClick={() => {
                   setIsTransitioning(true);
-                  // Find closest matching index in track
                   const diff = i - currentDoctorIndex;
                   setActiveTrackIndex((prev) => prev + diff);
                 }}

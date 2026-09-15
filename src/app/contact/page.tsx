@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   AlertCircle,
   MessageSquare,
+  ExternalLink,
 } from "lucide-react";
 import { CLINIC_SETTINGS } from "@/data/settings";
 import { useLanguage } from "@/context/LanguageContext";
@@ -132,18 +133,24 @@ export default function ContactPage() {
                       {isBn ? "চেম্বার অবস্থান" : "Chamber Address"}
                     </span>
                     <h3 className="text-base font-bold text-zinc-950">
-                      Dhaka, Bangladesh
+                      {isBn ? "বনানী, ঢাকা, বাংলাদেশ" : "Banani, Dhaka, Bangladesh"}
                     </h3>
                   </div>
                 </div>
-                <p className="text-xs text-zinc-600 leading-relaxed">
+                <p className="text-xs text-zinc-700 leading-relaxed font-medium">
                   {t(CLINIC_SETTINGS.address)}
                 </p>
-                {CLINIC_SETTINGS.isAddressPlaceholder && (
-                  <span className="inline-block text-[11px] font-semibold text-zinc-600 bg-zinc-200/80 px-2.5 py-1 rounded-md">
-                    {isBn ? "[ঠিকানা ও গুগল ম্যাপ শীঘ্রই চূড়ান্ত করা হবে]" : "[Physical address slot reserved for client update]"}
-                  </span>
-                )}
+                <div className="pt-1">
+                  <a
+                    href={CLINIC_SETTINGS.googleMapUrl || "https://maps.app.goo.gl/aztfz8BxL5vug12L7"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>{isBn ? "গুগল ম্যাপে লোকেশন ও ডিরেকশন দেখুন" : "View Map & Directions on Google Maps"}</span>
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -257,21 +264,37 @@ export default function ContactPage() {
                   </form>
                 )}
 
-                {/* Google Maps Slot Notice */}
+                {/* Google Maps Location Card */}
                 <div className="mt-8 pt-6 border-t border-zinc-200">
-                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 block mb-2">
-                    {isBn ? "গুগল ম্যাপ লোকেশন" : "Google Maps Embed Slot"}
-                  </span>
-                  <div className="h-44 rounded-2xl bg-zinc-100 border border-zinc-300 flex flex-col items-center justify-center p-4 text-center">
-                    <MapPin className="w-8 h-8 text-zinc-400 mb-1" />
-                    <span className="text-xs font-bold text-zinc-800">
-                      {isBn ? "ইন্টারেক্টিভ গুগল ম্যাপ স্লট" : "Interactive Google Map Slot"}
-                    </span>
-                    <span className="text-[11px] text-zinc-500 mt-1">
-                      {isBn
-                        ? "ক্লায়েন্ট কর্তৃক স্থায়ী ঠিকানা প্রদানের সাথে সাথে ম্যাপ এমবেড কোড সক্রিয় হবে।"
-                        : "Ready for live Google Maps API iframe once final physical chamber coordinates are provided."}
-                    </span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 block">
+                        {isBn ? "গুগল ম্যাপ লোকেশন" : "Google Maps Location"}
+                      </span>
+                      <h4 className="text-sm font-bold text-zinc-950">
+                        {isBn ? "চান্দীওয়ালা ম্যানশন (লেভেল ৪), বনানী ১১" : "Chandiwala Mansion (Level 4), Banani 11"}
+                      </h4>
+                    </div>
+                    <a
+                      href={CLINIC_SETTINGS.googleMapUrl || "https://maps.app.goo.gl/aztfz8BxL5vug12L7"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold rounded-xl transition-all shadow-xs self-start sm:self-auto"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>{isBn ? "গুগল ম্যাপে খুলুন" : "Open in Google Maps"}</span>
+                    </a>
+                  </div>
+
+                  <div className="w-full h-64 sm:h-72 rounded-2xl overflow-hidden border border-zinc-300 shadow-xs relative bg-zinc-100">
+                    <iframe
+                      title="KGH Dental Location - Chandiwala Mansion, Level 4, Banani, Dhaka"
+                      src="https://maps.google.com/maps?q=Chandiwala+Mansion,+House+32,+Road+11,+Block+G,+Banani,+Dhaka&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                      className="w-full h-full border-0"
+                      loading="lazy"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
                   </div>
                 </div>
               </div>

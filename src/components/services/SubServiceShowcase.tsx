@@ -18,80 +18,89 @@ import { SubService, Department } from "@/types";
 import { useLanguage } from "@/context/LanguageContext";
 import { DepartmentIcon } from "@/components/shared/DepartmentIcon";
 
-// Curated image mappings for sub-services to provide distinct, rich photography
+// Curated image mappings for sub-services from public/images/SubServices-images
 const SUB_SERVICE_IMAGE_MAP: Record<string, string> = {
-  // Orthodontics
-  "metal-braces": "/images/services-images-for-7-services/Orthodontics.jpeg",
-  "clear-aligners": "/images/departments/orthodontics.jpg",
-  "smile-design": "/images/departments/general-consultation.jpg",
-  "retainers": "/images/departments/consultation-cta.jpg",
-  "space-maintainers": "/images/departments/pediatric.jpg",
-  "orthognathic": "/images/departments/oral-surgery.jpg",
-  "ceramic-braces": "/images/services-images-for-7-services/Orthodontics.jpeg",
+  // 1. Orthodontics
+  "metal-braces": "/images/SubServices-images/1. A. Metal Traditional Braces.png",
+  "clear-aligners": "/images/SubServices-images/1. B. Clear Aligners.png",
+  "smile-design": "/images/SubServices-images/1. c. Smile Design.png",
+  "retainers": "/images/SubServices-images/1. d. Retainers.png",
+  "space-maintainers": "/images/SubServices-images/1. e. Space Maintainers.png",
+  "myofunctional-appliances": "/images/SubServices-images/1. f. Habit Correction Appliances.png",
+  "interceptive-orthodontics": "/images/SubServices-images/1. g. KIDS orthodontics.png",
 
-  // Oral & Maxillofacial Surgery
-  "wisdom-tooth": "/images/services-images-for-7-services/Oral & Maxillofacial Surgery.png",
-  "dental-implants": "/images/departments/oral-surgery.jpg",
-  "facial-trauma": "/images/departments/consultation-cta.jpg",
-  "tmj-disorder": "/images/departments/orthodontics.jpg",
-  "cyst-removal": "/images/services-images-for-7-services/ORAL Medicine.jpeg",
-  "bone-grafting": "/images/services-images-for-7-services/Oral & Maxillofacial Surgery.png",
-  "biopsy": "/images/departments/oral-medicine.jpg",
+  // 2. Oral & Maxillofacial Surgery
+  "simple-extraction": "/images/SubServices-images/2.1. Simple Tooth Extraction.png",
+  "wisdom-tooth-surgery": "/images/SubServices-images/2.2. Impacted Wisdom Tooth.png",
+  "dental-implant-surgery": "/images/SubServices-images/2.3. Dental Implant Surgery.png",
+  "facial-trauma": "/images/SubServices-images/2.4. Facial Trauma & Fracture Treatment.png",
+  "tmj-disorder": "/images/SubServices-images/2.5.  TMJ Jaw Joint Disorder Treatment.png",
+  "cyst-tumor-removal": "/images/SubServices-images/2.6. Oral Cyst & Tumor Removal.png",
+  "oral-biopsy": "/images/SubServices-images/2.7. Oral Biopsy.png",
+  "abscess-management": "/images/SubServices-images/2.8. Space Infection Abscess Management.png",
+  "oral-ulcer": "/images/SubServices-images/2.9. Oral Ulcer Management.png",
 
-  // Conservative Dentistry & Endodontics
-  "root-canal": "/images/services-images-for-7-services/Conservative Dentistry & Endodontics.jpeg",
-  "composite-fillings": "/images/departments/endodontics.jpg",
-  "re-rct": "/images/departments/consultation-cta.jpg",
-  "inlay-onlay": "/images/departments/prosthodontics.jpg",
-  "teeth-bleaching": "/images/departments/general-consultation.jpg",
-  "dental-veneer": "/images/departments/orthodontics.jpg",
-  "post-core": "/images/services-images-for-7-services/Conservative Dentistry & Endodontics.jpeg",
+  // 3. Conservative Dentistry & Endodontics
+  "root-canal": "/images/SubServices-images/3. 1. Root Canal Treatment.png",
+  "re-root-canal": "/images/SubServices-images/3. 2. Re-Root Canal Treatment.png",
+  "composite-filling": "/images/SubServices-images/3. 3. Composite (Tooth-Colored) Filling.png",
+  "gic-filling": "/images/SubServices-images/3. 4. GIC (Glass Ionomer) Filling.png",
+  "inlay-onlay": "/images/SubServices-images/3. 5. Inlay_Onlay Restoration.png",
+  "cracked-tooth": "/images/SubServices-images/3. 6. Cracked Tooth Treatment.png",
+  "apicoectomy": "/images/SubServices-images/3. 7. Post & Core Build-Up.png",
+  "post-core": "/images/SubServices-images/3. 8. Post & Core Build-Up.png",
+  "teeth-whitening": "/images/SubServices-images/3. 9. Toothe whitening.png",
 
-  // Prosthodontics
-  "zirconia-crowns": "/images/services-images-for-7-services/Prosthodontics.jpeg",
-  "fixed-bridges": "/images/departments/prosthodontics.jpg",
-  "complete-dentures": "/images/departments/consultation-cta.jpg",
-  "partial-dentures": "/images/departments/endodontics.jpg",
-  "implant-overdentures": "/images/services-images-for-7-services/Oral & Maxillofacial Surgery.png",
-  "porcelain-laminates": "/images/departments/general-consultation.jpg",
-  "mouth-guards": "/images/departments/orthodontics.jpg",
+  // 4. Prosthodontics
+  "dental-crowns": "/images/SubServices-images/4. 1. Dental Crowns.png",
+  "dental-bridges": "/images/SubServices-images/4. 2. Dental Bridges.png",
+  "complete-dentures": "/images/SubServices-images/4. 3. Complete Dentures.png",
+  "partial-dentures": "/images/SubServices-images/4. 4.  Partial Dentures.png",
+  "implant-supported-crown": "/images/SubServices-images/4. 5. Implant-Supported Crown.png",
+  "implant-supported-denture": "/images/SubServices-images/4.6. Implant-Supported Denture.png",
+  "veneers": "/images/SubServices-images/4.7. Dental venners.png",
+  "maxillofacial-prosthesis": "/images/SubServices-images/4.8. Maxillofacial Prosthesis.png",
 
-  // Pediatric Dentistry
-  "kids-rct": "/images/services-images-for-7-services/Pediatric Dentistry.jpeg",
-  "pit-fissure-sealants": "/images/departments/pediatric.jpg",
-  "fluoride-therapy": "/images/departments/general-consultation.jpg",
-  "space-maintainers-kids": "/images/departments/consultation-cta.jpg",
-  "habit-breaking": "/images/departments/orthodontics.jpg",
-  "milk-tooth-extractions": "/images/services-images-for-7-services/Pediatric Dentistry.jpeg",
-  "kids-crowns": "/images/departments/endodontics.jpg",
+  // 5. Pediatric Dentistry
+  "pulpotomy": "/images/SubServices-images/5. 1. Pulpotomy.png",
+  "pulpectomy": "/images/SubServices-images/5. 2. Pulpectomy.png",
+  "pediatric-extraction": "/images/SubServices-images/5. 3. Pediatric Tooth Extraction.png",
+  "pit-fissure-sealants": "/images/SubServices-images/5.4. Pit & Fissure Sealants.png",
+  "kids-space-maintainer": "/images/SubServices-images/5. 5. Space Maintainers.png",
+  "habit-breaking": "/images/SubServices-images/5.6. Habit-Breaking Appliances'.png",
+  "early-caries": "/images/SubServices-images/5.7. Early Caries Management.png",
+  "child-checkup": "/images/SubServices-images/5.8. Child Dental Check-up & Preventive Counselling.png",
+  "pediatric-trauma": "/images/SubServices-images/5.9. Dental Trauma Management.png",
 
-  // Periodontics
-  "scaling-polishing": "/images/services-images-for-7-services/Periodontics.jpeg",
-  "root-planing": "/images/departments/periodontics.jpg",
-  "gummy-smile": "/images/departments/general-consultation.jpg",
-  "mobile-teeth": "/images/departments/consultation-cta.jpg",
-  "bone-regeneration": "/images/services-images-for-7-services/Oral & Maxillofacial Surgery.png",
-  "gingivectomy": "/images/services-images-for-7-services/Periodontics.jpeg",
-  "gum-depigmentation": "/images/departments/orthodontics.jpg",
+  // 6. Periodontics
+  "scaling-polishing": "/images/SubServices-images/6. 1. Scaling & Polishing (Cleaning).jpeg",
+  "deep-cleaning": "/images/SubServices-images/6.2. Deep Cleaning _ Root Planing.png",
+  "periodontitis-treatment": "/images/SubServices-images/6. 3. Gum Disease.png",
+  "gum-contouring": "/images/SubServices-images/6. 4. Gummy Smile Correction.png",
+  "flap-surgery": "/images/SubServices-images/6. 5. Flap Surgery.png",
+  "gum-grafting": "/images/SubServices-images/6. 6. Gum Grafting.png",
+  "crown-lengthening": "/images/SubServices-images/6. 7. Crown Lengthening.png",
+  "halitosis-management": "/images/SubServices-images/6. 8. Bad Breath (Halitosis) Management.png",
+  "mobile-teeth-splinting": "/images/SubServices-images/6. 9. Management of Mobile Teeth by Splinting.png",
 
-  // Oral Medicine & Clinical Diagnosis
-  "oral-cancer-screening-diagnosis": "/images/services-images-for-7-services/ORAL Medicine.jpeg",
-  "precancerous-lesion-management": "/images/departments/oral-medicine.jpg",
-  "osmf-management": "/images/services-images-for-7-services/Oral Medicine & Diagnosis.jpeg",
-  "recurrent-aphthous-ulcer": "/images/departments/consultation-cta.jpg",
-  "oral-lichen-planus": "/images/services-images-for-7-services/ORAL Medicine.jpeg",
-  "burning-mouth-syndrome": "/images/departments/general-consultation.jpg",
-  "oral-biopsy-consultation": "/images/departments/oral-surgery.jpg",
-  "salivary-gland-disorder": "/images/departments/oral-medicine.jpg",
+  // 7. Oral Medicine & Clinical Diagnosis
+  "oral-cancer-screening-diagnosis": "/images/SubServices-images/7. 1. Oral Cancer Screening & Diagnosis.png",
+  "precancerous-lesion-management": "/images/SubServices-images/7. 2. Precancerous Lesion Management (Leukoplakia, Erythroplakia).png",
+  "osmf-management": "/images/SubServices-images/7. 3. Oral Submucous Fibrosis (OSMF) Management.png",
+  "recurrent-oral-ulcers": "/images/SubServices-images/7. 4. Recurrent Oral Ulcer _ Aphthous Ulcer Management.png",
+  "oral-lichen-planus": "/images/SubServices-images/7. 5. Oral Lichen Planus & Mucosal Lesion Management.png",
+  "burning-mouth-syndrome": "/images/SubServices-images/7. 6. Burning Mouth Syndrome Management.png",
+  "oral-biopsy-consultation": "/images/SubServices-images/7.7. Oral Biopsy & Diagnostic Consultation.png",
+  "oral-manifestations-systemic": "/images/SubServices-images/7.8. Oral Manifestations of Systemic Disease Management.png",
+  "salivary-gland-disorders": "/images/SubServices-images/7.9. Salivary Gland Disorder.png",
+  "complex-oral-diagnosis": "/images/SubServices-images/7.10. Second Opinion _ Complex Oral Diagnosis Consultation.png",
 
-  // General Consultation & Diagnostics
-  "comprehensive-exam": "/images/services-images-for-7-services/Consultation.jpeg",
-  "opg-xray": "/images/departments/general-consultation.jpg",
-  "3d-intraoral-scan": "/images/departments/consultation-cta.jpg",
-  "pain-emergency": "/images/departments/endodontics.jpg",
-  "second-opinion": "/images/services-images-for-7-services/Consultation.jpeg",
-  "preventive-screening": "/images/departments/pediatric.jpg",
-  "oral-hygiene-guide": "/images/services-images-for-7-services/Periodontics.jpeg",
+  // 8. General Consultation & Diagnostics
+  "general-checkup": "/images/SubServices-images/8.1 General Dental Check-up & Consultation.jpeg",
+  "digital-xray-opg": "/images/SubServices-images/8. 2, Digital X-Ray.png",
+  "intraoral-scanning": "/images/SubServices-images/8. 3. Intraoral Scanning (Digital Impression).png",
+  "oral-cancer-screening": "/images/SubServices-images/8. 4. Oral Cancer Screening.png",
+  "emergency-care": "/images/SubServices-images/8. 5. Emergency Dental Care.png",
 };
 
 interface SubServiceShowcaseProps {
@@ -135,7 +144,9 @@ export function SubServiceShowcase({
 
   const getSubImage = (sub: SubService, index: number) => {
     return (
+      sub.imageUrl ||
       SUB_SERVICE_IMAGE_MAP[sub.id] ||
+      sub.imagePlaceholder ||
       department.imageUrl ||
       "/images/services-images-for-7-services/Orthodontics.jpeg"
     );

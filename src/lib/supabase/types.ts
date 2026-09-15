@@ -124,5 +124,6 @@ export interface DbClinicSettings {
   address_en: string;
   address_bn: string;
   is_address_placeholder: boolean;
+  google_map_url?: string;
   updated_at?: string;
 }

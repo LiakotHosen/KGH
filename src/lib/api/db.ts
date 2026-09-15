@@ -76,6 +76,13 @@ export async function saveLiveDoctor(doc: Doctor): Promise<{ success: boolean; e
       specialty_bn: doc.specialty.bn,
       degrees_en: doc.degrees.en,
       degrees_bn: doc.degrees.bn,
+      designation_en: doc.designation?.en || null,
+      designation_bn: doc.designation?.bn || null,
+      institution_en: doc.institution?.en || null,
+      institution_bn: doc.institution?.bn || null,
+      experience_en: doc.experience?.en || null,
+      experience_bn: doc.experience?.bn || null,
+      department_id: doc.departmentId || null,
       schedule: doc.schedule,
       bio_en: doc.bio.en,
       bio_bn: doc.bio.bn,
@@ -131,16 +138,21 @@ export async function fetchLiveDepartments(): Promise<Department[]> {
     }
 
     const liveDepts = deptData.map((d: any) => {
+      const staticDept = DEPARTMENTS.find((dep) => dep.id === d.id);
       const subsForDept = (subData || [])
         .filter((s: any) => s.department_id === d.id)
-        .map((s: any) => ({
-          id: s.id,
-          number: s.number,
-          name: { en: s.name_en, bn: s.name_bn },
-          why: { en: s.why_en, bn: s.why_bn },
-          when: { en: s.when_en, bn: s.when_bn },
-          benefit: { en: s.benefit_en, bn: s.benefit_bn },
-        }));
+        .map((s: any) => {
+          const staticSub = staticDept?.subServices?.find((sub) => sub.id === s.id || sub.number === s.number);
+          return {
+            id: s.id,
+            number: s.number,
+            name: { en: s.name_en, bn: s.name_bn },
+            why: { en: s.why_en, bn: s.why_bn },
+            when: { en: s.when_en, bn: s.when_bn },
+            benefit: { en: s.benefit_en, bn: s.benefit_bn },
+            imageUrl: s.image_url || staticSub?.imageUrl,
+          };
+        });
 
       return {
         id: d.id,
@@ -150,7 +162,8 @@ export async function fetchLiveDepartments(): Promise<Department[]> {
         iconName: d.icon_name,
         leadDoctorId: d.lead_doctor_id,
         imageUrl: d.image_url,
-        subServices: subsForDept.length > 0 ? subsForDept : (DEPARTMENTS.find(dep => dep.id === d.id)?.subServices || []),
+        coverBannerUrl: d.cover_banner_url || staticDept?.coverBannerUrl,
+        subServices: subsForDept.length > 0 ? subsForDept : (staticDept?.subServices || []),
       };
     });
 
@@ -176,6 +189,7 @@ export async function saveLiveDepartment(dept: Department): Promise<{ success: b
       icon_name: dept.iconName,
       lead_doctor_id: dept.leadDoctorId || null,
       image_url: dept.imageUrl,
+      cover_banner_url: dept.coverBannerUrl || null,
     };
 
     const { error } = await supabase.from("departments").upsert(payload, { onConflict: "id" });
@@ -221,6 +235,7 @@ export async function saveLiveSubService(
       when_bn: sub.when.bn,
       benefit_en: sub.benefit.en,
       benefit_bn: sub.benefit.bn,
+      image_url: sub.imageUrl || null,
     };
 
     const { error } = await supabase.from("sub_services").upsert(payload, { onConflict: "id" });
@@ -373,7 +388,8 @@ export async function fetchLiveClinicSettings(): Promise<ClinicSettings> {
         en: data.address_en || cached?.address?.en || CLINIC_SETTINGS.address.en,
         bn: data.address_bn || cached?.address?.bn || CLINIC_SETTINGS.address.bn,
       },
-      isAddressPlaceholder: data.is_address_placeholder ?? cached?.isAddressPlaceholder ?? true,
+      isAddressPlaceholder: data.is_address_placeholder ?? cached?.isAddressPlaceholder ?? false,
+      googleMapUrl: data.google_map_url || cached?.googleMapUrl || CLINIC_SETTINGS.googleMapUrl,
       googleReviewUrl: data.google_review_url || cached?.googleReviewUrl || CLINIC_SETTINGS.googleReviewUrl,
       socialLinks: data.social_links || cached?.socialLinks || CLINIC_SETTINGS.socialLinks,
     };
@@ -413,6 +429,7 @@ export async function saveLiveClinicSettings(settings: ClinicSettings): Promise<
       address_en: settings.address.en,
       address_bn: settings.address.bn,
       is_address_placeholder: settings.isAddressPlaceholder,
+      google_map_url: settings.googleMapUrl,
       google_review_url: settings.googleReviewUrl,
       social_links: settings.socialLinks,
       updated_at: new Date().toISOString(),

@@ -20,9 +20,9 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
   return (
     <div
       onMouseLeave={onClose}
-      className="absolute top-full left-1/2 -translate-x-1/2 w-[94vw] max-w-5xl mt-2 p-6 rounded-2xl glass-panel shadow-2xl border border-zinc-200/90 animate-in fade-in slide-in-from-top-2 duration-200 z-50"
+      className="absolute top-full left-1/2 -translate-x-1/2 w-[94vw] max-w-5xl mt-2 p-6 rounded-2xl bg-white shadow-2xl border border-zinc-200 animate-in fade-in slide-in-from-top-2 duration-200 z-50"
     >
-      <div className="flex items-center justify-between pb-4 mb-5 border-b border-zinc-200/80">
+      <div className="flex items-center justify-between pb-4 mb-5 border-b border-zinc-200">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-600">
             {isBn ? "সকল ক্লিনিক্যাল বিভাগ" : "Clinical Specializations"}
@@ -47,9 +47,9 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
             key={dept.id}
             href={`/services/${dept.slug}`}
             onClick={onClose}
-            className="group flex items-start gap-3.5 p-3.5 rounded-xl bg-white/70 hover:bg-zinc-100/90 border border-zinc-200/60 hover:border-zinc-300 transition-all duration-200"
+            className="group flex items-start gap-3.5 p-3.5 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 hover:border-zinc-300 transition-all duration-200"
           >
-            <div className="p-2.5 rounded-xl bg-zinc-100 text-zinc-800 group-hover:bg-zinc-900 group-hover:text-white transition-colors">
+            <div className="p-2.5 rounded-xl bg-white border border-zinc-200 text-zinc-800 group-hover:bg-zinc-900 group-hover:text-white group-hover:border-zinc-900 transition-colors shadow-2xs">
               <DepartmentIcon name={dept.iconName} className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
@@ -70,7 +70,7 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
         ))}
       </div>
 
-      <div className="mt-5 pt-3.5 border-t border-zinc-200/70 flex flex-wrap items-center justify-between text-xs text-zinc-600">
+      <div className="mt-5 pt-3.5 border-t border-zinc-200 flex flex-wrap items-center justify-between text-xs text-zinc-600">
         <span className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-700 animate-pulse" />
           {isBn
