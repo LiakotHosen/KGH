@@ -140,3 +140,70 @@ html {
     transform: translateY(-160px);
   }
 }
+
+/* ==========================================================================
+   PRINT MEDIA STYLES - CLINICAL APPOINTMENT SLIP ISOLATION
+   ========================================================================== */
+@media print {
+  /* Hide standard page chrome and interactive elements */
+  header,
+  footer,
+  nav,
+  aside,
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Optimize layout for paper */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Force background colors and borders to print properly */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide entire page tree in print mode */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make only the appointment slip visible */
+  #kgh-print-slip,
+  #kgh-print-slip * {
+    visibility: visible !important;
+  }
+
+  #kgh-print-slip {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 16px 20px !important;
+    box-shadow: none !important;
+    border: 1px solid #d4d4d8 !important;
+    border-radius: 12px !important;
+    display: block !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    z-index: 999999 !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+}
+

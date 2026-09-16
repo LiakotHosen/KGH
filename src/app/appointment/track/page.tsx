@@ -25,6 +25,7 @@ import { fetchAppointmentsByQuery } from "@/lib/api/db";
 import { AppointmentRecord } from "@/types";
 import { useLanguage } from "@/context/LanguageContext";
 import { CLINIC_SETTINGS } from "@/data/settings";
+import { AppointmentPrintSlip } from "@/components/appointment/AppointmentPrintSlip";
 
 function TrackContent() {
   const searchParams = useSearchParams();
@@ -36,6 +37,7 @@ function TrackContent() {
   const [searched, setSearched] = useState(false);
   const [results, setResults] = useState<AppointmentRecord[]>([]);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [printingRecord, setPrintingRecord] = useState<AppointmentRecord | null>(null);
 
   const performSearch = async (searchTerm: string) => {
     if (!searchTerm.trim()) return;
@@ -43,7 +45,11 @@ function TrackContent() {
     setSearched(true);
     try {
       const records = await fetchAppointmentsByQuery(searchTerm.trim());
-      setResults(records);
+      // Guarantee strictly unique records by reference_code or ID
+      const uniqueRecords = Array.from(
+        new Map(records.map((r) => [r.reference_code || r.id, r])).values()
+      );
+      setResults(uniqueRecords);
     } catch (err) {
       console.error(err);
       setResults([]);
@@ -325,8 +331,13 @@ function TrackContent() {
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => window.print()}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold transition-colors"
+                            onClick={() => {
+                              setPrintingRecord(record);
+                              setTimeout(() => {
+                                window.print();
+                              }, 150);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold transition-colors shadow-2xs"
                           >
                             <Printer className="w-3.5 h-3.5" />
                             <span>{isBn ? "স্লিপ প্রিন্ট" : "Print Pass"}</span>
@@ -353,6 +364,23 @@ function TrackContent() {
           )}
         </div>
       </div>
+
+      {/* Exclusively printed in print media */}
+      {printingRecord && (
+        <div className="hidden print:block text-left">
+          <AppointmentPrintSlip
+            bookingRef={printingRecord.reference_code}
+            doctorName={printingRecord.doctor_name}
+            departmentName={printingRecord.department_name}
+            date={printingRecord.appointment_date}
+            timeSlot={printingRecord.time_slot}
+            patientName={printingRecord.patient_name}
+            patientPhone={printingRecord.patient_phone}
+            symptoms={printingRecord.symptoms}
+            paymentStatus="UNPAID"
+          />
+        </div>
+      )}
     </div>
   );
 }

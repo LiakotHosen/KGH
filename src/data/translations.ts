@@ -331,12 +331,12 @@ export const UI_STRINGS = {
     },
     confirmation: {
       heading: {
-        en: "Appointment Request Received!",
-        bn: "আপনার অ্যাপয়েন্টমেন্টের অনুরোধ গৃহীত হয়েছে!",
+        en: "Appointment Confirmed!",
+        bn: "আপনার অ্যাপয়েন্টমেন্ট সফলভাবে নিশ্চিত হয়েছে!",
       },
       message: {
-        en: "Thank you for scheduling with KGH Dental. Our clinic coordinator will call you to confirm your reservation shortly.",
-        bn: "কেজিএইচ ডেন্টালে সময় নির্ধারণের জন্য ধন্যবাদ। আমাদের কোঅর্ডিনেটর খুব শীঘ্রই ফোন করে সিরিয়ালটি নিশ্চিত করবেন।",
+        en: "Thank you for scheduling with KGH Dental. Your consultation booking is confirmed. Please arrive 10 minutes before your scheduled slot.",
+        bn: "কেজিএইচ ডেন্টালে সময় নির্ধারণের জন্য ধন্যবাদ। আপনার অ্যাপয়েন্টমেন্ট সফলভাবে নিশ্চিত করা হয়েছে। নির্ধারিত সময়ের ১০ মিনিট পূর্বে উপস্থিত হওয়ার অনুরোধ করা হচ্ছে।",
       },
       bookingRef: { en: "Booking Reference:", bn: "বুকিং রেফারেন্স নম্বর:" },
       selectedDoctor: { en: "Doctor:", bn: "নির্বাচিত ডাক্তার:" },

@@ -22,6 +22,7 @@ import {
   Search,
   ShieldCheck,
   Loader2,
+  Eye,
 } from "lucide-react";
 import { DOCTORS } from "@/data/doctors";
 import { Doctor } from "@/types";
@@ -33,6 +34,7 @@ import {
 } from "@/lib/api/db";
 import { generateAppointmentReference } from "@/lib/appointment-utils";
 import { CalendarMonthView } from "@/components/appointment/CalendarMonthView";
+import { AppointmentPrintSlip } from "@/components/appointment/AppointmentPrintSlip";
 import { DEPARTMENTS } from "@/data/departments";
 import { useLanguage } from "@/context/LanguageContext";
 import { UI_STRINGS } from "@/data/translations";
@@ -82,6 +84,7 @@ export function BookingWizard() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [bookingRef, setBookingRef] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [showSlipPreview, setShowSlipPreview] = useState<boolean>(false);
 
   // Calendar and slot collision states
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
@@ -212,30 +215,8 @@ export function BookingWizard() {
       setIsSubmitted(true);
       setCurrentStep(4);
 
-      // Record in Admin Patient Registry
+      // Record in Admin Patient Registry and Supabase
       try {
-        const newRecord = {
-          id: `app-${Date.now()}`,
-          reference_code: ref,
-          patient_name: patientName,
-          patient_phone: patientPhone,
-          patient_email: patientEmail || "",
-          doctor_id: activeDoctor?.id || "",
-          doctor_name: activeDoctor ? activeDoctor.name.en : "Specialist Doctor",
-          department_id: activeDoctor?.departmentId || "",
-          department_name: activeDoctor ? activeDoctor.specialty.en : "General Consultation",
-          appointment_date: selectedDate,
-          time_slot: selectedTimeSlot,
-          symptoms: visitReason || "",
-          status: "pending",
-          created_at: new Date().toISOString().replace("T", " ").substring(0, 16),
-        };
-
-        const existing = localStorage.getItem("kgh_admin_appointments");
-        const list = existing ? JSON.parse(existing) : [];
-        localStorage.setItem("kgh_admin_appointments", JSON.stringify([newRecord, ...list]));
-
-        // Direct live persistence into Supabase appointments table
         createLiveAppointment({
           reference_code: ref,
           patient_name: patientName,
@@ -248,7 +229,7 @@ export function BookingWizard() {
           appointment_date: selectedDate,
           time_slot: selectedTimeSlot,
           symptoms: visitReason || undefined,
-          status: "pending",
+          status: "confirmed",
         }).catch((err) => console.warn("Live appointment insert error:", err));
       } catch (err) {
         console.warn("Could not cache appointment:", err);
@@ -265,6 +246,7 @@ export function BookingWizard() {
     setPatientEmail("");
     setVisitReason("");
     setIsSubmitted(false);
+    setShowSlipPreview(false);
   };
 
   return (
@@ -276,7 +258,13 @@ export function BookingWizard() {
             {isBn ? "অনলাইন অ্যাপয়েন্টমেন্ট সিস্টেম" : "Direct Specialist Booking"}
           </span>
           <span className="text-xs text-zinc-400">
-            {isBn ? `ধাপ ${currentStep} / ৪` : `Step ${currentStep} of 4`}
+            {isSubmitted
+              ? isBn
+                ? "ধাপ ৪ / ৪ (নিশ্চিত)"
+                : "Step 4 of 4 (Confirmed)"
+              : isBn
+              ? `ধাপ ${currentStep} / ৪`
+              : `Step ${currentStep} of 4`}
           </span>
         </div>
 
@@ -293,23 +281,27 @@ export function BookingWizard() {
               UI_STRINGS.bookingWizard.steps.step3,
               UI_STRINGS.bookingWizard.steps.step4,
             ];
-            const isCurrent = currentStep === step;
-            const isCompleted = currentStep > step;
+            const isCompleted = isSubmitted ? true : currentStep > step;
+            const isCurrent = !isSubmitted && currentStep === step;
 
             return (
               <div key={step} className="space-y-1.5">
                 <div
                   className={`h-1.5 rounded-full transition-colors ${
-                    isCurrent
+                    isCompleted
+                      ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]"
+                      : isCurrent
                       ? "bg-white"
-                      : isCompleted
-                      ? "bg-emerald-400"
                       : "bg-zinc-800"
                   }`}
                 />
                 <span
                   className={`hidden sm:block text-[10px] font-medium truncate ${
-                    isCurrent ? "text-white font-bold" : isCompleted ? "text-zinc-300" : "text-zinc-600"
+                    isCompleted
+                      ? "text-emerald-400 font-semibold"
+                      : isCurrent
+                      ? "text-white font-bold"
+                      : "text-zinc-600"
                   }`}
                 >
                   {isBn ? labels[step - 1].bn : labels[step - 1].en}
@@ -690,11 +682,8 @@ export function BookingWizard() {
               </p>
             </div>
 
-            {/* Booking Details Card (Printable) */}
-            <div
-              id="printable-appointment-slip"
-              className="max-w-md mx-auto p-5 rounded-2xl bg-zinc-50 border border-zinc-200 text-left space-y-3 text-xs shadow-xs"
-            >
+            {/* Booking Details Card (Web Summary) */}
+            <div className="max-w-md mx-auto p-5 rounded-2xl bg-zinc-50 border border-zinc-200 text-left space-y-3 text-xs shadow-xs">
               <div className="flex justify-between border-b border-zinc-200 pb-2">
                 <span className="text-zinc-600">
                   {UI_STRINGS.bookingWizard.confirmation.selectedDoctor[isBn ? "bn" : "en"]}
@@ -713,11 +702,29 @@ export function BookingWizard() {
                 </span>
                 <span className="font-bold text-zinc-900">{patientName}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-zinc-200 pb-2">
                 <span className="text-zinc-600">
                   {UI_STRINGS.bookingWizard.confirmation.patientPhone[isBn ? "bn" : "en"]}
                 </span>
-                <span className="font-bold text-zinc-900">{patientPhone}</span>
+                <span className="font-bold text-zinc-900 font-mono">{patientPhone}</span>
+              </div>
+              <div className="flex justify-between items-center border-b border-zinc-200 pb-2">
+                <span className="text-zinc-600">
+                  {isBn ? "অ্যাপয়েন্টমেন্ট স্ট্যাটাস:" : "Appointment Status:"}
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[11px] border border-emerald-300">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>{isBn ? "CONFIRMED (নিশ্চিত)" : "CONFIRMED"}</span>
+                </span>
+              </div>
+              <div className="flex justify-between items-center pt-0.5">
+                <span className="text-zinc-600">
+                  {isBn ? "পেমেন্ট স্ট্যাটাস:" : "Payment Status:"}
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-100 text-amber-900 font-extrabold text-[11px] border border-amber-300">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse" />
+                  <span>UNPAID (চেম্বারে প্রদেয়)</span>
+                </span>
               </div>
             </div>
 
@@ -768,6 +775,60 @@ export function BookingWizard() {
                   ? UI_STRINGS.bookingWizard.confirmation.bookAnotherBtn.bn
                   : UI_STRINGS.bookingWizard.confirmation.bookAnotherBtn.en}
               </button>
+            </div>
+
+            {/* Toggle Preview Button */}
+            <div className="pt-3">
+              <button
+                type="button"
+                onClick={() => setShowSlipPreview(!showSlipPreview)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-zinc-900 underline underline-offset-4 transition-colors"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>
+                  {showSlipPreview
+                    ? isBn
+                      ? "অফিসিয়াল স্লিপ প্রিভিউ লুকান"
+                      : "Hide Official Slip Preview"
+                    : isBn
+                    ? "অফিসিয়াল প্রিন্ট স্লিপ প্রিভিউ দেখুন (UNPAID ও রিসিপশন সিল বক্স)"
+                    : "Preview Official Slip (UNPAID & Reception Seal)"}
+                </span>
+              </button>
+            </div>
+
+            {/* On-screen Preview when toggled */}
+            {showSlipPreview && (
+              <div className="mt-4 pt-6 border-t border-zinc-200 text-left">
+                <AppointmentPrintSlip
+                  bookingRef={bookingRef}
+                  doctorName={t(activeDoctor.name)}
+                  departmentName={t(activeDoctor.specialty)}
+                  date={selectedDate}
+                  timeSlot={selectedTimeSlot}
+                  patientName={patientName}
+                  patientPhone={patientPhone}
+                  patientEmail={patientEmail}
+                  symptoms={visitReason}
+                  paymentStatus="UNPAID"
+                />
+              </div>
+            )}
+
+            {/* Hidden on web, exclusively visible & isolated during print */}
+            <div className="hidden print:block text-left">
+              <AppointmentPrintSlip
+                bookingRef={bookingRef}
+                doctorName={t(activeDoctor.name)}
+                departmentName={t(activeDoctor.specialty)}
+                date={selectedDate}
+                timeSlot={selectedTimeSlot}
+                patientName={patientName}
+                patientPhone={patientPhone}
+                patientEmail={patientEmail}
+                symptoms={visitReason}
+                paymentStatus="UNPAID"
+              />
             </div>
           </div>
         )}

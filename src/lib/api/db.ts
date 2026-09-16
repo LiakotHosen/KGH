@@ -265,6 +265,44 @@ export async function deleteLiveSubService(id: string): Promise<{ success: boole
 // 3. APPOINTMENTS API
 // ==============================================================================
 
+/**
+ * Resolves a doctor's slug or raw id (e.g. 'dr-bappy', 'dr-sanwar') to full clinical display name
+ */
+export function resolveDoctorDisplayName(idOrName: string | undefined): string {
+  if (!idOrName) return "Specialist Doctor";
+  const found = DOCTORS.find(
+    (d) =>
+      d.id.toLowerCase() === idOrName.toLowerCase() ||
+      d.slug.toLowerCase() === idOrName.toLowerCase() ||
+      d.name.en.toLowerCase() === idOrName.toLowerCase() ||
+      d.name.bn === idOrName
+  );
+  return found ? found.name.en : idOrName;
+}
+
+/**
+ * Resolves a department id or slug to full clinical specialty title
+ */
+export function resolveDepartmentDisplayName(deptIdOrName: string | undefined, doctorIdOrName?: string): string {
+  if (doctorIdOrName) {
+    const doc = DOCTORS.find(
+      (d) =>
+        d.id.toLowerCase() === doctorIdOrName.toLowerCase() ||
+        d.slug.toLowerCase() === doctorIdOrName.toLowerCase() ||
+        d.name.en.toLowerCase() === doctorIdOrName.toLowerCase()
+    );
+    if (doc) return doc.specialty.en;
+  }
+  if (!deptIdOrName || deptIdOrName === "general") {
+    return "Specialist Consultation";
+  }
+  const foundDept = DEPARTMENTS.find(
+    (d) => d.id.toLowerCase() === deptIdOrName.toLowerCase() || d.slug.toLowerCase() === deptIdOrName.toLowerCase()
+  );
+  if (foundDept) return foundDept.name.en;
+  return deptIdOrName;
+}
+
 export async function fetchLiveAppointments(): Promise<any[]> {
   if (!isSupabaseConfigured) return [];
 
@@ -282,12 +320,12 @@ export async function fetchLiveAppointments(): Promise<any[]> {
       patient_name: a.patient_name,
       patient_phone: a.patient_phone,
       patient_email: a.patient_email || "",
-      doctor_name: a.doctor_id || "Specialist Doctor",
-      department_name: a.department_id || "General Consultation",
+      doctor_name: resolveDoctorDisplayName(a.doctor_name || a.doctor_id),
+      department_name: resolveDepartmentDisplayName(a.department_name || a.department_id, a.doctor_name || a.doctor_id),
       appointment_date: a.appointment_date,
       time_slot: a.time_slot,
       symptoms: a.symptoms || "",
-      status: a.status,
+      status: a.status || "confirmed",
       created_at: a.created_at ? a.created_at.substring(0, 16).replace("T", " ") : "",
     }));
   } catch (err) {
@@ -298,7 +336,8 @@ export async function fetchLiveAppointments(): Promise<any[]> {
 
 export async function updateLiveAppointmentStatus(
   id: string,
-  status: string
+  status: string,
+  referenceCode?: string
 ): Promise<{ success: boolean; error?: string }> {
   // Update local storage cache first
   if (typeof window !== "undefined") {
@@ -306,7 +345,11 @@ export async function updateLiveAppointmentStatus(
       const existing = localStorage.getItem("kgh_admin_appointments");
       if (existing) {
         const list = JSON.parse(existing);
-        const updated = list.map((a: any) => (a.id === id ? { ...a, status } : a));
+        const updated = list.map((a: any) =>
+          (a.id === id || (referenceCode && a.reference_code === referenceCode))
+            ? { ...a, status }
+            : a
+        );
         localStorage.setItem("kgh_admin_appointments", JSON.stringify(updated));
       }
     } catch (e) {
@@ -317,11 +360,19 @@ export async function updateLiveAppointmentStatus(
   if (!isSupabaseConfigured) return { success: true };
 
   try {
-    const { error } = await supabase
+    let query = supabase
       .from("appointments")
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq("id", id);
+      .update({ status, updated_at: new Date().toISOString() });
 
+    if (id && !id.startsWith("app-")) {
+      query = query.eq("id", id);
+    } else if (referenceCode) {
+      query = query.eq("reference_code", referenceCode);
+    } else {
+      query = query.eq("id", id);
+    }
+
+    const { error } = await query;
     if (error) throw error;
     return { success: true };
   } catch (err: any) {
@@ -347,6 +398,8 @@ export async function createLiveAppointment(record: {
   // Always cache locally
   if (typeof window !== "undefined") {
     try {
+      const resolvedDoc = resolveDoctorDisplayName(record.doctor_name || record.doctor_id);
+      const resolvedDept = resolveDepartmentDisplayName(record.department_name || record.department_id, record.doctor_name || record.doctor_id);
       const newRecord = {
         id: `app-${Date.now()}`,
         reference_code: record.reference_code,
@@ -354,18 +407,20 @@ export async function createLiveAppointment(record: {
         patient_phone: record.patient_phone,
         patient_email: record.patient_email || "",
         doctor_id: record.doctor_id || "",
-        doctor_name: record.doctor_name,
+        doctor_name: resolvedDoc,
         department_id: record.department_id || "",
-        department_name: record.department_name,
+        department_name: resolvedDept,
         appointment_date: record.appointment_date,
         time_slot: record.time_slot,
         symptoms: record.symptoms || "",
-        status: record.status || "pending",
+        status: record.status || "confirmed",
         created_at: new Date().toISOString().replace("T", " ").substring(0, 16),
       };
       const existing = localStorage.getItem("kgh_admin_appointments");
       const list = existing ? JSON.parse(existing) : [];
-      localStorage.setItem("kgh_admin_appointments", JSON.stringify([newRecord, ...list]));
+      // Prevent duplicate reference_code entries
+      const filtered = list.filter((a: any) => a.reference_code !== record.reference_code);
+      localStorage.setItem("kgh_admin_appointments", JSON.stringify([newRecord, ...filtered]));
     } catch (e) {
       // ignore
     }
@@ -384,7 +439,7 @@ export async function createLiveAppointment(record: {
       appointment_date: record.appointment_date,
       time_slot: record.time_slot,
       symptoms: record.symptoms || null,
-      status: record.status || "pending",
+      status: record.status || "confirmed",
     };
 
     const { error } = await supabase.from("appointments").insert(payload);
@@ -572,11 +627,35 @@ export async function fetchAppointmentsByQuery(query: string): Promise<any[]> {
       const stored = localStorage.getItem("kgh_admin_appointments");
       if (stored) {
         const list = JSON.parse(stored);
+
+        // Automatically cleanup any duplicate records previously saved in localStorage
+        const uniqueMap = new Map<string, any>();
         list.forEach((item: any) => {
+          const key = item.reference_code || item.id;
+          if (key && !uniqueMap.has(key)) {
+            uniqueMap.set(key, item);
+          }
+        });
+        const deduplicatedList = Array.from(uniqueMap.values());
+        if (deduplicatedList.length !== list.length) {
+          localStorage.setItem("kgh_admin_appointments", JSON.stringify(deduplicatedList));
+        }
+
+        deduplicatedList.forEach((item: any) => {
+          const resolvedDoc = resolveDoctorDisplayName(item.doctor_name || item.doctor_id);
+          const resolvedDept = resolveDepartmentDisplayName(item.department_name || item.department_id, item.doctor_name || item.doctor_id);
+          const normalizedItem = {
+            ...item,
+            doctor_name: resolvedDoc,
+            department_name: resolvedDept,
+            status: item.status || "confirmed",
+          };
           const refMatch = item.reference_code?.toUpperCase().includes(q);
           const phoneMatch = item.patient_phone?.replace(/[^0-9]/g, "").includes(q.replace(/[^0-9]/g, ""));
           if (refMatch || phoneMatch) {
-            matches.push(item);
+            if (!matches.some((m) => m.reference_code === item.reference_code)) {
+              matches.push(normalizedItem);
+            }
           }
         });
       }
@@ -604,12 +683,12 @@ export async function fetchAppointmentsByQuery(query: string): Promise<any[]> {
             patient_name: a.patient_name,
             patient_phone: a.patient_phone,
             patient_email: a.patient_email || "",
-            doctor_name: a.doctor_id || "Specialist Doctor",
-            department_name: a.department_id || "General Consultation",
+            doctor_name: resolveDoctorDisplayName(a.doctor_name || a.doctor_id),
+            department_name: resolveDepartmentDisplayName(a.department_name || a.department_id, a.doctor_name || a.doctor_id),
             appointment_date: a.appointment_date,
             time_slot: a.time_slot,
             symptoms: a.symptoms || "",
-            status: a.status,
+            status: a.status || "confirmed",
             created_at: a.created_at ? a.created_at.substring(0, 16).replace("T", " ") : "",
           });
         }
