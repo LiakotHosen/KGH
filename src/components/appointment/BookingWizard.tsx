@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import {
   Calendar,
   Clock,
@@ -15,10 +16,23 @@ import {
   AlertCircle,
   MessageSquare,
   Sparkles,
+  Printer,
+  Copy,
+  Check,
+  Search,
+  ShieldCheck,
+  Loader2,
 } from "lucide-react";
 import { DOCTORS } from "@/data/doctors";
 import { Doctor } from "@/types";
-import { fetchLiveDoctors, createLiveAppointment } from "@/lib/api/db";
+import {
+  fetchLiveDoctors,
+  createLiveAppointment,
+  fetchBookedSlots,
+  fetchDoctorBlockedDates,
+} from "@/lib/api/db";
+import { generateAppointmentReference } from "@/lib/appointment-utils";
+import { CalendarMonthView } from "@/components/appointment/CalendarMonthView";
 import { DEPARTMENTS } from "@/data/departments";
 import { useLanguage } from "@/context/LanguageContext";
 import { UI_STRINGS } from "@/data/translations";
@@ -69,9 +83,36 @@ export function BookingWizard() {
   const [bookingRef, setBookingRef] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
+  // Calendar and slot collision states
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState<boolean>(false);
+  const [copiedRef, setCopiedRef] = useState<boolean>(false);
+
   const activeDoctor = useMemo(() => {
     return doctorsList.find((d) => d.id === selectedDoctorId) || doctorsList[0];
   }, [selectedDoctorId, doctorsList]);
+
+  // Fetch blocked dates (leaves/holidays) for active doctor
+  useEffect(() => {
+    if (activeDoctor?.id) {
+      fetchDoctorBlockedDates(activeDoctor.id).then((blks) => {
+        setBlockedDates(blks.map((b: any) => b.blocked_date));
+      });
+    }
+  }, [activeDoctor]);
+
+  // Fetch booked slots for the chosen doctor and date to prevent double booking
+  useEffect(() => {
+    if (activeDoctor?.id && selectedDate) {
+      setLoadingSlots(true);
+      fetchBookedSlots(activeDoctor.id, selectedDate, activeDoctor.name.en)
+        .then((slots) => setBookedSlots(slots))
+        .finally(() => setLoadingSlots(false));
+    } else {
+      setBookedSlots([]);
+    }
+  }, [activeDoctor, selectedDate]);
 
   // Generate next 14 calendar days that match the doctor's active schedule
   const availableDates = useMemo(() => {
@@ -165,8 +206,8 @@ export function BookingWizard() {
         return;
       }
 
-      // Generate reference code
-      const ref = `KGH-${Math.floor(100000 + Math.random() * 900000)}`;
+      // Generate doctor-coded reference code: KGH-[DOC]-[RANDOM]
+      const ref = generateAppointmentReference(activeDoctor?.id, activeDoctor?.name?.en);
       setBookingRef(ref);
       setIsSubmitted(true);
       setCurrentStep(4);
@@ -179,7 +220,9 @@ export function BookingWizard() {
           patient_name: patientName,
           patient_phone: patientPhone,
           patient_email: patientEmail || "",
+          doctor_id: activeDoctor?.id || "",
           doctor_name: activeDoctor ? activeDoctor.name.en : "Specialist Doctor",
+          department_id: activeDoctor?.departmentId || "",
           department_name: activeDoctor ? activeDoctor.specialty.en : "General Consultation",
           appointment_date: selectedDate,
           time_slot: selectedTimeSlot,
@@ -198,7 +241,9 @@ export function BookingWizard() {
           patient_name: patientName,
           patient_phone: patientPhone,
           patient_email: patientEmail || undefined,
+          doctor_id: activeDoctor?.id,
           doctor_name: activeDoctor ? activeDoctor.name.en : "Specialist Doctor",
+          department_id: activeDoctor?.departmentId,
           department_name: activeDoctor ? activeDoctor.specialty.en : "General Consultation",
           appointment_date: selectedDate,
           time_slot: selectedTimeSlot,
@@ -355,7 +400,7 @@ export function BookingWizard() {
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-zinc-950">
-                  {isBn ? "২. তারিখ ও সুবিধাজনক সময় নির্বাচন করুন" : "2. Select Date & Preferred Time Slot"}
+                  {isBn ? "২. চেম্বার ক্যালেন্ডার ও সময় নির্বাচন করুন" : "2. Chamber Calendar & Time Slot"}
                 </h3>
                 <span className="text-xs font-semibold text-zinc-700 bg-zinc-100 px-3 py-1 rounded-full">
                   {t(activeDoctor.name)}
@@ -368,34 +413,19 @@ export function BookingWizard() {
               </p>
             </div>
 
-            {/* Date Selection Grid */}
+            {/* Interactive Month Calendar View */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-2.5">
-                {isBn ? "উপলব্ধ তারিখসমূহ (আগামী ৩ সপ্তাহ)" : "Available Dates (Next 3 Weeks)"}
-              </label>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-                {availableDates.map((item) => {
-                  const isSelected = selectedDate === item.dateString;
-                  return (
-                    <button
-                      key={item.dateString}
-                      type="button"
-                      onClick={() => {
-                        setSelectedDate(item.dateString);
-                        setErrors((prev) => ({ ...prev, date: "" }));
-                      }}
-                      className={`p-3 rounded-xl border text-center transition-all ${
-                        isSelected
-                          ? "bg-zinc-950 text-white border-zinc-950 shadow-sm"
-                          : "bg-white text-zinc-800 border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50"
-                      }`}
-                    >
-                      <div className="text-xs font-bold">{item.displayString}</div>
-                    </button>
-                  );
-                })}
-              </div>
+              <CalendarMonthView
+                selectedDate={selectedDate}
+                onSelectDate={(date) => {
+                  setSelectedDate(date);
+                  setSelectedTimeSlot("");
+                  setErrors((prev) => ({ ...prev, date: "" }));
+                }}
+                doctor={activeDoctor}
+                blockedDates={blockedDates}
+                isBn={isBn}
+              />
 
               {errors.date && (
                 <div className="mt-2 flex items-center gap-1.5 text-xs text-red-600 font-medium">
@@ -406,41 +436,99 @@ export function BookingWizard() {
             </div>
 
             {/* Time Slot Selection Grid */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-2.5">
-                {isBn ? "সময় নির্বাচন করুন (৩০ মিনিট স্লট)" : "Choose Time Slot (30-Minute Interval)"}
-              </label>
+            {selectedDate ? (
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-zinc-800">
+                      {isBn ? "উপলব্ধ সময় নির্বাচন করুন (৩০ মিনিট স্লট)" : "Choose Available Time Slot (30-Min)"}
+                    </label>
+                    <span className="text-[11px] text-zinc-500">
+                      {selectedDate} •{" "}
+                      {loadingSlots
+                        ? isBn
+                          ? "স্লট চেক হচ্ছে..."
+                          : "Checking slots..."
+                        : `${availableSlots.length - bookedSlots.length} / ${availableSlots.length} ${
+                            isBn ? "স্লট খালি আছে" : "slots available"
+                          }`}
+                    </span>
+                  </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-                {availableSlots.map((slot) => {
-                  const isSelected = selectedTimeSlot === slot;
-                  return (
-                    <button
-                      key={slot}
-                      type="button"
-                      onClick={() => {
-                        setSelectedTimeSlot(slot);
-                        setErrors((prev) => ({ ...prev, slot: "" }));
-                      }}
-                      className={`p-2.5 rounded-xl border text-center text-xs font-semibold transition-all ${
-                        isSelected
-                          ? "bg-zinc-900 text-white border-zinc-900 shadow-xs"
-                          : "bg-zinc-50 text-zinc-800 border-zinc-200 hover:bg-zinc-100 hover:border-zinc-300"
-                      }`}
-                    >
-                      {slot}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {errors.slot && (
-                <div className="mt-2 flex items-center gap-1.5 text-xs text-red-600 font-medium">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{errors.slot}</span>
+                  {bookedSlots.length > 0 && (
+                    <span className="text-[11px] font-medium text-rose-600 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">
+                      {bookedSlots.length} {isBn ? "স্লট আগে থেকেই বুকড" : "slots already booked"}
+                    </span>
+                  )}
                 </div>
-              )}
-            </div>
+
+                {loadingSlots ? (
+                  <div className="py-8 flex items-center justify-center gap-2 text-xs text-zinc-500">
+                    <Loader2 className="w-4 h-4 animate-spin text-zinc-700" />
+                    <span>{isBn ? "রিয়েল-টাইম স্লট লোড হচ্ছে..." : "Loading live slot availability..."}</span>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                    {availableSlots.map((slot) => {
+                      const isSelected = selectedTimeSlot === slot;
+                      const isBooked = bookedSlots.includes(slot);
+
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          disabled={isBooked}
+                          onClick={() => {
+                            if (!isBooked) {
+                              setSelectedTimeSlot(slot);
+                              setErrors((prev) => ({ ...prev, slot: "" }));
+                            }
+                          }}
+                          className={`relative p-3 rounded-xl border text-center text-xs font-semibold transition-all ${
+                            isSelected
+                              ? "bg-zinc-950 text-white border-zinc-950 shadow-sm ring-1 ring-zinc-950 scale-102"
+                              : isBooked
+                              ? "bg-zinc-100 text-zinc-400 border-zinc-200 cursor-not-allowed line-through"
+                              : "bg-white text-zinc-900 border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50 cursor-pointer"
+                          }`}
+                        >
+                          <div>{slot}</div>
+                          {isBooked && (
+                            <span className="text-[9px] uppercase tracking-wider text-rose-600 block mt-0.5 no-underline font-bold">
+                              {isBn ? "বুকড" : "Booked"}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {availableSlots.length > 0 && availableSlots.every((s) => bookedSlots.includes(s)) && (
+                  <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>
+                      {isBn
+                        ? "এই তারিখের সবকটি স্লট ইতিমধ্যেই বুক হয়ে গেছে। অনুগ্রহ করে ক্যালেন্ডার থেকে অন্য একটি তারিখ নির্বাচন করুন।"
+                        : "All slots for this date are fully booked. Please select another date from the calendar."}
+                    </span>
+                  </div>
+                )}
+
+                {errors.slot && (
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-red-600 font-medium">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>{errors.slot}</span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 text-center text-xs text-zinc-500">
+                {isBn
+                  ? "↑ উপরের ক্যালেন্ডার থেকে যেকোনো একটি উপলব্ধ তারিখ নির্বাচন করুন।"
+                  : "↑ Please select an available chamber date on the calendar above to view time slots."}
+              </div>
+            )}
           </div>
         )}
 
@@ -568,9 +656,28 @@ export function BookingWizard() {
             </div>
 
             <div>
-              <span className="text-xs font-bold tracking-wider uppercase text-zinc-600 block mb-1">
-                {UI_STRINGS.bookingWizard.confirmation.bookingRef[isBn ? "bn" : "en"]} {bookingRef}
-              </span>
+              {/* Reference Code with Copy button */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-100 border border-zinc-200 mb-2">
+                <span className="text-xs text-zinc-600 font-medium">
+                  {isBn ? "সিরিয়াল রেফারেন্স:" : "Booking Ref:"}
+                </span>
+                <span className="font-mono text-sm sm:text-base font-extrabold text-zinc-950">
+                  {bookingRef}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(bookingRef);
+                    setCopiedRef(true);
+                    setTimeout(() => setCopiedRef(false), 2000);
+                  }}
+                  className="p-1 rounded-md text-zinc-500 hover:text-zinc-900 transition-colors"
+                  title={isBn ? "রেফারেন্স কোড কপি করুন" : "Copy reference code"}
+                >
+                  {copiedRef ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+
               <h3 className="text-2xl sm:text-3xl font-extrabold text-zinc-950">
                 {isBn
                   ? UI_STRINGS.bookingWizard.confirmation.heading.bn
@@ -583,8 +690,11 @@ export function BookingWizard() {
               </p>
             </div>
 
-            {/* Booking Details Card */}
-            <div className="max-w-md mx-auto p-5 rounded-2xl bg-zinc-50 border border-zinc-200 text-left space-y-3 text-xs">
+            {/* Booking Details Card (Printable) */}
+            <div
+              id="printable-appointment-slip"
+              className="max-w-md mx-auto p-5 rounded-2xl bg-zinc-50 border border-zinc-200 text-left space-y-3 text-xs shadow-xs"
+            >
               <div className="flex justify-between border-b border-zinc-200 pb-2">
                 <span className="text-zinc-600">
                   {UI_STRINGS.bookingWizard.confirmation.selectedDoctor[isBn ? "bn" : "en"]}
@@ -611,15 +721,16 @@ export function BookingWizard() {
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            {/* Actions Grid */}
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
+              {/* WhatsApp Button */}
               <a
                 href={`https://wa.me/8801700000000?text=${encodeURIComponent(
-                  `Hello KGH Dental, I have requested an appointment.\nRef: ${bookingRef}\nDoctor: ${activeDoctor.name.en}\nDate: ${selectedDate} at ${selectedTimeSlot}\nPatient: ${patientName}`
+                  `Hello KGH Dental, I have requested an appointment.\nRef: ${bookingRef}\nDoctor: ${activeDoctor.name.en}\nDate: ${selectedDate} at ${selectedTimeSlot}\nPatient: ${patientName}\nPhone: ${patientPhone}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>
@@ -629,9 +740,29 @@ export function BookingWizard() {
                 </span>
               </a>
 
+              {/* Print Slip Button */}
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+              >
+                <Printer className="w-4 h-4" />
+                <span>{isBn ? "স্লিপ প্রিন্ট করুন" : "Print Slip"}</span>
+              </button>
+
+              {/* Track Status Online Link */}
+              <Link
+                href={`/appointment/track?ref=${bookingRef}`}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white hover:bg-zinc-100 text-zinc-900 border border-zinc-300 text-xs font-bold rounded-xl transition-colors shadow-xs"
+              >
+                <Search className="w-4 h-4" />
+                <span>{isBn ? "সিরিয়াল ট্র্যাক করুন" : "Track Status"}</span>
+              </Link>
+
+              {/* Book Another */}
               <button
                 onClick={resetWizard}
-                className="w-full sm:w-auto px-6 py-3.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold rounded-xl transition-colors"
+                className="inline-flex items-center justify-center px-4 py-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold rounded-xl transition-colors"
               >
                 {isBn
                   ? UI_STRINGS.bookingWizard.confirmation.bookAnotherBtn.bn

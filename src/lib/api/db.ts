@@ -300,6 +300,20 @@ export async function updateLiveAppointmentStatus(
   id: string,
   status: string
 ): Promise<{ success: boolean; error?: string }> {
+  // Update local storage cache first
+  if (typeof window !== "undefined") {
+    try {
+      const existing = localStorage.getItem("kgh_admin_appointments");
+      if (existing) {
+        const list = JSON.parse(existing);
+        const updated = list.map((a: any) => (a.id === id ? { ...a, status } : a));
+        localStorage.setItem("kgh_admin_appointments", JSON.stringify(updated));
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
   if (!isSupabaseConfigured) return { success: true };
 
   try {
@@ -321,13 +335,42 @@ export async function createLiveAppointment(record: {
   patient_name: string;
   patient_phone: string;
   patient_email?: string;
+  doctor_id?: string;
   doctor_name: string;
+  department_id?: string;
   department_name: string;
   appointment_date: string;
   time_slot: string;
   symptoms?: string;
   status?: string;
 }): Promise<{ success: boolean; error?: string }> {
+  // Always cache locally
+  if (typeof window !== "undefined") {
+    try {
+      const newRecord = {
+        id: `app-${Date.now()}`,
+        reference_code: record.reference_code,
+        patient_name: record.patient_name,
+        patient_phone: record.patient_phone,
+        patient_email: record.patient_email || "",
+        doctor_id: record.doctor_id || "",
+        doctor_name: record.doctor_name,
+        department_id: record.department_id || "",
+        department_name: record.department_name,
+        appointment_date: record.appointment_date,
+        time_slot: record.time_slot,
+        symptoms: record.symptoms || "",
+        status: record.status || "pending",
+        created_at: new Date().toISOString().replace("T", " ").substring(0, 16),
+      };
+      const existing = localStorage.getItem("kgh_admin_appointments");
+      const list = existing ? JSON.parse(existing) : [];
+      localStorage.setItem("kgh_admin_appointments", JSON.stringify([newRecord, ...list]));
+    } catch (e) {
+      // ignore
+    }
+  }
+
   if (!isSupabaseConfigured) return { success: true };
 
   try {
@@ -336,12 +379,12 @@ export async function createLiveAppointment(record: {
       patient_name: record.patient_name,
       patient_phone: record.patient_phone,
       patient_email: record.patient_email || null,
-      doctor_id: record.doctor_name,
-      department_id: record.department_name,
+      doctor_id: record.doctor_id || record.doctor_name,
+      department_id: record.department_id || record.department_name,
       appointment_date: record.appointment_date,
       time_slot: record.time_slot,
       symptoms: record.symptoms || null,
-      status: "pending",
+      status: record.status || "pending",
     };
 
     const { error } = await supabase.from("appointments").insert(payload);
@@ -351,6 +394,232 @@ export async function createLiveAppointment(record: {
     console.error("createLiveAppointment error:", err);
     return { success: false, error: err.message };
   }
+}
+
+/**
+ * Real-time slot conflict detection:
+ * Fetches already booked slots for a doctor on a specific date.
+ */
+export async function fetchBookedSlots(doctorId: string, date: string, doctorName?: string): Promise<string[]> {
+  const bookedSet = new Set<string>();
+
+  // Check local cache
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_admin_appointments");
+      if (stored) {
+        const apps = JSON.parse(stored);
+        apps.forEach((a: any) => {
+          const isDocMatch =
+            (a.doctor_id && a.doctor_id === doctorId) ||
+            (a.doctor_name && doctorName && a.doctor_name.toLowerCase() === doctorName.toLowerCase());
+          if (
+            isDocMatch &&
+            a.appointment_date === date &&
+            ["pending", "confirmed"].includes(a.status?.toLowerCase())
+          ) {
+            if (a.time_slot) bookedSet.add(a.time_slot);
+          }
+        });
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) {
+    return Array.from(bookedSet);
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("appointments")
+      .select("time_slot, status")
+      .or(`doctor_id.eq.${doctorId}${doctorName ? `,doctor_id.eq.${doctorName}` : ""}`)
+      .eq("appointment_date", date)
+      .in("status", ["pending", "confirmed"]);
+
+    if (!error && data) {
+      data.forEach((row: any) => {
+        if (row.time_slot) bookedSet.add(row.time_slot);
+      });
+    }
+  } catch (err) {
+    console.warn("fetchBookedSlots error:", err);
+  }
+
+  return Array.from(bookedSet);
+}
+
+/**
+ * Fetch doctor blocked dates (leaves, holidays)
+ */
+export async function fetchDoctorBlockedDates(doctorId?: string): Promise<any[]> {
+  let localBlocked: any[] = [];
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_doctor_blocked_dates");
+      if (stored) localBlocked = JSON.parse(stored);
+    } catch {
+      // ignore
+    }
+  }
+
+  if (doctorId) {
+    localBlocked = localBlocked.filter((b) => b.doctor_id === doctorId || b.doctor_id === "all");
+  }
+
+  if (!isSupabaseConfigured) return localBlocked;
+
+  try {
+    let query = supabase.from("doctor_blocked_dates").select("*");
+    if (doctorId) {
+      query = query.or(`doctor_id.eq.${doctorId},doctor_id.eq.all`);
+    }
+    const { data, error } = await query;
+    if (error || !data) return localBlocked;
+
+    // Combine Supabase data with any local additions
+    const combined = [...data];
+    localBlocked.forEach((lb) => {
+      if (!combined.some((c) => c.id === lb.id)) {
+        combined.push(lb);
+      }
+    });
+    return combined;
+  } catch (err) {
+    return localBlocked;
+  }
+}
+
+/**
+ * Add a doctor blocked date
+ */
+export async function addDoctorBlockedDate(item: {
+  doctor_id: string;
+  blocked_date: string;
+  reason?: string;
+}): Promise<{ success: boolean; data?: any; error?: string }> {
+  const newRecord = {
+    id: `blk-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+    doctor_id: item.doctor_id,
+    blocked_date: item.blocked_date,
+    reason: item.reason || "Doctor Leave / Clinic Holiday",
+    created_at: new Date().toISOString(),
+  };
+
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_doctor_blocked_dates");
+      const list = stored ? JSON.parse(stored) : [];
+      localStorage.setItem("kgh_doctor_blocked_dates", JSON.stringify([newRecord, ...list]));
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return { success: true, data: newRecord };
+
+  try {
+    const { data, error } = await supabase.from("doctor_blocked_dates").insert(newRecord).select().single();
+    if (error) {
+      console.warn("Supabase doctor_blocked_dates insert warning (using local fallback):", error);
+    }
+    return { success: true, data: data || newRecord };
+  } catch (err: any) {
+    return { success: true, data: newRecord };
+  }
+}
+
+/**
+ * Remove a doctor blocked date
+ */
+export async function removeDoctorBlockedDate(id: string): Promise<{ success: boolean; error?: string }> {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_doctor_blocked_dates");
+      if (stored) {
+        const list = JSON.parse(stored).filter((b: any) => b.id !== id);
+        localStorage.setItem("kgh_doctor_blocked_dates", JSON.stringify(list));
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    await supabase.from("doctor_blocked_dates").delete().eq("id", id);
+    return { success: true };
+  } catch (err: any) {
+    return { success: true };
+  }
+}
+
+/**
+ * Patient tracking: Search appointment by reference code or phone number
+ */
+export async function fetchAppointmentsByQuery(query: string): Promise<any[]> {
+  const q = query.trim().toUpperCase();
+  if (!q) return [];
+
+  const matches: any[] = [];
+
+  // Check local storage first
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("kgh_admin_appointments");
+      if (stored) {
+        const list = JSON.parse(stored);
+        list.forEach((item: any) => {
+          const refMatch = item.reference_code?.toUpperCase().includes(q);
+          const phoneMatch = item.patient_phone?.replace(/[^0-9]/g, "").includes(q.replace(/[^0-9]/g, ""));
+          if (refMatch || phoneMatch) {
+            matches.push(item);
+          }
+        });
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return matches;
+
+  try {
+    const cleanPhone = query.trim();
+    const { data, error } = await supabase
+      .from("appointments")
+      .select("*")
+      .or(`reference_code.ilike.%${query}%,patient_phone.ilike.%${cleanPhone}%`)
+      .order("appointment_date", { ascending: false });
+
+    if (!error && data) {
+      data.forEach((a: any) => {
+        if (!matches.some((m) => m.reference_code === a.reference_code)) {
+          matches.push({
+            id: a.id,
+            reference_code: a.reference_code,
+            patient_name: a.patient_name,
+            patient_phone: a.patient_phone,
+            patient_email: a.patient_email || "",
+            doctor_name: a.doctor_id || "Specialist Doctor",
+            department_name: a.department_id || "General Consultation",
+            appointment_date: a.appointment_date,
+            time_slot: a.time_slot,
+            symptoms: a.symptoms || "",
+            status: a.status,
+            created_at: a.created_at ? a.created_at.substring(0, 16).replace("T", " ") : "",
+          });
+        }
+      });
+    }
+  } catch (err) {
+    console.warn("fetchAppointmentsByQuery error:", err);
+  }
+
+  return matches;
 }
 
 // ==============================================================================

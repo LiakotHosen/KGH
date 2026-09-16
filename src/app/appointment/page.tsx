@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Suspense } from "react";
+import Link from "next/link";
 import { BookingWizard } from "@/components/appointment/BookingWizard";
 import { useLanguage } from "@/context/LanguageContext";
 import { Phone, Clock, ShieldCheck } from "lucide-react";
@@ -24,6 +25,19 @@ function AppointmentContent() {
               ? "আপনার পছন্দের ডাক্তার বেছে নিন, সুবিধাজনক একটা সময় নির্বাচন করুন — বাকিটা আমরা দেখব।"
               : "Choose your doctor, pick a time that works for you, and we'll take care of the rest."}
           </p>
+
+          <div className="mt-5">
+            <Link
+              href="/appointment/track"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white hover:bg-zinc-100 border border-zinc-300 text-xs font-bold text-zinc-800 shadow-2xs hover:shadow-xs transition-all"
+            >
+              <span>
+                {isBn
+                  ? "ইতিমধ্যে বুক করেছেন? সিরিয়াল বা বুকিং স্ট্যাটাস ট্র্যাক করুন →"
+                  : "Already booked? Track your appointment status →"}
+              </span>
+            </Link>
+          </div>
         </div>
 
         {/* Wizard Container */}

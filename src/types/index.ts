@@ -84,6 +84,33 @@ export interface BlogPost {
   };
 }
 
+export interface AppointmentRecord {
+  id: string;
+  reference_code: string;
+  patient_name: string;
+  patient_phone: string;
+  patient_email?: string;
+  doctor_id?: string;
+  doctor_name: string;
+  department_id?: string;
+  department_name: string;
+  appointment_date: string;
+  time_slot: string;
+  symptoms?: string;
+  status: "pending" | "confirmed" | "completed" | "cancelled";
+  admin_notes?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface DoctorBlockedDate {
+  id: string;
+  doctor_id: string;
+  blocked_date: string;
+  reason?: string;
+  created_at?: string;
+}
+
 export interface AppointmentBooking {
   id?: string;
   doctorId: string;
