@@ -153,6 +153,15 @@ export interface ClinicalCreedStat {
   label: BilingualText;
 }
 
+export interface CreedQuoteItem {
+  id: string;
+  quote: BilingualText;
+  highlight: BilingualText;
+  author: BilingualText;
+  role: BilingualText;
+  image: string;
+}
+
 export interface ClinicalCreedData {
   tag: BilingualText;
   quote: BilingualText;
@@ -160,5 +169,7 @@ export interface ClinicalCreedData {
   authority: BilingualText;
   designation: BilingualText;
   stats: ClinicalCreedStat[];
+  quotes?: CreedQuoteItem[];
 }
+
 

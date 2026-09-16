@@ -14,6 +14,7 @@ import {
   GoogleReview,
   WhyChooseCard,
   ClinicalCreedData,
+  CreedQuoteItem,
 } from "@/types";
 
 // ==============================================================================
@@ -1007,6 +1008,69 @@ export async function saveLiveWhyChooseCards(cards: WhyChooseCard[]): Promise<{ 
 // 8. HOMEPAGE CLINICAL CREED API
 // ==============================================================================
 
+export const DEFAULT_CLINICAL_CREED_QUOTES: CreedQuoteItem[] = [
+  {
+    id: "quote-1",
+    highlight: {
+      en: "Transforming how you live and smile.",
+      bn: "আপনার জীবন ও হাসিতে নতুন আত্মবিশ্বাস।",
+    },
+    quote: {
+      en: "A genuine smile is the universal language of health, confidence, and human connection. We combine surgical mastery with compassionate gentleness — because modern dentistry isn't just about fixing teeth, it's about transforming how you live.",
+      bn: "একটি আত্মবিশ্বাসী ও সুন্দর হাসি মানুষের স্বাস্থ্য, মর্যাদা ও আত্মবিশ্বাসের প্রতীক। কেজিএইচ ডেন্টালে আমরা বিশেষায়িত সার্জিক্যাল দক্ষতা ও আন্তরিক সেবার মেলবন্ধন ঘটাই — কারণ আধুনিক ডেন্টাল কেয়ার শুধু দাঁত সারানো নয়, জীবনকে সহজ ও হাসিময় করে তোলা।",
+    },
+    author: {
+      en: "Clinical Advisory Council",
+      bn: "ক্লিনিক্যাল অ্যাডভাইজরি কাউন্সিল",
+    },
+    role: {
+      en: "KGH Dental Multi-Specialty Chamber",
+      bn: "কেজিএইচ ডেন্টাল মাল্টি-স্পেশালিটি চেম্বার",
+    },
+    image: "/images/why-choose-us/modern-chamber.jpg",
+  },
+  {
+    id: "quote-2",
+    highlight: {
+      en: "Complete transparency before any decision.",
+      bn: "কোনো সিদ্ধান্তের আগেই সম্পূর্ণ স্বচ্ছতা।",
+    },
+    quote: {
+      en: "Zero guesswork, zero rushed decisions. From digital low-radiation imaging to high-magnification diagnosis, every patient sees what we see before any procedure begins.",
+      bn: "কোনো অনুমান নয়, তাড়াহুড়ো করে নেওয়া সিদ্ধান্ত নয়। ডিজিটাল লো-রেডিয়েশন এক্স-রে এবং স্পষ্ট স্ক্রিনিংয়ের মাধ্যমে রোগীকে আগে তার সমস্যাটি বোঝানো হয়, তারপর চিকিৎসা শুরু হয়।",
+    },
+    author: {
+      en: "Board of Department Leads",
+      bn: "বিভাগীয় প্রধান চিকিৎসক পরিষদ",
+    },
+    role: {
+      en: "Precision Diagnostics & Clinical Governance",
+      bn: "প্রেসিশন ডায়াগনস্টিকস ও ক্লিনিক্যাল গভর্ন্যান্স",
+    },
+    image: "/images/why-choose-us/transparent-plans-hd.jpeg",
+  },
+  {
+    id: "quote-3",
+    highlight: {
+      en: "Eight specialist fields under one unified roof.",
+      bn: "এক ছাদের নিচে আটটি বিশেষায়িত বিভাগ।",
+    },
+    quote: {
+      en: "Every smile has unique anatomy. By bringing eight distinct surgical and clinical sub-disciplines under one unified roof, we ensure you receive the exact specialist your teeth deserve.",
+      bn: "প্রতিটি দাঁত ও হাসির গঠন সম্পূর্ণ আলাদা। আধুনিক ডেন্টিস্ট্রির আটটি ভিন্ন বিশেষায়িত বিভাগকে এক ছাদের নিচে এনে আমরা নিশ্চিত করি যে আপনি কেবল সঠিক বিশেষজ্ঞের হাতেই সেবা পাচ্ছেন।",
+    },
+    author: {
+      en: "Consultant Dental Surgeons",
+      bn: "কনসালটেন্ট ডেন্টাল সার্জনবৃন্দ",
+    },
+    role: {
+      en: "Specialist Care Collaborative",
+      bn: "বিশেষজ্ঞ সমন্বিত চিকিৎসা দল",
+    },
+    image: "/images/why-choose-us/specialist-care.jpg",
+  },
+];
+
 export const DEFAULT_CLINICAL_CREED: ClinicalCreedData = {
   tag: {
     en: "OUR CLINICAL CREED",
@@ -1042,6 +1106,7 @@ export const DEFAULT_CLINICAL_CREED: ClinicalCreedData = {
       label: { en: "Unscheduled Waiting Delay", bn: "অতিরিক্ত অপেক্ষাহীন সেবা" },
     },
   ],
+  quotes: DEFAULT_CLINICAL_CREED_QUOTES,
 };
 
 export async function fetchLiveClinicalCreed(): Promise<ClinicalCreedData> {
@@ -1077,6 +1142,7 @@ export async function fetchLiveClinicalCreed(): Promise<ClinicalCreedData> {
       authority: { en: data.authority_en, bn: data.authority_bn },
       designation: { en: data.designation_en, bn: data.designation_bn },
       stats: data.stats || DEFAULT_CLINICAL_CREED.stats,
+      quotes: data.quotes || cached?.quotes || DEFAULT_CLINICAL_CREED.quotes,
     };
 
     if (typeof window !== "undefined") {
@@ -1106,23 +1172,33 @@ export async function saveLiveClinicalCreed(creed: ClinicalCreedData): Promise<{
   if (!isSupabaseConfigured) return { success: true };
 
   try {
-    const payload = {
+    const primaryQuote = creed.quotes?.[0];
+    const payload: any = {
       id: 1,
       tag_en: creed.tag.en,
       tag_bn: creed.tag.bn,
-      quote_en: creed.quote.en,
-      quote_bn: creed.quote.bn,
-      sub_quote_en: creed.subQuote.en,
-      sub_quote_bn: creed.subQuote.bn,
-      authority_en: creed.authority.en,
-      authority_bn: creed.authority.bn,
-      designation_en: creed.designation.en,
-      designation_bn: creed.designation.bn,
+      quote_en: primaryQuote?.quote.en || creed.quote.en,
+      quote_bn: primaryQuote?.quote.bn || creed.quote.bn,
+      sub_quote_en: primaryQuote?.highlight.en || creed.subQuote.en,
+      sub_quote_bn: primaryQuote?.highlight.bn || creed.subQuote.bn,
+      authority_en: primaryQuote?.author.en || creed.authority.en,
+      authority_bn: primaryQuote?.author.bn || creed.authority.bn,
+      designation_en: primaryQuote?.role.en || creed.designation.en,
+      designation_bn: primaryQuote?.role.bn || creed.designation.bn,
       stats: creed.stats,
       updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase.from("clinical_creed").upsert(payload, { onConflict: "id" });
+    if (creed.quotes && creed.quotes.length > 0) {
+      payload.quotes = creed.quotes;
+    }
+
+    let { error } = await supabase.from("clinical_creed").upsert(payload, { onConflict: "id" });
+    if (error && error.message?.includes("quotes")) {
+      delete payload.quotes;
+      const res = await supabase.from("clinical_creed").upsert(payload, { onConflict: "id" });
+      error = res.error;
+    }
     if (error) {
       console.warn("Supabase upsert warning for clinical_creed:", error.message);
     }

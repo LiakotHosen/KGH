@@ -407,6 +407,7 @@ CREATE TABLE IF NOT EXISTS public.clinical_creed (
 
 -- Enable RLS & Policies for clinical_creed
 ALTER TABLE public.clinical_creed ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.clinical_creed ADD COLUMN IF NOT EXISTS quotes JSONB DEFAULT '[]'::jsonb;
 
 DO $$ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'clinical_creed' AND policyname = 'Public read clinical_creed') THEN

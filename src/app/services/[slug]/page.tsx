@@ -48,18 +48,17 @@ export default function DepartmentDetailPage() {
           />
         )}
 
-        {/* Cinematic Gradient Overlays for Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-zinc-950/80 to-zinc-950/30 sm:from-zinc-950/95 sm:via-zinc-950/75 sm:to-zinc-950/20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-zinc-950/40" />
+        {/* Subtle localized gradient overlay on the left for text legibility, leaving the real cover image 100% bright and authentic */}
+        <div className="absolute inset-y-0 left-0 w-full sm:w-[72%] md:w-[62%] lg:w-[52%] xl:w-[46%] bg-gradient-to-r from-black/85 via-black/45 to-transparent pointer-events-none" />
 
         {/* Content Container */}
         <div className="relative z-10 w-full max-w-[2200px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-20 py-16 sm:py-20">
-          <div className="max-w-3xl space-y-5">
+          <div className="max-w-2xl lg:max-w-3xl space-y-5">
             {/* Back Button */}
             <div>
               <Link
                 href="/services"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white/90 hover:text-white text-xs font-medium border border-white/15 transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white/95 hover:text-white text-xs font-medium border border-white/20 transition-all shadow-sm"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
                 <span>{isBn ? "সকল সেবার তালিকায় ফিরে যান" : "Back to All Departments"}</span>
@@ -67,7 +66,7 @@ export default function DepartmentDetailPage() {
             </div>
 
             {/* Department Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white border border-white/20 text-xs font-bold shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-white border border-white/20 text-xs font-bold shadow-sm">
               <DepartmentIcon name={department.iconName} className="w-3.5 h-3.5 text-white" />
               <span>
                 {isBn ? "বিশেষায়িত চিকিৎসা অন্তর্ভুক্ত" : "Specialized Treatments Included"}
@@ -75,12 +74,12 @@ export default function DepartmentDetailPage() {
             </div>
 
             {/* Department Title */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1] drop-shadow-sm">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1] drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
               {t(department.name)}
             </h1>
 
             {/* Department Description */}
-            <p className="text-base sm:text-lg lg:text-xl text-zinc-200 leading-relaxed max-w-2xl font-normal drop-shadow-xs">
+            <p className="text-base sm:text-lg lg:text-xl text-zinc-100 leading-relaxed max-w-2xl font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
               {t(department.shortDesc)}
             </p>
 
@@ -96,9 +95,9 @@ export default function DepartmentDetailPage() {
 
               <a
                 href="#treatment-list"
-                className="inline-flex items-center gap-2 px-5 py-3.5 bg-white/10 hover:bg-white/20 active:bg-white/25 backdrop-blur-md text-white text-xs sm:text-sm font-semibold rounded-xl border border-white/25 transition-all shadow-xs"
+                className="inline-flex items-center gap-2 px-5 py-3.5 bg-black/40 hover:bg-black/60 active:bg-black/70 backdrop-blur-md text-white text-xs sm:text-sm font-semibold rounded-xl border border-white/25 transition-all shadow-sm"
               >
-                <span>{isBn ? "সেবাসমূহের তালিকা দেখুন" : "View Treatment Details"}</span>
+                <span>{isBn ? "চিকিৎসার বিস্তারিত দেখুন" : "View Treatment Details"}</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>

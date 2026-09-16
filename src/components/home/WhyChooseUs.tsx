@@ -229,9 +229,9 @@ export function WhyChooseUs() {
   };
 
   return (
-    <section ref={sectionRef} className="relative w-full bg-zinc-950 text-zinc-900">
+    <section ref={sectionRef} className="relative w-full bg-[#F3F3F7] text-zinc-900">
       {/* Intro Header Section */}
-      <div className="pt-20 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 bg-gradient-to-b from-zinc-50 via-zinc-100 to-zinc-950 text-center relative z-10 border-t border-zinc-200">
+      <div className="pt-20 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 bg-gradient-to-b from-white via-[#F3F3F7] to-[#F3F3F7] text-center relative z-10 border-t border-zinc-200/80">
         <div className="max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-zinc-200/80 shadow-xs mb-4">
             <span className="w-2 h-2 rounded-full bg-zinc-700 animate-ping" />
@@ -250,7 +250,7 @@ export function WhyChooseUs() {
 
           <div className="mt-8 flex items-center justify-center gap-2 text-xs font-semibold text-zinc-500">
             <span className="inline-flex items-center gap-1">
-              <Layers className="w-4 h-4 text-zinc-700" />
+              <Layers className="w-4 h-4 text-zinc-600" />
               {isBn
                 ? "স্ক্রোল করুন বা বাটনে ক্লিক করে প্রতিটি ধাপ দেখুন"
                 : "Scroll or use arrows to navigate full-screen standards"}
@@ -321,16 +321,6 @@ export function WhyChooseUs() {
           const Icon = icons[index] || Sparkles;
           const isFirst = index === 0;
 
-          const itemImage =
-            item.image ||
-            (index === 0
-              ? "/images/why-choose-us/specialist-care.jpg"
-              : index === 1
-              ? "/images/why-choose-us/modern-chamber.jpg"
-              : index === 2
-              ? "/images/why-choose-us/transparent-plans-hd.jpeg"
-              : "/images/why-choose-us/easy-booking.jpg");
-
           const highlights = item.highlights
             ? isBn
               ? item.highlights.bn
@@ -346,36 +336,24 @@ export function WhyChooseUs() {
               id={`clinical-card-${index}`}
               style={{
                 zIndex: index + 10,
+                backgroundColor: "#F3F3F7",
               }}
-              className={`sticky top-0 min-h-screen w-full flex items-center justify-center overflow-hidden transition-all duration-300 ${
+              className={`sticky top-0 min-h-screen w-full flex items-center justify-center overflow-hidden transition-all duration-300 bg-[#F3F3F7] ${
                 !isFirst
-                  ? "rounded-t-[36px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.55)] border-t border-white/20"
+                  ? "rounded-t-[36px] sm:rounded-t-[48px] shadow-[0_-20px_50px_rgba(0,0,0,0.06)] border-t border-zinc-200/80"
                   : ""
               }`}
             >
-              {/* Full-Bleed High Definition Background Image */}
-              <div className="absolute inset-0 z-0">
-                <img
-                  src={itemImage}
-                  alt={isBn ? item.title.bn : item.title.en}
-                  className="w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
-                />
-
-                {/* Balanced Contrast Vignette so the photo is vibrant and text is readable */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/60" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
-              </div>
-
               {/* Card Sequence Indicator in Corner */}
               <div className="absolute top-6 left-6 sm:top-10 sm:left-10 z-20 flex items-center gap-2">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 text-white shadow-lg text-xs font-bold tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200/80 text-zinc-900 shadow-sm text-xs font-bold tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-zinc-900 animate-pulse" />
                   <span>
                     0{index + 1} / 0{items.length}
                   </span>
                 </div>
                 {item.tag && (
-                  <span className="hidden sm:inline-block px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-xs font-bold tracking-wide shadow-md border border-white/20">
+                  <span className="hidden sm:inline-block px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md text-zinc-700 text-xs font-bold tracking-wide shadow-sm border border-zinc-200/80">
                     {isBn ? item.tag.bn : item.tag.en}
                   </span>
                 )}
@@ -384,46 +362,46 @@ export function WhyChooseUs() {
               {/* Top Right Stat Pill */}
               {item.stat && (
                 <div className="absolute top-6 right-6 sm:top-10 sm:right-10 z-20">
-                  <span className="px-3.5 py-1.5 rounded-full bg-white/20 text-white text-xs font-bold tracking-wide shadow-lg backdrop-blur-sm border border-white/30">
+                  <span className="px-3.5 py-1.5 rounded-full bg-white/90 text-zinc-900 text-xs font-bold tracking-wide shadow-sm backdrop-blur-md border border-zinc-200/80">
                     {isBn ? item.stat.bn : item.stat.en}
                   </span>
                 </div>
               )}
 
-              {/* Centered Middle-Aligned 95% Transparent Card (টেক্সটের ব্যাকগ্রাউন্ড ৯৫% স্বচ্ছ) */}
+              {/* Centered Middle-Aligned Card */}
               <div className="relative z-20 w-full max-w-3xl mx-auto px-4 sm:px-6 py-12 flex flex-col items-center justify-center">
-                <div className="w-full rounded-3xl sm:rounded-[36px] bg-white/[0.05] border border-white/15 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-6 sm:p-10 md:p-12 text-center flex flex-col items-center relative transition-all duration-300">
+                <div className="w-full rounded-3xl sm:rounded-[36px] bg-white border border-zinc-200/80 shadow-[0_12px_45px_rgba(0,0,0,0.05)] p-6 sm:p-10 md:p-12 text-center flex flex-col items-center relative transition-all duration-300">
                   {/* Icon Circle */}
-                  <div className="p-3.5 rounded-2xl bg-black/30 border border-white/20 text-white shadow-lg mb-4">
+                  <div className="p-3.5 rounded-2xl bg-zinc-900 text-white shadow-md mb-4">
                     <Icon className="w-7 h-7 sm:w-8 sm:h-8" />
                   </div>
 
                   {/* Category Pill */}
                   <div className="mb-3">
-                    <span className="text-xs font-bold uppercase tracking-widest text-zinc-200 bg-white/15 px-3.5 py-1 rounded-full border border-white/25 shadow-xs">
+                    <span className="text-xs font-bold uppercase tracking-widest text-zinc-700 bg-zinc-100 px-3.5 py-1 rounded-full border border-zinc-200/80">
                       {isBn ? item.tag?.bn || "ক্লিনিক্যাল স্ট্যান্ডার্ড" : item.tag?.en || "Clinical Standard"}
                     </span>
                   </div>
 
                   {/* Main Title */}
-                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight mb-3 sm:mb-4 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-950 tracking-tight mb-3 sm:mb-4">
                     {isBn ? item.title.bn : item.title.en}
                   </h3>
 
                   {/* Main Description */}
-                  <p className="text-sm sm:text-base text-zinc-100 font-medium leading-relaxed max-w-xl mx-auto mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                  <p className="text-sm sm:text-base text-zinc-600 font-medium leading-relaxed max-w-xl mx-auto mb-6">
                     {isBn ? item.desc.bn : item.desc.en}
                   </p>
 
-                  {/* Micro-Highlights (3 Checkmark Points) - 95% Transparent Pills */}
+                  {/* Micro-Highlights (3 Checkmark Points) */}
                   {highlights.length > 0 && (
                     <div className="w-full flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8">
                       {highlights.map((point, pIdx) => (
                         <div
                           key={pIdx}
-                          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/30 border border-white/20 text-xs sm:text-sm font-medium text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]"
+                          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-50 border border-zinc-200/80 text-xs sm:text-sm font-medium text-zinc-800 shadow-xs"
                         >
-                          <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                           <span>{point}</span>
                         </div>
                       ))}
@@ -435,7 +413,7 @@ export function WhyChooseUs() {
                     {item.ctaLink && (
                       <Link
                         href={item.ctaLink}
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-sm tracking-wide shadow-xl transition-all duration-200 hover:scale-[1.03]"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all duration-200 hover:scale-[1.03]"
                       >
                         <span>
                           {item.cta
@@ -452,9 +430,9 @@ export function WhyChooseUs() {
 
                     <button
                       onClick={() => setSelectedItem(item)}
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-black/30 hover:bg-black/45 text-white font-semibold text-xs sm:text-sm border border-white/25 transition-all duration-200 shadow-sm"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200/80 text-zinc-800 font-semibold text-xs sm:text-sm border border-zinc-200/80 transition-all duration-200 shadow-xs"
                     >
-                      <Info className="w-4 h-4 text-zinc-300" />
+                      <Info className="w-4 h-4 text-zinc-600" />
                       <span>{isBn ? "বিস্তারিত প্রোটোকল" : "Detailed Protocol"}</span>
                     </button>
                   </div>
@@ -464,7 +442,7 @@ export function WhyChooseUs() {
                 {index < items.length - 1 && (
                   <button
                     onClick={nextCard}
-                    className="mt-6 inline-flex items-center gap-1.5 text-white/80 hover:text-white text-xs font-semibold drop-shadow-md transition-colors animate-bounce"
+                    className="mt-6 inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-900 text-xs font-semibold transition-colors animate-bounce"
                   >
                     <span>{isBn ? "পরবর্তী স্ট্যান্ডার্ড দেখতে স্ক্রোল করুন" : "Scroll to see next standard"}</span>
                     <ChevronDown className="w-4 h-4" />

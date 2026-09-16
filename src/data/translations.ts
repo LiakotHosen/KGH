@@ -179,6 +179,7 @@ export const UI_STRINGS = {
           en: "KGH Dental Multi-Specialty Chamber",
           bn: "কেজিএইচ ডেন্টাল মাল্টি-স্পেশালিটি চেম্বার",
         },
+        image: "/images/why-choose-us/modern-chamber.jpg",
       },
       {
         quote: {
@@ -197,6 +198,7 @@ export const UI_STRINGS = {
           en: "Precision Diagnostics & Clinical Governance",
           bn: "প্রেসিশন ডায়াগনস্টিকস ও ক্লিনিক্যাল গভর্ন্যান্স",
         },
+        image: "/images/why-choose-us/transparent-plans-hd.jpeg",
       },
       {
         quote: {
@@ -215,6 +217,7 @@ export const UI_STRINGS = {
           en: "Specialist Care Collaborative",
           bn: "বিশেষজ্ঞ সমন্বিত চিকিৎসা দল",
         },
+        image: "/images/why-choose-us/specialist-care.jpg",
       },
     ],
     pills: [

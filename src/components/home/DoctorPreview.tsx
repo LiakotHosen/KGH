@@ -56,15 +56,15 @@ export function DoctorPreview() {
     preloadDoctorImages();
   }, []);
 
-  // Repeat array 3 times to form a lightweight, perfectly seamless infinite looping circular track
-  const REPEAT_COUNT = 3;
+  // Repeat array 5 times to form a robust, perfectly seamless circular track that never runs out of cards
+  const REPEAT_COUNT = 5;
   const extendedDoctors = useMemo(() => {
     return Array.from({ length: REPEAT_COUNT }, () => doctorsList).flat();
   }, [doctorsList]);
   const baseCount = doctorsList.length;
 
-  // Start with middle set (index = baseCount) so we can slide left/right freely
-  const [activeTrackIndex, setActiveTrackIndex] = useState<number>(baseCount);
+  // Start with middle set (Set 2, index = baseCount * 2) so cards are guaranteed on both left and right
+  const [activeTrackIndex, setActiveTrackIndex] = useState<number>(baseCount * 2);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(true);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -74,6 +74,7 @@ export function DoctorPreview() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(1200);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const boundaryTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sync with Supabase only if data actually changes
   useEffect(() => {
@@ -105,6 +106,17 @@ export function DoctorPreview() {
     return () => observer.disconnect();
   }, []);
 
+  // Stop auto-slide when browser tab is hidden to prevent accumulated state drifts
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (timerRef.current) clearInterval(timerRef.current);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
   // Measure container width with resize observer for responsive accuracy
   useEffect(() => {
     if (!containerRef.current) return;
@@ -131,28 +143,58 @@ export function DoctorPreview() {
     (containerWidth - (Math.floor(visibleCards) - 1) * gap) / visibleCards
   );
 
-  // Seamless infinite track reset when reaching boundaries
-  const handleTransitionEnd = () => {
+  // Normalization logic: keep activeTrackIndex safely within the middle set [baseCount * 2, baseCount * 3 - 1]
+  const normalizeBoundary = useCallback(() => {
     if (baseCount === 0) return;
-    // If we've drifted into the 3rd set, silently snap back to 2nd (middle) set
-    if (activeTrackIndex >= baseCount * 2) {
-      setIsTransitioning(false);
-      setActiveTrackIndex((prev) => prev - baseCount);
-    } else if (activeTrackIndex < baseCount) {
-      setIsTransitioning(false);
-      setActiveTrackIndex((prev) => prev + baseCount);
-    }
+    setActiveTrackIndex((curr) => {
+      if (curr >= baseCount * 3) {
+        setIsTransitioning(false);
+        return curr - baseCount;
+      } else if (curr < baseCount * 2) {
+        setIsTransitioning(false);
+        return curr + baseCount;
+      }
+      return curr;
+    });
+  }, [baseCount]);
+
+  // Seamless infinite track reset when reaching boundaries
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    // CRITICAL: Only handle transitions on the track container itself, ignore bubbling child card transitions!
+    if (e.target !== e.currentTarget) return;
+    if (e.propertyName !== "transform") return;
+    normalizeBoundary();
   };
+
+  // Safe timeout fallback in case browser suppresses or cancels transitionend event
+  const scheduleBoundaryReset = useCallback(() => {
+    if (boundaryTimerRef.current) clearTimeout(boundaryTimerRef.current);
+    boundaryTimerRef.current = setTimeout(() => {
+      normalizeBoundary();
+    }, 580);
+  }, [normalizeBoundary]);
 
   const handleNext = useCallback(() => {
     setIsTransitioning(true);
     setActiveTrackIndex((prev) => prev + 1);
-  }, []);
+    scheduleBoundaryReset();
+  }, [scheduleBoundaryReset]);
 
   const handlePrev = useCallback(() => {
     setIsTransitioning(true);
     setActiveTrackIndex((prev) => prev - 1);
-  }, []);
+    scheduleBoundaryReset();
+  }, [scheduleBoundaryReset]);
+
+  // Absolute fail-safe watchdog: if activeTrackIndex somehow drifts beyond safe bounds, normalize immediately
+  useEffect(() => {
+    if (baseCount === 0) return;
+    if (activeTrackIndex >= baseCount * 4 || activeTrackIndex < baseCount) {
+      const normalized = baseCount * 2 + ((((activeTrackIndex % baseCount) + baseCount) % baseCount));
+      setIsTransitioning(false);
+      setActiveTrackIndex(normalized);
+    }
+  }, [activeTrackIndex, baseCount]);
 
   // Auto-slide round-robin right-to-left every 4.5s (ONLY when in viewport and not paused)
   useEffect(() => {
@@ -399,6 +441,7 @@ export function DoctorPreview() {
                     if (isActive || hasMovedRef.current) return;
                     setIsTransitioning(true);
                     setActiveTrackIndex(idx);
+                    scheduleBoundaryReset();
                   }}
                   className={`shrink-0 flex flex-col select-none transition-all duration-300 ${
                     isActive
@@ -532,6 +575,7 @@ export function DoctorPreview() {
                   setIsTransitioning(true);
                   const diff = i - currentDoctorIndex;
                   setActiveTrackIndex((prev) => prev + diff);
+                  scheduleBoundaryReset();
                 }}
                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                   i === currentDoctorIndex
