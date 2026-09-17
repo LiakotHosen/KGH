@@ -2,16 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Quote,
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  Award,
-  ChevronLeft,
-  ChevronRight,
-  Activity,
-} from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { UI_STRINGS } from "@/data/translations";
 import { ClinicalCreedData } from "@/types";
@@ -119,35 +110,8 @@ export function ClinicalPhilosophyBanner() {
 
       <div className="relative z-10 w-full px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24">
         <div className="max-w-4xl mx-auto">
-          {/* Top Header Badge & Live Indicator in Minimalist Charcoal/Light-Grey (No Green) */}
-          <div className="flex items-center justify-between gap-4 mb-8 sm:mb-10">
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-zinc-300/80 shadow-xs">
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-600 opacity-60" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-zinc-800" />
-              </span>
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-zinc-800">
-                {isBn
-                  ? creedData?.tag?.bn || quoteData?.badge?.bn || "আমাদের চিকিৎসা দর্শন"
-                  : creedData?.tag?.en || quoteData?.badge?.en || "Our Clinical Creed"}
-              </span>
-            </div>
-
-            {/* Minimalist Soundwave Indicator in Slate/Charcoal (No Green) */}
-            <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-zinc-300/80 shadow-xs text-zinc-700 text-xs font-mono">
-              <Activity className="w-3.5 h-3.5 text-zinc-800" />
-              <span className="text-[11px] font-semibold text-zinc-800">KGH Philosophy</span>
-              <div className="flex items-center gap-0.5 ml-1">
-                <span className="w-0.5 h-3 bg-zinc-700 rounded-full animate-bounce [animation-delay:0ms]" />
-                <span className="w-0.5 h-4 bg-zinc-700 rounded-full animate-bounce [animation-delay:150ms]" />
-                <span className="w-0.5 h-2 bg-zinc-700 rounded-full animate-bounce [animation-delay:300ms]" />
-                <span className="w-0.5 h-3.5 bg-zinc-700 rounded-full animate-bounce [animation-delay:450ms]" />
-              </div>
-            </div>
-          </div>
-
-          {/* 90% Transparent Quotation Box (ব্যাকগ্রাউন্ডের ছবি ৯০% স্বচ্ছভাবে দেখা যাবে) */}
-          <div className="relative p-7 sm:p-10 lg:p-12 rounded-3xl bg-white/[0.22] border border-white/60 shadow-[0_12px_32px_0_rgba(0,0,0,0.15)] overflow-hidden transition-all duration-300">
+          {/* 90% Transparent Quotation Box */}
+          <div className="relative p-8 sm:p-12 lg:p-14 rounded-3xl bg-white/[0.22] border border-white/60 shadow-[0_12px_32px_0_rgba(0,0,0,0.15)] overflow-hidden transition-all duration-300">
             {/* Massive Stylized Background Quote Glyph */}
             <div className="pointer-events-none absolute -top-8 -left-4 text-zinc-400/25 select-none font-serif text-9xl sm:text-[180px] leading-none">
               “
@@ -161,19 +125,8 @@ export function ClinicalPhilosophyBanner() {
                   : "opacity-100 translate-y-0"
               }`}
             >
-              <div className="flex items-center gap-3 text-zinc-800 mb-5">
-                <Quote className="w-6 h-6 rotate-180" />
-                {displayedQuote?.highlight && (
-                  <span className="text-xs sm:text-sm font-bold tracking-wider uppercase text-zinc-900 bg-white/70 px-3.5 py-1 rounded-full border border-zinc-300/80 shadow-2xs">
-                    {isBn
-                      ? displayedQuote.highlight.bn
-                      : displayedQuote.highlight.en}
-                  </span>
-                )}
-              </div>
-
               {/* Main Editorial Quote Statement */}
-              <blockquote className="text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-950 leading-relaxed sm:leading-relaxed lg:leading-relaxed tracking-tight drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
+              <blockquote className="text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-950 leading-relaxed sm:leading-relaxed lg:leading-relaxed tracking-tight drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] text-center">
                 “
                 {isBn
                   ? displayedQuote?.quote?.bn
@@ -181,94 +134,42 @@ export function ClinicalPhilosophyBanner() {
                 ”
               </blockquote>
 
-              {/* Quote Author & Council Attribution */}
-              <div className="mt-8 pt-6 border-t border-zinc-300/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-11 h-11 rounded-2xl bg-white/80 border border-zinc-300 flex items-center justify-center text-zinc-900 shadow-xs">
-                    <Award className="w-5 h-5 text-zinc-800" />
+              {/* Quote Switcher Controls */}
+              {quotesList.length > 1 && (
+                <div className="mt-8 pt-4 flex items-center justify-center gap-2">
+                  <button
+                    onClick={handlePrevQuote}
+                    aria-label="Previous quote"
+                    className="p-2 rounded-xl bg-white/80 hover:bg-white text-zinc-800 transition-colors border border-zinc-300 shadow-2xs cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  <div className="flex items-center gap-1.5 px-2">
+                    {quotesList.map((_, qIdx) => (
+                      <button
+                        key={qIdx}
+                        onClick={() => changeQuote(qIdx)}
+                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                          qIdx === activeQuoteIndex
+                            ? "w-6 bg-zinc-900"
+                            : "w-2 bg-zinc-400 hover:bg-zinc-600"
+                        }`}
+                        aria-label={`Go to quote ${qIdx + 1}`}
+                      />
+                    ))}
                   </div>
-                  <div>
-                    <h4 className="text-sm sm:text-base font-extrabold text-zinc-950 tracking-wide">
-                      {isBn
-                        ? displayedQuote?.author?.bn || "ক্লিনিক্যাল অ্যাডভাইজরি কাউন্সিল"
-                        : displayedQuote?.author?.en || "Clinical Advisory Council"}
-                    </h4>
-                    <p className="text-xs font-medium text-zinc-700">
-                      {isBn
-                        ? displayedQuote?.role?.bn || "কেজিএইচ ডেন্টাল মাল্টি-স্পেশালিটি চেম্বার"
-                        : displayedQuote?.role?.en || "KGH Dental Multi-Specialty Chamber"}
-                    </p>
-                  </div>
+
+                  <button
+                    onClick={handleNextQuote}
+                    aria-label="Next quote"
+                    className="p-2 rounded-xl bg-white/80 hover:bg-white text-zinc-800 transition-colors border border-zinc-300 shadow-2xs cursor-pointer"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
-
-                {/* Quote Switcher Controls in Minimalist Light Grey */}
-                {quotesList.length > 1 && (
-                  <div className="flex items-center gap-2 self-end sm:self-center">
-                    <button
-                      onClick={handlePrevQuote}
-                      aria-label="Previous quote"
-                      className="p-2 rounded-xl bg-white/80 hover:bg-white text-zinc-800 transition-colors border border-zinc-300 shadow-2xs"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-
-                    <div className="flex items-center gap-1.5 px-2">
-                      {quotesList.map((_, qIdx) => (
-                        <button
-                          key={qIdx}
-                          onClick={() => changeQuote(qIdx)}
-                          className={`h-1.5 rounded-full transition-all duration-300 ${
-                            qIdx === activeQuoteIndex
-                              ? "w-6 bg-zinc-900"
-                              : "w-2 bg-zinc-400 hover:bg-zinc-600"
-                          }`}
-                          aria-label={`Go to quote ${qIdx + 1}`}
-                        />
-                      ))}
-                    </div>
-
-                    <button
-                      onClick={handleNextQuote}
-                      aria-label="Next quote"
-                      className="p-2 rounded-xl bg-white/80 hover:bg-white text-zinc-800 transition-colors border border-zinc-300 shadow-2xs"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
-          </div>
-
-
-
-          {/* Standard Pills Row in Minimalist Light Grey / Charcoal (No Green) */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5">
-            {creedData?.stats ? (
-              creedData.stats.map((st, idx) => (
-                <div
-                  key={idx}
-                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-zinc-300/80 text-xs text-zinc-800 font-bold shadow-xs"
-                >
-                  <span className="font-mono text-xs font-extrabold text-zinc-950">
-                    {isBn ? st.value.bn : st.value.en}
-                  </span>
-                  <span className="text-zinc-700">
-                    {isBn ? st.label.bn : st.label.en}
-                  </span>
-                </div>
-              ))
-            ) : quoteData?.pills ? (
-              quoteData.pills.map((pill, idx) => (
-                <div
-                  key={idx}
-                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-zinc-300/80 text-xs text-zinc-800 font-bold shadow-xs"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-zinc-700 flex-shrink-0" />
-                  <span>{isBn ? pill.bn : pill.en}</span>
-                </div>
-              ))
-            ) : null}
           </div>
 
           {/* Action Callouts */}

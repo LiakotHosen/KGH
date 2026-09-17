@@ -10,11 +10,8 @@ import {
   ArrowRight,
   CheckCircle2,
   ShieldCheck,
-  ChevronUp,
-  ChevronDown,
   Info,
   X,
-  Layers,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { UI_STRINGS } from "@/data/translations";
@@ -133,9 +130,7 @@ const EXTENDED_DETAILS: Record<
 export function WhyChooseUs() {
   const { isBn } = useLanguage();
   const [liveCards, setLiveCards] = useState<WhyChooseCard[]>(DEFAULT_WHY_CHOOSE_CARDS);
-  const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
   const [selectedItem, setSelectedItem] = useState<CardItem | null>(null);
-  const [isNavVisible, setIsNavVisible] = useState<boolean>(false);
 
   useEffect(() => {
     fetchLiveWhyChooseCards().then((cards) => {
@@ -182,150 +177,24 @@ export function WhyChooseUs() {
     };
   };
 
-  // Update active index based on scroll position and section bounds
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current) return;
-      const sRect = sectionRef.current.getBoundingClientRect();
-      const inView = sRect.top <= 120 && sRect.bottom >= 300;
-      setIsNavVisible(inView);
-
-      const scrollPosition = window.scrollY + window.innerHeight * 0.45;
-      cardRefs.current.forEach((ref, idx) => {
-        if (!ref) return;
-        const rect = ref.getBoundingClientRect();
-        const top = rect.top + window.scrollY;
-        const bottom = top + rect.height;
-        if (scrollPosition >= top && scrollPosition <= bottom) {
-          setActiveCardIndex(idx);
-        }
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Smooth scroll to a specific card on click
-  const scrollToCard = (index: number) => {
-    const targetRef = cardRefs.current[index];
-    if (targetRef) {
-      const yOffset = -20;
-      const y = targetRef.getBoundingClientRect().top + window.scrollY + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
-      setActiveCardIndex(index);
-    }
-  };
-
-  const nextCard = () => {
-    const nextIdx = Math.min(activeCardIndex + 1, items.length - 1);
-    scrollToCard(nextIdx);
-  };
-
-  const prevCard = () => {
-    const prevIdx = Math.max(activeCardIndex - 1, 0);
-    scrollToCard(prevIdx);
-  };
-
   return (
     <section ref={sectionRef} className="relative w-full bg-[#F3F3F7] text-zinc-900">
-      {/* Intro Header Section */}
-      <div className="pt-20 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-8 lg:px-12 xl:px-16 2xl:px-24 bg-gradient-to-b from-white via-[#F3F3F7] to-[#F3F3F7] text-center relative z-10 border-t border-zinc-200/80">
-        <div className="max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-zinc-200/80 shadow-xs mb-4">
-            <span className="w-2 h-2 rounded-full bg-zinc-700 animate-ping" />
-            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-zinc-700">
-              {isBn ? "আমাদের বিশেষত্ব ও মানদণ্ড" : "Our Clinical Standard"}
-            </span>
-          </div>
+      {/* Intro Header Section — Single-Line Prominent Headline */}
+      <div className="pt-20 sm:pt-28 lg:pt-36 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 w-full max-w-[1700px] mx-auto text-center relative z-10">
+        <h2 className="text-[clamp(1.35rem,3.9vw,4.5rem)] font-black text-zinc-950 tracking-tight leading-tight w-full max-w-none mx-auto whitespace-nowrap">
+          {isBn ? UI_STRINGS.whyChooseUs.title.bn : UI_STRINGS.whyChooseUs.title.en}
+        </h2>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 tracking-tight">
-            {isBn ? UI_STRINGS.whyChooseUs.title.bn : UI_STRINGS.whyChooseUs.title.en}
-          </h2>
-
-          <p className="text-base sm:text-lg text-zinc-600 mt-4 max-w-2xl mx-auto leading-relaxed">
-            {isBn ? UI_STRINGS.whyChooseUs.subtitle.bn : UI_STRINGS.whyChooseUs.subtitle.en}
-          </p>
-
-          <div className="mt-8 flex items-center justify-center gap-2 text-xs font-semibold text-zinc-500">
-            <span className="inline-flex items-center gap-1">
-              <Layers className="w-4 h-4 text-zinc-600" />
-              {isBn
-                ? "স্ক্রোল করুন বা বাটনে ক্লিক করে প্রতিটি ধাপ দেখুন"
-                : "Scroll or use arrows to navigate full-screen standards"}
-            </span>
-          </div>
-        </div>
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-zinc-600 mt-4 sm:mt-6 max-w-4xl mx-auto font-normal leading-relaxed">
+          {isBn ? UI_STRINGS.whyChooseUs.subtitle.bn : UI_STRINGS.whyChooseUs.subtitle.en}
+        </p>
       </div>
 
-      {/* Floating Sticky Navigation Bar for Quick Click-Switching */}
-      <aside
-        aria-label="Clinical standard steps"
-        className={`fixed bottom-6 right-6 z-40 hidden sm:flex flex-col items-end gap-2 transition-all duration-300 ${
-          isNavVisible
-            ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
-      >
-        <div className="flex items-center gap-1.5 p-2 rounded-2xl bg-white/95 backdrop-blur-xl border border-zinc-200/90 shadow-2xl">
-          {/* Card Indicator Buttons */}
-          <div className="flex items-center gap-1 px-1">
-            {items.map((item, idx) => (
-              <button
-                key={item.id || idx}
-                onClick={() => scrollToCard(idx)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
-                  activeCardIndex === idx
-                    ? "bg-zinc-950 text-white shadow-sm"
-                    : "text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100"
-                }`}
-              >
-                <span>0{idx + 1}</span>
-                {activeCardIndex === idx && (
-                  <span className="hidden md:inline font-semibold text-[11px] max-w-[120px] truncate">
-                    {isBn ? item.tag?.bn || item.title.bn : item.tag?.en || item.title.en}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          <div className="h-5 w-px bg-zinc-200 mx-1" />
-
-          {/* Up & Down Arrows */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={prevCard}
-              disabled={activeCardIndex === 0}
-              aria-label="Previous standard"
-              className="p-1.5 rounded-lg text-zinc-700 hover:bg-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              <ChevronUp className="w-4 h-4" />
-            </button>
-            <button
-              onClick={nextCard}
-              disabled={activeCardIndex === items.length - 1}
-              aria-label="Next standard"
-              className="p-1.5 rounded-lg text-zinc-700 hover:bg-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              <ChevronDown className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* The 4 Full-Bleed Stacking Cards */}
+      {/* The 4 Full-Bleed Stacking Cards — Cleaned Minimalist Design */}
       <div className="relative w-full">
         {items.map((item, index) => {
           const Icon = icons[index] || Sparkles;
           const isFirst = index === 0;
-
-          const highlights = item.highlights
-            ? isBn
-              ? item.highlights.bn
-              : item.highlights.en
-            : [];
 
           return (
             <div
@@ -344,76 +213,30 @@ export function WhyChooseUs() {
                   : ""
               }`}
             >
-              {/* Card Sequence Indicator in Corner */}
-              <div className="absolute top-6 left-6 sm:top-10 sm:left-10 z-20 flex items-center gap-2">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200/80 text-zinc-900 shadow-sm text-xs font-bold tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-zinc-900 animate-pulse" />
-                  <span>
-                    0{index + 1} / 0{items.length}
-                  </span>
-                </div>
-                {item.tag && (
-                  <span className="hidden sm:inline-block px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md text-zinc-700 text-xs font-bold tracking-wide shadow-sm border border-zinc-200/80">
-                    {isBn ? item.tag.bn : item.tag.en}
-                  </span>
-                )}
-              </div>
-
-              {/* Top Right Stat Pill */}
-              {item.stat && (
-                <div className="absolute top-6 right-6 sm:top-10 sm:right-10 z-20">
-                  <span className="px-3.5 py-1.5 rounded-full bg-white/90 text-zinc-900 text-xs font-bold tracking-wide shadow-sm backdrop-blur-md border border-zinc-200/80">
-                    {isBn ? item.stat.bn : item.stat.en}
-                  </span>
-                </div>
-              )}
-
-              {/* Centered Middle-Aligned Card */}
-              <div className="relative z-20 w-full max-w-3xl mx-auto px-4 sm:px-6 py-12 flex flex-col items-center justify-center">
-                <div className="w-full rounded-3xl sm:rounded-[36px] bg-white border border-zinc-200/80 shadow-[0_12px_45px_rgba(0,0,0,0.05)] p-6 sm:p-10 md:p-12 text-center flex flex-col items-center relative transition-all duration-300">
+              {/* Centered Middle-Aligned Clean Card */}
+              <div className="relative z-20 w-full max-w-4xl mx-auto px-4 sm:px-6 py-12 flex flex-col items-center justify-center">
+                <div className="w-full rounded-3xl sm:rounded-[40px] bg-white border border-zinc-200/80 shadow-[0_16px_50px_rgba(0,0,0,0.06)] p-8 sm:p-12 md:p-16 text-center flex flex-col items-center relative transition-all duration-300">
                   {/* Icon Circle */}
-                  <div className="p-3.5 rounded-2xl bg-zinc-900 text-white shadow-md mb-4">
-                    <Icon className="w-7 h-7 sm:w-8 sm:h-8" />
-                  </div>
-
-                  {/* Category Pill */}
-                  <div className="mb-3">
-                    <span className="text-xs font-bold uppercase tracking-widest text-zinc-700 bg-zinc-100 px-3.5 py-1 rounded-full border border-zinc-200/80">
-                      {isBn ? item.tag?.bn || "ক্লিনিক্যাল স্ট্যান্ডার্ড" : item.tag?.en || "Clinical Standard"}
-                    </span>
+                  <div className="p-4 rounded-2xl bg-zinc-950 text-white shadow-md mb-6">
+                    <Icon className="w-8 h-8 sm:w-10 sm:h-10" />
                   </div>
 
                   {/* Main Title */}
-                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-950 tracking-tight mb-3 sm:mb-4">
+                  <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-zinc-950 tracking-tight mb-4 sm:mb-5">
                     {isBn ? item.title.bn : item.title.en}
                   </h3>
 
                   {/* Main Description */}
-                  <p className="text-sm sm:text-base text-zinc-600 font-medium leading-relaxed max-w-xl mx-auto mb-6">
+                  <p className="text-base sm:text-lg md:text-xl text-zinc-600 font-medium leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-10">
                     {isBn ? item.desc.bn : item.desc.en}
                   </p>
 
-                  {/* Micro-Highlights (3 Checkmark Points) */}
-                  {highlights.length > 0 && (
-                    <div className="w-full flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8">
-                      {highlights.map((point, pIdx) => (
-                        <div
-                          key={pIdx}
-                          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-50 border border-zinc-200/80 text-xs sm:text-sm font-medium text-zinc-800 shadow-xs"
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                          <span>{point}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Action Buttons Row */}
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
                     {item.ctaLink && (
                       <Link
                         href={item.ctaLink}
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all duration-200 hover:scale-[1.03]"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-sm tracking-wide shadow-md transition-all duration-200 hover:scale-[1.03]"
                       >
                         <span>
                           {item.cta
@@ -430,24 +253,13 @@ export function WhyChooseUs() {
 
                     <button
                       onClick={() => setSelectedItem(item)}
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200/80 text-zinc-800 font-semibold text-xs sm:text-sm border border-zinc-200/80 transition-all duration-200 shadow-xs"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-100 hover:bg-zinc-200/80 text-zinc-800 font-semibold text-sm border border-zinc-200/80 transition-all duration-200 shadow-xs cursor-pointer"
                     >
                       <Info className="w-4 h-4 text-zinc-600" />
                       <span>{isBn ? "বিস্তারিত প্রোটোকল" : "Detailed Protocol"}</span>
                     </button>
                   </div>
                 </div>
-
-                {/* Bottom Scroll Hint for Non-Final Cards */}
-                {index < items.length - 1 && (
-                  <button
-                    onClick={nextCard}
-                    className="mt-6 inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-900 text-xs font-semibold transition-colors animate-bounce"
-                  >
-                    <span>{isBn ? "পরবর্তী স্ট্যান্ডার্ড দেখতে স্ক্রোল করুন" : "Scroll to see next standard"}</span>
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                )}
               </div>
             </div>
           );
