@@ -21,10 +21,14 @@ import {
   X,
   Printer,
   ChevronDown,
+  Mail,
+  MailOpen,
+  CheckCheck,
 } from "lucide-react";
 import {
   fetchLiveAppointments,
   updateLiveAppointmentStatus,
+  deleteLiveAppointment,
   fetchDoctorBlockedDates,
   addDoctorBlockedDate,
   removeDoctorBlockedDate,
@@ -33,7 +37,14 @@ import {
 } from "@/lib/api/db";
 import { DOCTORS } from "@/data/doctors";
 import { AppointmentRecord, DoctorBlockedDate } from "@/types";
-import { exportAppointmentsToCSV } from "@/lib/appointment-utils";
+import {
+  exportAppointmentsToCSV,
+  getReadAppointmentRefs,
+  isAppointmentRead,
+  markAppointmentAsRead,
+  markAppointmentAsUnread,
+  markAllAppointmentsAsRead,
+} from "@/lib/appointment-utils";
 
 const INITIAL_APPOINTMENTS: AppointmentRecord[] = [
   {
@@ -47,7 +58,7 @@ const INITIAL_APPOINTMENTS: AppointmentRecord[] = [
     appointment_date: "2026-09-06",
     time_slot: "05:30 PM",
     symptoms: "Upper molar tooth replacement and crown inquiry.",
-    status: "pending",
+    status: "confirmed",
     created_at: "2026-09-02 18:30",
   },
   {
@@ -86,13 +97,14 @@ const INITIAL_APPOINTMENTS: AppointmentRecord[] = [
     appointment_date: "2026-09-04",
     time_slot: "06:30 PM",
     symptoms: "Tooth sensitivity to cold water, needs filling.",
-    status: "completed",
+    status: "confirmed",
     created_at: "2026-08-30 14:00",
   },
 ];
 
 export default function AdminAppointmentsPage() {
   const [appointments, setAppointments] = useState<AppointmentRecord[]>(INITIAL_APPOINTMENTS);
+  const [readRefs, setReadRefs] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [timeHorizon, setTimeHorizon] = useState<"all" | "today" | "week" | "month">("all");
   const [filterDoctor, setFilterDoctor] = useState<string>("all");
@@ -107,14 +119,38 @@ export default function AdminAppointmentsPage() {
   const [leaveReason, setLeaveReason] = useState("");
   const [isSubmittingLeave, setIsSubmittingLeave] = useState(false);
 
-  // Load appointments from Supabase on mount
+  // Load appointments and read state on mount
   useEffect(() => {
+    // Read cached/live appointments
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem("kgh_admin_appointments");
+      if (cached) {
+        try {
+          const list = JSON.parse(cached);
+          if (Array.isArray(list) && list.length > 0) {
+            setAppointments(
+              list.map((a) => ({
+                ...a,
+                status: a.status === "cancelled" ? "cancelled" : "confirmed",
+              }))
+            );
+          }
+        } catch {
+          // ignore
+        }
+      }
+    }
+
     fetchLiveAppointments().then((liveApps) => {
       if (liveApps && liveApps.length > 0) {
         const normalized = liveApps.map((a) => ({
           ...a,
           doctor_name: resolveDoctorDisplayName(a.doctor_name || a.doctor_id),
-          department_name: resolveDepartmentDisplayName(a.department_name || a.department_id, a.doctor_name || a.doctor_id),
+          department_name: resolveDepartmentDisplayName(
+            a.department_name || a.department_id,
+            a.doctor_name || a.doctor_id
+          ),
+          status: a.status === "cancelled" ? "cancelled" : "confirmed",
         }));
         setAppointments(normalized);
       }
@@ -123,11 +159,48 @@ export default function AdminAppointmentsPage() {
     fetchDoctorBlockedDates().then((blks) => {
       if (blks) setBlockedDates(blks);
     });
+
+    setReadRefs(getReadAppointmentRefs());
+
+    const handleSync = () => {
+      setReadRefs(getReadAppointmentRefs());
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem("kgh_admin_appointments");
+        if (cached) {
+          try {
+            const list = JSON.parse(cached);
+            if (Array.isArray(list) && list.length > 0) {
+              setAppointments(
+                list.map((a) => ({
+                  ...a,
+                  status: a.status === "cancelled" ? "cancelled" : "confirmed",
+                }))
+              );
+            }
+          } catch {
+            // ignore
+          }
+        }
+      }
+    };
+
+    window.addEventListener("kgh_appointments_updated", handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener("kgh_appointments_updated", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
   }, []);
+
+  const unreadCount = useMemo(() => {
+    return appointments.filter(
+      (a) => !isAppointmentRead(a.reference_code, readRefs) && !isAppointmentRead(a.id, readRefs)
+    ).length;
+  }, [appointments, readRefs]);
 
   const handleStatusChange = async (
     id: string,
-    newStatus: AppointmentRecord["status"],
+    newStatus: "confirmed" | "cancelled",
     referenceCode?: string
   ) => {
     const updated = appointments.map((a) =>
@@ -136,10 +209,54 @@ export default function AdminAppointmentsPage() {
         : a
     );
     setAppointments(updated);
-    if (selectedApp && (selectedApp.id === id || (referenceCode && selectedApp.reference_code === referenceCode))) {
+    if (
+      selectedApp &&
+      (selectedApp.id === id || (referenceCode && selectedApp.reference_code === referenceCode))
+    ) {
       setSelectedApp({ ...selectedApp, status: newStatus });
     }
     await updateLiveAppointmentStatus(id, newStatus, referenceCode);
+  };
+
+  const handleOpenDetails = (app: AppointmentRecord) => {
+    markAppointmentAsRead(app.reference_code);
+    setReadRefs((prev) => Array.from(new Set([...prev, app.reference_code])));
+    setSelectedApp(app);
+  };
+
+  const handleToggleRead = (e: React.MouseEvent, refCode: string) => {
+    e.stopPropagation();
+    if (isAppointmentRead(refCode, readRefs)) {
+      markAppointmentAsUnread(refCode);
+      setReadRefs((prev) => prev.filter((r) => r !== refCode));
+    } else {
+      markAppointmentAsRead(refCode);
+      setReadRefs((prev) => [...prev, refCode]);
+    }
+  };
+
+  const handleMarkAllRead = () => {
+    const allRefs = appointments.map((a) => a.reference_code);
+    markAllAppointmentsAsRead(allRefs);
+    setReadRefs(allRefs);
+  };
+
+  const handleDeleteAppointment = async (app: AppointmentRecord) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently delete appointment #${app.reference_code} for ${app.patient_name}?`
+    );
+    if (!confirmed) return;
+
+    await deleteLiveAppointment(app.id, app.reference_code);
+    setAppointments((prev) =>
+      prev.filter((a) => a.reference_code !== app.reference_code && a.id !== app.id)
+    );
+    if (
+      selectedApp?.reference_code === app.reference_code ||
+      selectedApp?.id === app.id
+    ) {
+      setSelectedApp(null);
+    }
   };
 
   // Distinct doctors list for dropdown: Strictly the 6 registered clinical specialists
@@ -165,8 +282,17 @@ export default function AdminAppointmentsPage() {
     const currentYearMonth = todayStr.substring(0, 7); // YYYY-MM
 
     return appointments.filter((app) => {
-      // Status filter
-      if (filterStatus !== "all" && app.status !== filterStatus) return false;
+      // Status & Unread filter
+      if (filterStatus === "unread") {
+        const isUnread =
+          !isAppointmentRead(app.reference_code, readRefs) &&
+          !isAppointmentRead(app.id, readRefs);
+        if (!isUnread) return false;
+      } else if (filterStatus === "confirmed") {
+        if (app.status === "cancelled") return false;
+      } else if (filterStatus === "cancelled") {
+        if (app.status !== "cancelled") return false;
+      }
 
       // Doctor filter
       if (filterDoctor !== "all") {
@@ -176,15 +302,22 @@ export default function AdminAppointmentsPage() {
 
       // Time Horizon filter
       if (timeHorizon === "today" && app.appointment_date !== todayStr) return false;
-      if (timeHorizon === "week" && (app.appointment_date < weekStartStr || app.appointment_date > weekEndStr))
+      if (
+        timeHorizon === "week" &&
+        (app.appointment_date < weekStartStr || app.appointment_date > weekEndStr)
+      )
         return false;
-      if (timeHorizon === "month" && !app.appointment_date.startsWith(currentYearMonth)) return false;
+      if (timeHorizon === "month" && !app.appointment_date.startsWith(currentYearMonth))
+        return false;
 
       // Search query filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const docName = resolveDoctorDisplayName(app.doctor_name || app.doctor_id).toLowerCase();
-        const deptName = resolveDepartmentDisplayName(app.department_name || app.department_id, app.doctor_name).toLowerCase();
+        const deptName = resolveDepartmentDisplayName(
+          app.department_name || app.department_id,
+          app.doctor_name
+        ).toLowerCase();
         const matchesQuery =
           app.patient_name.toLowerCase().includes(q) ||
           app.patient_phone.includes(q) ||
@@ -196,7 +329,7 @@ export default function AdminAppointmentsPage() {
 
       return true;
     });
-  }, [appointments, filterStatus, filterDoctor, timeHorizon, searchQuery]);
+  }, [appointments, filterStatus, filterDoctor, timeHorizon, searchQuery, readRefs]);
 
   // Handle Export to Excel (CSV)
   const handleExportCSV = () => {
@@ -236,35 +369,20 @@ export default function AdminAppointmentsPage() {
   };
 
   const getStatusBadge = (status: AppointmentRecord["status"]) => {
-    switch (status) {
-      case "pending":
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-            Pending
-          </span>
-        );
-      case "confirmed":
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            Confirmed
-          </span>
-        );
-      case "completed":
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-zinc-100 text-zinc-700 border border-zinc-200">
-            Completed
-          </span>
-        );
-      case "cancelled":
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-800 border border-red-200">
-            <XCircle className="w-3.5 h-3.5 text-red-600" />
-            Cancelled
-          </span>
-        );
+    if (status === "cancelled") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-800 border border-red-200">
+          <XCircle className="w-3.5 h-3.5 text-red-600" />
+          Cancelled
+        </span>
+      );
     }
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+        Confirmed
+      </span>
+    );
   };
 
   return (
@@ -354,19 +472,37 @@ export default function AdminAppointmentsPage() {
 
         {/* Secondary Filter Row: Search & Status Tabs */}
         <div className="pt-2 border-t border-zinc-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Status Tabs */}
-          <div className="flex flex-wrap gap-1.5">
-            {["all", "pending", "confirmed", "completed", "cancelled"].map((st) => (
+          {/* Status & Unread Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              { key: "all", label: `All (${appointments.length})` },
+              { key: "unread", label: `Unread (${unreadCount})` },
+              { key: "confirmed", label: "Confirmed" },
+              { key: "cancelled", label: "Cancelled" },
+            ].map((st) => (
               <button
-                key={st}
-                onClick={() => setFilterStatus(st)}
-                className={`px-3 py-1 rounded-lg text-xs font-bold capitalize transition-all ${
-                  filterStatus === st
-                    ? "bg-zinc-900 text-white shadow-2xs"
+                key={st.key}
+                onClick={() => setFilterStatus(st.key)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  filterStatus === st.key
+                    ? st.key === "cancelled"
+                      ? "bg-red-700 text-white shadow-2xs"
+                      : st.key === "unread"
+                      ? "bg-sky-600 text-white shadow-2xs"
+                      : st.key === "confirmed"
+                      ? "bg-emerald-700 text-white shadow-2xs"
+                      : "bg-zinc-900 text-white shadow-2xs"
+                    : st.key === "unread" && unreadCount > 0
+                    ? "bg-sky-50 text-sky-800 border border-sky-200 hover:bg-sky-100"
                     : "bg-zinc-50 text-zinc-600 border border-zinc-200 hover:bg-zinc-100"
                 }`}
               >
-                {st}
+                {st.key === "unread" && unreadCount > 0 && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+                )}
+                {st.key === "confirmed" && <CheckCircle2 className="w-3 h-3 text-emerald-600" />}
+                {st.key === "cancelled" && <XCircle className="w-3 h-3 text-red-600" />}
+                <span>{st.label}</span>
               </button>
             ))}
           </div>
@@ -387,13 +523,33 @@ export default function AdminAppointmentsPage() {
 
       {/* Appointments Counter & Table */}
       <div className="rounded-2xl bg-white border border-zinc-200 shadow-sm overflow-hidden">
-        <div className="px-4 py-3 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between text-xs text-zinc-600">
-          <div>
-            Showing <span className="font-bold text-zinc-950">{filteredAppointments.length}</span>{" "}
-            appointments matching filters
+        <div className="px-4 py-3 bg-zinc-50 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600">
+          <div className="flex items-center gap-2">
+            <span>
+              Showing <strong className="text-zinc-950">{filteredAppointments.length}</strong> appointments
+            </span>
+            {unreadCount > 0 && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[11px] font-bold border border-sky-200">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-600 animate-pulse" />
+                {unreadCount} unread / new
+              </span>
+            )}
           </div>
-          <div className="text-[11px] text-zinc-500">
-            KGH Dental Reception Desk
+          <div className="flex items-center gap-2">
+            {unreadCount > 0 && (
+              <button
+                type="button"
+                onClick={handleMarkAllRead}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-zinc-300 hover:bg-zinc-100 text-zinc-700 text-xs font-semibold cursor-pointer transition-colors"
+                title="Mark all appointments as read"
+              >
+                <CheckCheck className="w-3.5 h-3.5 text-zinc-500" />
+                <span>Mark all as read</span>
+              </button>
+            )}
+            <span className="text-[11px] text-zinc-400 hidden sm:inline">
+              KGH Dental Reception Desk
+            </span>
           </div>
         </div>
 
@@ -417,162 +573,203 @@ export default function AdminAppointmentsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredAppointments.map((app) => (
-                  <tr key={app.id || app.reference_code} className="hover:bg-zinc-50/60 transition-colors">
-                    {/* Ref Code */}
-                    <td className="py-3.5 px-4 font-mono font-bold text-zinc-900">
-                      {app.reference_code}
-                    </td>
+                filteredAppointments.map((app) => {
+                  const isUnread =
+                    !isAppointmentRead(app.reference_code, readRefs) &&
+                    !isAppointmentRead(app.id, readRefs);
 
-                    {/* Patient Info */}
-                    <td className="py-3.5 px-4">
-                      <div className="font-bold text-zinc-950">{app.patient_name}</div>
-                      <div className="flex items-center gap-2 text-zinc-500 text-[11px] mt-0.5">
-                        <a href={`tel:${app.patient_phone}`} className="hover:underline flex items-center gap-1 font-mono">
-                          <Phone className="w-3 h-3" />
-                          <span>{app.patient_phone}</span>
-                        </a>
-                        <a
-                          href={`https://wa.me/88${app.patient_phone}?text=${encodeURIComponent(
-                            `Hello ${app.patient_name}, this is KGH Dental confirming your appointment (#${app.reference_code}) with ${app.doctor_name} on ${app.appointment_date} at ${app.time_slot}.`
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-emerald-700 hover:text-emerald-800"
-                          title="Message on WhatsApp"
-                        >
-                          <MessageSquare className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
-                    </td>
+                  return (
+                    <tr
+                      key={app.id || app.reference_code}
+                      onClick={() => handleOpenDetails(app)}
+                      className={`transition-colors cursor-pointer group ${
+                        isUnread
+                          ? "bg-sky-50/75 hover:bg-sky-100/80 border-l-4 border-l-sky-600 font-semibold"
+                          : "bg-white hover:bg-zinc-50/80 text-zinc-700 border-l-4 border-l-transparent"
+                      }`}
+                    >
+                      {/* Ref Code */}
+                      <td className="py-3.5 px-4 font-mono">
+                        <div className="flex items-center gap-2">
+                          {isUnread && (
+                            <span className="px-1.5 py-0.5 rounded bg-sky-600 text-white text-[9px] font-black uppercase tracking-wider shrink-0 shadow-2xs">
+                              NEW
+                            </span>
+                          )}
+                          <span
+                            className={
+                              isUnread
+                                ? "font-extrabold text-zinc-950"
+                                : "font-bold text-zinc-800"
+                            }
+                          >
+                            {app.reference_code}
+                          </span>
+                        </div>
+                      </td>
 
-                    {/* Doctor Info */}
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-zinc-900">
-                        {resolveDoctorDisplayName(app.doctor_name || app.doctor_id)}
-                      </div>
-                      <div className="text-[11px] text-zinc-500">
-                        {resolveDepartmentDisplayName(app.department_name || app.department_id, app.doctor_name)}
-                      </div>
-                    </td>
-
-                    {/* Date & Slot */}
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-zinc-900">{app.appointment_date}</div>
-                      <div className="text-[11px] text-zinc-500 flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        <span>{app.time_slot}</span>
-                      </div>
-                    </td>
-
-                    {/* Status with Direct Change Dropdown */}
-                    <td className="py-3.5 px-4">
-                      <div className="relative inline-block">
-                        <select
-                          value={app.status}
-                          onChange={(e) =>
-                            handleStatusChange(
-                              app.id,
-                              e.target.value as AppointmentRecord["status"],
-                              app.reference_code
-                            )
+                      {/* Patient Info */}
+                      <td className="py-3.5 px-4">
+                        <div
+                          className={
+                            isUnread
+                              ? "font-extrabold text-zinc-950"
+                              : "font-bold text-zinc-900"
                           }
-                          className={`text-xs font-bold pl-3 pr-7 py-1.5 rounded-full border cursor-pointer appearance-none transition-all focus:outline-hidden focus:ring-2 focus:ring-offset-1 shadow-2xs ${
-                            app.status === "confirmed"
-                              ? "bg-emerald-50 text-emerald-800 border-emerald-300 focus:ring-emerald-500"
-                              : app.status === "pending"
-                              ? "bg-amber-50 text-amber-800 border-amber-300 focus:ring-amber-500"
-                              : app.status === "cancelled"
-                              ? "bg-red-50 text-red-800 border-red-300 focus:ring-red-500"
-                              : "bg-zinc-100 text-zinc-800 border-zinc-300 focus:ring-zinc-500"
-                          }`}
-                          title="Click to quickly switch status"
                         >
-                          <option value="confirmed">✓ Confirmed</option>
-                          <option value="pending">⏳ Pending</option>
-                          <option value="completed">✔ Completed</option>
-                          <option value="cancelled">✕ Cancelled</option>
-                        </select>
-                        <ChevronDown className="w-3 h-3 text-zinc-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
-                    </td>
+                          {app.patient_name}
+                        </div>
+                        <div className="flex items-center gap-2 text-zinc-500 text-[11px] mt-0.5">
+                          <a
+                            href={`tel:${app.patient_phone}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="hover:underline flex items-center gap-1 font-mono"
+                          >
+                            <Phone className="w-3 h-3" />
+                            <span>{app.patient_phone}</span>
+                          </a>
+                          <a
+                            href={`https://wa.me/88${app.patient_phone}?text=${encodeURIComponent(
+                              `Hello ${app.patient_name}, this is KGH Dental regarding your appointment (#${app.reference_code}) with ${app.doctor_name} on ${app.appointment_date} at ${app.time_slot}.`
+                            )}`}
+                            onClick={(e) => e.stopPropagation()}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-emerald-700 hover:text-emerald-800"
+                            title="Message on WhatsApp"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
+                      </td>
 
-                    {/* Action Dropdown / Buttons */}
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="inline-flex items-center gap-1.5">
-                        {app.status === "pending" && (
+                      {/* Doctor Info */}
+                      <td className="py-3.5 px-4">
+                        <div
+                          className={
+                            isUnread
+                              ? "font-bold text-zinc-950"
+                              : "font-semibold text-zinc-900"
+                          }
+                        >
+                          {resolveDoctorDisplayName(app.doctor_name || app.doctor_id)}
+                        </div>
+                        <div className="text-[11px] text-zinc-500">
+                          {resolveDepartmentDisplayName(
+                            app.department_name || app.department_id,
+                            app.doctor_name
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Date & Slot */}
+                      <td className="py-3.5 px-4">
+                        <div
+                          className={
+                            isUnread
+                              ? "font-bold text-zinc-950"
+                              : "font-semibold text-zinc-900"
+                          }
+                        >
+                          {app.appointment_date}
+                        </div>
+                        <div className="text-[11px] text-zinc-500 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          <span>{app.time_slot}</span>
+                        </div>
+                      </td>
+
+                      {/* Status with Direct Change Dropdown (Only Confirmed / Cancelled) */}
+                      <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
+                        <div className="relative inline-block">
+                          <select
+                            value={app.status === "cancelled" ? "cancelled" : "confirmed"}
+                            onChange={(e) =>
+                              handleStatusChange(
+                                app.id,
+                                e.target.value as "confirmed" | "cancelled",
+                                app.reference_code
+                              )
+                            }
+                            className={`text-xs font-bold pl-3 pr-7 py-1.5 rounded-full border cursor-pointer appearance-none transition-all focus:outline-hidden focus:ring-2 focus:ring-offset-1 shadow-2xs ${
+                              app.status === "cancelled"
+                                ? "bg-red-50 text-red-800 border-red-300 focus:ring-red-500"
+                                : "bg-emerald-50 text-emerald-800 border-emerald-300 focus:ring-emerald-500"
+                            }`}
+                            title="Click to switch status"
+                          >
+                            <option value="confirmed">✓ Confirmed</option>
+                            <option value="cancelled">✕ Cancelled</option>
+                          </select>
+                          <ChevronDown className="w-3 h-3 text-zinc-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                      </td>
+
+                      {/* Actions: Toggle Read, Confirm/Cancel, Details, Delete */}
+                      <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <div className="inline-flex items-center gap-1.5">
+                          {/* Gmail style Toggle Read/Unread button */}
                           <button
                             type="button"
-                            onClick={() => handleStatusChange(app.id, "confirmed", app.reference_code)}
-                            className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-2xs cursor-pointer transition-colors"
-                            title="Confirm Appointment"
+                            onClick={(e) => handleToggleRead(e, app.reference_code)}
+                            className="p-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-600 hover:text-zinc-900 transition-colors cursor-pointer"
+                            title={isUnread ? "Mark as Read" : "Mark as Unread"}
                           >
-                            Confirm
+                            {isUnread ? (
+                              <Mail className="w-3.5 h-3.5 text-sky-600" />
+                            ) : (
+                              <MailOpen className="w-3.5 h-3.5 text-zinc-400" />
+                            )}
                           </button>
-                        )}
 
-                        {app.status === "confirmed" && (
-                          <>
+                          {/* Quick Status Button */}
+                          {app.status === "cancelled" ? (
                             <button
                               type="button"
-                              onClick={() => handleStatusChange(app.id, "pending", app.reference_code)}
-                              className="px-2.5 py-1 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold cursor-pointer transition-colors"
-                              title="Move to Pending"
-                            >
-                              Pending
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleStatusChange(app.id, "completed", app.reference_code)}
-                              className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-black text-white text-xs font-semibold shadow-2xs cursor-pointer transition-colors"
-                              title="Mark as Completed"
-                            >
-                              Complete
-                            </button>
-                          </>
-                        )}
-
-                        {app.status === "cancelled" ? (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => handleStatusChange(app.id, "confirmed", app.reference_code)}
+                              onClick={() =>
+                                handleStatusChange(app.id, "confirmed", app.reference_code)
+                              }
                               className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-2xs cursor-pointer transition-colors"
                               title="Restore to Confirmed"
                             >
-                              Re-Confirm
+                              Confirm
                             </button>
+                          ) : (
                             <button
                               type="button"
-                              onClick={() => handleStatusChange(app.id, "pending", app.reference_code)}
-                              className="px-2.5 py-1 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold cursor-pointer transition-colors"
-                              title="Restore to Pending"
+                              onClick={() =>
+                                handleStatusChange(app.id, "cancelled", app.reference_code)
+                              }
+                              className="px-2.5 py-1 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold cursor-pointer transition-colors"
+                              title="Cancel Appointment"
                             >
-                              Pending
+                              Cancel
                             </button>
-                          </>
-                        ) : (
+                          )}
+
+                          {/* Details Button */}
                           <button
                             type="button"
-                            onClick={() => handleStatusChange(app.id, "cancelled", app.reference_code)}
-                            className="px-2.5 py-1 rounded-lg border border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold cursor-pointer transition-colors"
-                            title="Cancel Booking"
+                            onClick={() => handleOpenDetails(app)}
+                            className="px-2.5 py-1 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-semibold cursor-pointer transition-colors"
                           >
-                            Cancel
+                            Details
                           </button>
-                        )}
 
-                        <button
-                          type="button"
-                          onClick={() => setSelectedApp(app)}
-                          className="px-2.5 py-1 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-100 text-xs font-semibold cursor-pointer transition-colors"
-                        >
-                          Details
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          {/* Delete Button */}
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAppointment(app)}
+                            className="p-1.5 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 transition-colors cursor-pointer"
+                            title="Delete Appointment"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -595,18 +792,20 @@ export default function AdminAppointmentsPage() {
               {getStatusBadge(selectedApp.status)}
             </div>
 
-            {/* Admin Status Controller */}
+            {/* Admin Status Controller (Only 2 statuses: Confirmed / Cancelled) */}
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2">
               <div className="text-xs font-bold text-zinc-700 uppercase tracking-wider flex items-center justify-between">
-                <span>Update Status / স্ট্যাটাস পরিবর্তন:</span>
+                <span>Appointment Status / স্ট্যাটাস:</span>
                 <span className="text-[11px] font-normal text-zinc-500">Instant Sync</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => handleStatusChange(selectedApp.id, "confirmed", selectedApp.reference_code)}
+                  onClick={() =>
+                    handleStatusChange(selectedApp.id, "confirmed", selectedApp.reference_code)
+                  }
                   className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    selectedApp.status === "confirmed"
+                    selectedApp.status !== "cancelled"
                       ? "bg-emerald-600 text-white ring-2 ring-emerald-600/30 shadow-xs"
                       : "bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50"
                   }`}
@@ -615,36 +814,16 @@ export default function AdminAppointmentsPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleStatusChange(selectedApp.id, "pending", selectedApp.reference_code)}
-                  className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    selectedApp.status === "pending"
-                      ? "bg-amber-600 text-white ring-2 ring-amber-600/30 shadow-xs"
-                      : "bg-white border border-amber-300 text-amber-800 hover:bg-amber-50"
-                  }`}
-                >
-                  ⏳ Pending
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleStatusChange(selectedApp.id, "cancelled", selectedApp.reference_code)}
+                  onClick={() =>
+                    handleStatusChange(selectedApp.id, "cancelled", selectedApp.reference_code)
+                  }
                   className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     selectedApp.status === "cancelled"
                       ? "bg-red-600 text-white ring-2 ring-red-600/30 shadow-xs"
                       : "bg-white border border-red-300 text-red-800 hover:bg-red-50"
                   }`}
                 >
-                  ✕ Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleStatusChange(selectedApp.id, "completed", selectedApp.reference_code)}
-                  className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    selectedApp.status === "completed"
-                      ? "bg-zinc-800 text-white ring-2 ring-zinc-800/30 shadow-xs"
-                      : "bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-100"
-                  }`}
-                >
-                  ✔ Completed
+                  ✕ Cancelled
                 </button>
               </div>
             </div>
@@ -657,7 +836,10 @@ export default function AdminAppointmentsPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-zinc-500">Phone Number:</span>
-                  <a href={`tel:${selectedApp.patient_phone}`} className="font-bold text-zinc-900 hover:underline">
+                  <a
+                    href={`tel:${selectedApp.patient_phone}`}
+                    className="font-bold text-zinc-900 hover:underline"
+                  >
                     {selectedApp.patient_phone}
                   </a>
                 </div>
@@ -679,7 +861,10 @@ export default function AdminAppointmentsPage() {
                 <div className="flex justify-between">
                   <span className="text-zinc-500">Department:</span>
                   <span className="font-semibold text-zinc-800">
-                    {resolveDepartmentDisplayName(selectedApp.department_name || selectedApp.department_id, selectedApp.doctor_name)}
+                    {resolveDepartmentDisplayName(
+                      selectedApp.department_name || selectedApp.department_id,
+                      selectedApp.doctor_name
+                    )}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -692,17 +877,23 @@ export default function AdminAppointmentsPage() {
 
               {selectedApp.symptoms && (
                 <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-1">
-                  <span className="text-zinc-500 font-medium">Patient Symptoms / Chief Complaint:</span>
-                  <p className="text-zinc-800 font-normal leading-relaxed">{selectedApp.symptoms}</p>
+                  <span className="text-zinc-500 font-medium">
+                    Patient Symptoms / Chief Complaint:
+                  </span>
+                  <p className="text-zinc-800 font-normal leading-relaxed">
+                    {selectedApp.symptoms}
+                  </p>
                 </div>
               )}
             </div>
 
-            {/* Quick WhatsApp & Call Actions */}
+            {/* Modal Actions: WhatsApp, Delete, Close */}
             <div className="pt-2 flex flex-col sm:flex-row gap-2">
               <a
                 href={`https://wa.me/88${selectedApp.patient_phone}?text=${encodeURIComponent(
-                  `Hello ${selectedApp.patient_name}, this is KGH Dental regarding your appointment (#${selectedApp.reference_code}) with ${resolveDoctorDisplayName(selectedApp.doctor_name || selectedApp.doctor_id)} on ${selectedApp.appointment_date} at ${selectedApp.time_slot}. Status: ${selectedApp.status.toUpperCase()}.`
+                  `Hello ${selectedApp.patient_name}, this is KGH Dental regarding your appointment (#${selectedApp.reference_code}) with ${resolveDoctorDisplayName(
+                    selectedApp.doctor_name || selectedApp.doctor_id
+                  )} on ${selectedApp.appointment_date} at ${selectedApp.time_slot}. Status: ${selectedApp.status.toUpperCase()}.`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -711,6 +902,16 @@ export default function AdminAppointmentsPage() {
                 <MessageSquare className="w-4 h-4" />
                 <span>WhatsApp Message</span>
               </a>
+
+              <button
+                type="button"
+                onClick={() => handleDeleteAppointment(selectedApp)}
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-colors cursor-pointer"
+                title="Delete this appointment"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Delete</span>
+              </button>
 
               <button
                 type="button"

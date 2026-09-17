@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -22,10 +22,54 @@ import {
   Layers,
 } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { fetchLiveAppointments } from "@/lib/api/db";
+import { getReadAppointmentRefs } from "@/lib/appointment-utils";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [unreadAppointmentsCount, setUnreadAppointmentsCount] = useState<number>(0);
+
+  // Track unread appointments count across admin panel
+  useEffect(() => {
+    const computeUnread = async () => {
+      try {
+        const readRefs = getReadAppointmentRefs();
+        let allApps: any[] = [];
+        if (typeof window !== "undefined") {
+          const cached = localStorage.getItem("kgh_admin_appointments");
+          if (cached) {
+            allApps = JSON.parse(cached);
+          }
+        }
+        if (allApps.length === 0) {
+          const live = await fetchLiveAppointments();
+          if (live && live.length > 0) {
+            allApps = live;
+          }
+        }
+        const unread = allApps.filter(
+          (a) => !readRefs.includes(a.reference_code) && !readRefs.includes(a.id)
+        ).length;
+        setUnreadAppointmentsCount(unread);
+      } catch (err) {
+        // ignore
+      }
+    };
+
+    computeUnread();
+
+    const handleUpdate = () => {
+      computeUnread();
+    };
+
+    window.addEventListener("kgh_appointments_updated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("kgh_appointments_updated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, []);
 
   // If on login page, render children without sidebar
   if (pathname === "/admin/login") {
@@ -58,6 +102,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-300">
             Admin CMS
           </span>
+          {unreadAppointmentsCount > 0 && (
+            <Link
+              href="/admin/appointments"
+              className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-extrabold animate-pulse"
+            >
+              {unreadAppointmentsCount} New
+            </Link>
+          )}
         </div>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -121,14 +173,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                     isActive
                       ? "bg-white text-zinc-950 font-bold shadow-xs"
                       : "text-zinc-400 hover:text-white hover:bg-zinc-900"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? "text-zinc-950" : "text-zinc-400"}`} />
-                  <span>{link.label}</span>
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 ${isActive ? "text-zinc-950" : "text-zinc-400"}`} />
+                    <span>{link.label}</span>
+                  </div>
+                  {link.href === "/admin/appointments" && unreadAppointmentsCount > 0 && (
+                    <span
+                      className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-extrabold tracking-wide animate-pulse shadow-xs"
+                      title={`${unreadAppointmentsCount} new unread appointments`}
+                    >
+                      {unreadAppointmentsCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}

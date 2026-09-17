@@ -29,6 +29,8 @@ export default function AdminLoginPage() {
       if (res.ok && data.success) {
         if (typeof window !== "undefined") {
           localStorage.setItem("kgh_admin_auth", "true");
+          window.location.href = "/admin";
+          return;
         }
         router.push("/admin");
       } else {
@@ -85,7 +87,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-sm text-white focus:outline-hidden focus:ring-2 focus:ring-white"
-                  placeholder="admin@kghdental.com"
+                  placeholder="Enter admin email"
                 />
               </div>
             </div>
@@ -107,10 +109,24 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
+            <div className="p-3 rounded-xl bg-zinc-950/70 border border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-400">
+              <span className="truncate">Default: <strong className="text-zinc-200">admin@kghdental.com</strong> / <strong className="text-zinc-200">admin123</strong></span>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail("admin@kghdental.com");
+                  setPassword("admin123");
+                }}
+                className="shrink-0 ml-2 px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-[10px] font-semibold transition-colors cursor-pointer"
+              >
+                Auto Fill
+              </button>
+            </div>
+
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs sm:text-sm transition-all shadow-md active:scale-98"
+              className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs sm:text-sm transition-all shadow-md active:scale-98 cursor-pointer"
             >
               <span>{isLoading ? "Authenticating..." : "Sign In to Admin CMS"}</span>
               <ArrowRight className="w-4 h-4" />

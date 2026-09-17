@@ -81,21 +81,12 @@ export function AppointmentPrintSlip({
 
         <div className="text-right">
           <span className="text-[10px] font-semibold text-zinc-500 block">
-            Generated: {currentDateFormatted}
+            Generated:
           </span>
-          <div className="mt-1 inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-100 border border-amber-300 text-amber-900 font-extrabold text-xs tracking-wide">
-            <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse print:hidden" />
-            <span>PAYMENT: {paymentStatus} (অপরিশোধিত)</span>
-          </div>
+          <span className="text-xs font-bold text-zinc-800 font-mono mt-0.5 block">
+            {currentDateFormatted}
+          </span>
         </div>
-      </div>
-
-      {/* Urgent Notice Banner */}
-      <div className="mb-5 p-3 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs text-amber-950 flex items-center justify-between">
-        <p className="leading-snug">
-          <span className="font-bold">Important Notice:</span> Consultation fee has{" "}
-          <span className="font-extrabold underline">NOT</span> been paid online. Please pay at the Level 4 reception counter upon arrival to receive the verified <strong>PAID Seal</strong>.
-        </p>
       </div>
 
       {/* Two Column Details Grid */}
@@ -160,56 +151,6 @@ export function AppointmentPrintSlip({
               </tr>
             </tbody>
           </table>
-        </div>
-      </div>
-
-      {/* Reception Verification & Paid Seal Box (Requested by user) */}
-      <div className="border-2 border-dashed border-zinc-400 rounded-xl p-4 mb-5 bg-white">
-        <div className="flex items-start justify-between gap-6">
-          <div className="flex-1 space-y-2 text-xs">
-            <h5 className="font-bold uppercase tracking-wider text-zinc-800 text-[11px] border-b border-zinc-200 pb-1">
-              For Clinic Reception & Cash Counter Use Only
-            </h5>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 pt-1">
-              <div>
-                <span className="text-zinc-500 block text-[10px]">Fee Amount:</span>
-                <span className="border-b border-zinc-400 block h-5 w-full mt-0.5 font-bold text-zinc-800">
-                  BDT ________________
-                </span>
-              </div>
-              <div>
-                <span className="text-zinc-500 block text-[10px]">Receipt No:</span>
-                <span className="border-b border-zinc-400 block h-5 w-full mt-0.5 font-bold text-zinc-800">
-                  MR-_________________
-                </span>
-              </div>
-              <div>
-                <span className="text-zinc-500 block text-[10px]">Collected By:</span>
-                <span className="border-b border-zinc-400 block h-5 w-full mt-0.5 font-bold text-zinc-800">
-                  ____________________
-                </span>
-              </div>
-              <div>
-                <span className="text-zinc-500 block text-[10px]">Authorized Signature:</span>
-                <span className="border-b border-zinc-400 block h-5 w-full mt-0.5 font-bold text-zinc-800">
-                  ____________________
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Dedicated Seal Box */}
-          <div className="w-48 h-32 border-2 border-zinc-400 rounded-xl flex flex-col items-center justify-center p-2 text-center bg-zinc-50/50 shrink-0">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-              AFFIX PHYSICAL
-            </span>
-            <span className="text-xs font-extrabold text-zinc-600 uppercase tracking-widest mt-0.5">
-              RECEPTION "PAID" SEAL
-            </span>
-            <span className="text-[9px] text-zinc-400 mt-1">
-              (পরিশোধের পর সিল প্রদান করা হবে)
-            </span>
-          </div>
         </div>
       </div>
 

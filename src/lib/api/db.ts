@@ -16,6 +16,7 @@ import {
   ClinicalCreedData,
   CreedQuoteItem,
 } from "@/types";
+import { notifyAppointmentsUpdated } from "@/lib/appointment-utils";
 
 // ==============================================================================
 // 1. DOCTORS API
@@ -357,6 +358,10 @@ export async function updateLiveAppointmentStatus(
     }
   }
 
+  if (typeof window !== "undefined") {
+    notifyAppointmentsUpdated();
+  }
+
   if (!isSupabaseConfigured) return { success: true };
 
   try {
@@ -377,6 +382,48 @@ export async function updateLiveAppointmentStatus(
     return { success: true };
   } catch (err: any) {
     console.error("updateLiveAppointmentStatus error:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+export async function deleteLiveAppointment(
+  id: string,
+  referenceCode?: string
+): Promise<{ success: boolean; error?: string }> {
+  // Update local storage cache
+  if (typeof window !== "undefined") {
+    try {
+      const existing = localStorage.getItem("kgh_admin_appointments");
+      if (existing) {
+        const list = JSON.parse(existing);
+        const filtered = list.filter(
+          (a: any) => !(a.id === id || (referenceCode && a.reference_code === referenceCode))
+        );
+        localStorage.setItem("kgh_admin_appointments", JSON.stringify(filtered));
+      }
+      notifyAppointmentsUpdated();
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  if (!isSupabaseConfigured) return { success: true };
+
+  try {
+    let query = supabase.from("appointments").delete();
+    if (id && !id.startsWith("app-")) {
+      query = query.eq("id", id);
+    } else if (referenceCode) {
+      query = query.eq("reference_code", referenceCode);
+    } else {
+      query = query.eq("id", id);
+    }
+
+    const { error } = await query;
+    if (error) throw error;
+    return { success: true };
+  } catch (err: any) {
+    console.error("deleteLiveAppointment error:", err);
     return { success: false, error: err.message };
   }
 }
@@ -421,6 +468,7 @@ export async function createLiveAppointment(record: {
       // Prevent duplicate reference_code entries
       const filtered = list.filter((a: any) => a.reference_code !== record.reference_code);
       localStorage.setItem("kgh_admin_appointments", JSON.stringify([newRecord, ...filtered]));
+      notifyAppointmentsUpdated();
     } catch (e) {
       // ignore
     }

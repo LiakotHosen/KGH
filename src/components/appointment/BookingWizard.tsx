@@ -791,8 +791,8 @@ export function BookingWizard() {
                       ? "অফিসিয়াল স্লিপ প্রিভিউ লুকান"
                       : "Hide Official Slip Preview"
                     : isBn
-                    ? "অফিসিয়াল প্রিন্ট স্লিপ প্রিভিউ দেখুন (UNPAID ও রিসিপশন সিল বক্স)"
-                    : "Preview Official Slip (UNPAID & Reception Seal)"}
+                    ? "অফিসিয়াল প্রিন্ট স্লিপ প্রিভিউ দেখুন"
+                    : "Preview Official Appointment Slip"}
                 </span>
               </button>
             </div>

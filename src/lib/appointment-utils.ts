@@ -102,3 +102,69 @@ export function exportAppointmentsToCSV(
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+// ==============================================================================
+// APPOINTMENT READ / UNREAD STATE MANAGEMENT (Gmail Style)
+// ==============================================================================
+
+export const READ_APPOINTMENTS_STORAGE_KEY = "kgh_read_appointment_refs";
+
+export function getReadAppointmentRefs(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(READ_APPOINTMENTS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function isAppointmentRead(refCodeOrId: string, readRefs?: string[]): boolean {
+  const list = readRefs || getReadAppointmentRefs();
+  return list.includes(refCodeOrId);
+}
+
+export function markAppointmentAsRead(refCodeOrId: string): void {
+  if (typeof window === "undefined" || !refCodeOrId) return;
+  try {
+    const current = getReadAppointmentRefs();
+    if (!current.includes(refCodeOrId)) {
+      const updated = [...current, refCodeOrId];
+      localStorage.setItem(READ_APPOINTMENTS_STORAGE_KEY, JSON.stringify(updated));
+      notifyAppointmentsUpdated();
+    }
+  } catch {
+    // ignore
+  }
+}
+
+export function markAppointmentAsUnread(refCodeOrId: string): void {
+  if (typeof window === "undefined" || !refCodeOrId) return;
+  try {
+    const current = getReadAppointmentRefs();
+    const updated = current.filter((r) => r !== refCodeOrId);
+    localStorage.setItem(READ_APPOINTMENTS_STORAGE_KEY, JSON.stringify(updated));
+    notifyAppointmentsUpdated();
+  } catch {
+    // ignore
+  }
+}
+
+export function markAllAppointmentsAsRead(refCodesOrIds: string[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    const current = getReadAppointmentRefs();
+    const combined = Array.from(new Set([...current, ...refCodesOrIds]));
+    localStorage.setItem(READ_APPOINTMENTS_STORAGE_KEY, JSON.stringify(combined));
+    notifyAppointmentsUpdated();
+  } catch {
+    // ignore
+  }
+}
+
+export function notifyAppointmentsUpdated(): void {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("kgh_appointments_updated"));
+  }
+}
+
