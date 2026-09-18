@@ -109,20 +109,6 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-zinc-950/70 border border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-400">
-              <span className="truncate">Default: <strong className="text-zinc-200">admin@kghdental.com</strong> / <strong className="text-zinc-200">admin123</strong></span>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("admin@kghdental.com");
-                  setPassword("admin123");
-                }}
-                className="shrink-0 ml-2 px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-[10px] font-semibold transition-colors cursor-pointer"
-              >
-                Auto Fill
-              </button>
-            </div>
-
             <button
               type="submit"
               disabled={isLoading}

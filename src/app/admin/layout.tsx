@@ -71,6 +71,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     };
   }, []);
 
+  // Verify active session with database on every admin page transition
+  useEffect(() => {
+    if (pathname === "/admin/login") return;
+
+    let isMounted = true;
+    const verifySession = async () => {
+      try {
+        const res = await fetch("/api/auth/check");
+        if (!res.ok && isMounted) {
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("kgh_admin_auth");
+            window.location.href = "/admin/login";
+          }
+        }
+      } catch {
+        // Network failure or offline
+      }
+    };
+
+    verifySession();
+    return () => {
+      isMounted = false;
+    };
+  }, [pathname]);
+
   // If on login page, render children without sidebar
   if (pathname === "/admin/login") {
     return <>{children}</>;
