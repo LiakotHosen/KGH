@@ -4,6 +4,11 @@ export const DOCTOR_CODE_MAP: Record<string, string> = {
   "dr-diean": "ADS",
   "dr-sanwar": "SMH",
   "dr-fatema": "FTM",
+  "dr-bappy": "MMC",
+  "dr-ratina": "JI",
+  "dr-rifat": "RR",
+  "dr-rafia": "RN",
+  "dr-rafia-nazneen": "RN",
   "dr-farzana": "FH",
   "dr-kazi-nawshad": "KNH",
   "dr-kazi-sharmin": "KSS",
@@ -39,13 +44,56 @@ export function getDoctorCode(doctorId?: string, doctorName?: string): string {
 }
 
 /**
- * Generates tracking reference code in format: KGH-[DOC_CODE]-[RANDOM_NUMBER]
- * Example: KGH-ADS-481920
+ * Formats appointment date into [YYYY][DD][Mon] format.
+ * Example: 2026-09-11 -> 202611Sep
  */
-export function generateAppointmentReference(doctorId?: string, doctorName?: string): string {
+export function formatAppointmentDateCode(dateInput?: string | Date): string {
+  let d: Date;
+  if (!dateInput) {
+    d = new Date();
+  } else if (typeof dateInput === "string") {
+    const parts = dateInput.split("T")[0].split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      d = new Date(year, month, day);
+    } else {
+      d = new Date(dateInput);
+    }
+  } else {
+    d = dateInput;
+  }
+
+  if (isNaN(d.getTime())) {
+    d = new Date();
+  }
+
+  const year = d.getFullYear();
+  const day = String(d.getDate()).padStart(2, "0");
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  const mon = monthNames[d.getMonth()] || "Sep";
+
+  return `${year}${day}${mon}`;
+}
+
+/**
+ * Generates tracking reference code in format: KGH-[DOC_CODE][YYYY][DD][Mon]-[3-DIGIT_RANDOM]
+ * Example: KGH-ADS202611Sep-001
+ * Matches: KGH-Doctor initial, Year, Date + random number
+ */
+export function generateAppointmentReference(
+  doctorId?: string,
+  doctorName?: string,
+  appointmentDate?: string | Date
+): string {
   const code = getDoctorCode(doctorId, doctorName);
-  const randomNum = Math.floor(100000 + Math.random() * 900000);
-  return `KGH-${code}-${randomNum}`;
+  const dateCode = formatAppointmentDateCode(appointmentDate);
+  const randomNum = String(Math.floor(1 + Math.random() * 999)).padStart(3, "0");
+  return `KGH-${code}${dateCode}-${randomNum}`;
 }
 
 /**

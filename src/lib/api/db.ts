@@ -698,7 +698,11 @@ export async function fetchAppointmentsByQuery(query: string): Promise<any[]> {
             department_name: resolvedDept,
             status: item.status || "confirmed",
           };
-          const refMatch = item.reference_code?.toUpperCase().includes(q);
+          const cleanQ = q.replace(/[\s-]/g, "");
+          const cleanItemRef = (item.reference_code || "").toUpperCase().replace(/[\s-]/g, "");
+          const refMatch =
+            item.reference_code?.toUpperCase().includes(q) ||
+            (cleanQ.length >= 3 && cleanItemRef.includes(cleanQ));
           const phoneMatch = item.patient_phone?.replace(/[^0-9]/g, "").includes(q.replace(/[^0-9]/g, ""));
           if (refMatch || phoneMatch) {
             if (!matches.some((m) => m.reference_code === item.reference_code)) {
@@ -716,10 +720,12 @@ export async function fetchAppointmentsByQuery(query: string): Promise<any[]> {
 
   try {
     const cleanPhone = query.trim();
+    const cleanQuery = query.trim();
+    const normalizedCode = cleanQuery.replace(/\s+/g, "");
     const { data, error } = await supabase
       .from("appointments")
       .select("*")
-      .or(`reference_code.ilike.%${query}%,patient_phone.ilike.%${cleanPhone}%`)
+      .or(`reference_code.ilike.%${cleanQuery}%,reference_code.ilike.%${normalizedCode}%,patient_phone.ilike.%${cleanPhone}%`)
       .order("appointment_date", { ascending: false });
 
     if (!error && data) {
@@ -1423,7 +1429,7 @@ export const DEFAULT_CLINICAL_CREED_QUOTES: CreedQuoteItem[] = [
       en: "KGH Dental Multi-Specialty Chamber",
       bn: "কেজিএইচ ডেন্টাল মাল্টি-স্পেশালিটি চেম্বার",
     },
-    image: "/images/why-choose-us/modern-chamber.jpg",
+    image: "/images/philosophy/slide-1-xray-diagnosis.jpg",
   },
   {
     id: "quote-2",
@@ -1443,7 +1449,7 @@ export const DEFAULT_CLINICAL_CREED_QUOTES: CreedQuoteItem[] = [
       en: "Precision Diagnostics & Clinical Governance",
       bn: "প্রেসিশন ডায়াগনস্টিকস ও ক্লিনিক্যাল গভর্ন্যান্স",
     },
-    image: "/images/why-choose-us/transparent-plans-hd.jpeg",
+    image: "/images/philosophy/slide-2-shade-guide-smile.jpg",
   },
   {
     id: "quote-3",
@@ -1463,7 +1469,7 @@ export const DEFAULT_CLINICAL_CREED_QUOTES: CreedQuoteItem[] = [
       en: "Specialist Care Collaborative",
       bn: "বিশেষজ্ঞ সমন্বিত চিকিৎসা দল",
     },
-    image: "/images/why-choose-us/specialist-care.jpg",
+    image: "/images/philosophy/slide-3-orthodontic-braces.jpg",
   },
 ];
 

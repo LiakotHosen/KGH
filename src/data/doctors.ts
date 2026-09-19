@@ -286,5 +286,53 @@ export const DOCTORS: Doctor[] = [
     },
     isConfirmed: true,
   },
+  {
+    id: "dr-rafia",
+    slug: "dr-rafia-nazneen",
+    name: {
+      en: "Dr. Rafia Nazneen",
+      bn: "ডা. রাফিয়া নাজনীন",
+    },
+    specialty: {
+      en: "Specialist in Conservative Dentistry & Endodontics",
+      bn: "কনজারভেটিভ ডেন্টিস্ট্রি ও এন্ডোডন্টিক্স বিশেষজ্ঞ",
+    },
+    departmentId: "endodontics",
+    degrees: {
+      en: "BDS, FCPS (Conservative Dentistry & Endodontics)",
+      bn: "বিডিএস, এফসিপিএস (কনজারভেটিভ ডেন্টিস্ট্রি অ্যান্ড এন্ডোডন্টিক্স)",
+    },
+    designation: {
+      en: "Associate Professor & Head, Department of Dental Surgery",
+      bn: "সহযোগী অধ্যাপক ও বিভাগীয় প্রধান, ডেন্টাল সার্জারি বিভাগ",
+    },
+    institution: {
+      en: "BIRDEM General Hospital",
+      bn: "বারডেম জেনারেল হাসপাতাল",
+    },
+    photoUrl: "/images/doctors/dr-rafia-nazneen.png",
+    bio: {
+      en: "Dr. Rafia Nazneen is an Associate Professor & Head of the Department of Dental Surgery at BIRDEM General Hospital. Holding a BDS and FCPS in Conservative Dentistry & Endodontics, she specializes in modern painless root canals, cosmetic dental restorations, and advanced microscopic endodontic procedures.",
+      bn: "ডা. রাফিয়া নাজনীন বারডেম জেনারেল হাসপাতালের ডেন্টাল সার্জারি বিভাগের সহযোগী অধ্যাপক ও বিভাগীয় প্রধান। তিনি বিডিএস এবং কনজারভেটিভ ডেন্টিস্ট্রি ও এন্ডোডন্টিক্সে এফসিপিএস ডিগ্রিধারী। তিনি আধুনিক ব্যথামুক্ত রুট ক্যানেল চিকিৎসা, নান্দনিক ডেন্টাল রেস্টোরেশন এবং উন্নত মাইক্রোস্কোপিক এন্ডোডন্টিক পদ্ধতিতে বিশেষভাবে অভিজ্ঞ।",
+    },
+    experience: {
+      en: "Associate Professor & Head at BIRDEM General Hospital • FCPS (Conservative Dentistry & Endodontics)",
+      bn: "সহযোগী অধ্যাপক ও বিভাগীয় প্রধান (বারডেম জেনারেল হাসপাতাল) • এফসিপিএস (কনজারভেটিভ ডেন্টিস্ট্রি ও এন্ডোডন্টিক্স)",
+    },
+    schedule: {
+      availableDaysEn: "Saturday & Monday",
+      availableDaysBn: "শনিবার ও সোমবার",
+      daysOfWeek: [1, 6], // Monday=1, Saturday=6
+      startTime: "15:00",
+      endTime: "19:00",
+      slotDurationMinutes: 30,
+      note: {
+        en: "3:00 PM – 7:00 PM (Saturday & Monday)",
+        bn: "বিকাল ৩:০০ – সন্ধ্যা ৭:০০ (শনিবার ও সোমবার)",
+      },
+    },
+    isConfirmed: true,
+  },
 ];
+
 

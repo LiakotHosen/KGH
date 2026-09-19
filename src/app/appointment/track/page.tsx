@@ -132,8 +132,8 @@ function TrackContent() {
           </h1>
           <p className="text-sm text-zinc-600 mt-2 max-w-xl mx-auto">
             {isBn
-              ? "আপনার বুকিং রেফারেন্স কোড (উদা: KGH-ADS-XXXXXX) অথবা মোবাইল নম্বর দিয়ে সরাসরি বর্তমান স্ট্যাটাস দেখুন।"
-              : "Enter your Booking Reference (e.g. KGH-ADS-XXXXXX) or Mobile Number to check real-time verification status."}
+              ? "আপনার বুকিং রেফারেন্স কোড (উদা: KGH-ADS202619Sep-001) অথবা মোবাইল নম্বর দিয়ে সরাসরি বর্তমান স্ট্যাটাস দেখুন।"
+              : "Enter your Booking Reference (e.g. KGH-ADS202619Sep-001) or Mobile Number to check real-time verification status."}
           </p>
 
           {/* Search Box Form */}
@@ -146,8 +146,8 @@ function TrackContent() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={
                   isBn
-                    ? "রেফারেন্স কোড (KGH-...) বা মোবাইল নম্বর লিখুন..."
-                    : "Enter Ref Code (e.g. KGH-ADS-...) or Mobile..."
+                    ? "রেফারেন্স কোড (উদা: KGH-ADS...) বা মোবাইল নম্বর..."
+                    : "Enter Ref Code (e.g. KGH-ADS...) or Mobile..."
                 }
                 className="w-full px-3.5 py-3 text-sm font-medium bg-transparent border-none focus:outline-hidden text-zinc-950 placeholder-zinc-400"
               />

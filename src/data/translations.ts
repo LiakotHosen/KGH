@@ -179,7 +179,7 @@ export const UI_STRINGS = {
           en: "KGH Dental Multi-Specialty Chamber",
           bn: "কেজিএইচ ডেন্টাল মাল্টি-স্পেশালিটি চেম্বার",
         },
-        image: "/images/why-choose-us/modern-chamber.jpg",
+        image: "/images/philosophy/slide-1-xray-diagnosis.jpg",
       },
       {
         quote: {
@@ -198,7 +198,7 @@ export const UI_STRINGS = {
           en: "Precision Diagnostics & Clinical Governance",
           bn: "প্রেসিশন ডায়াগনস্টিকস ও ক্লিনিক্যাল গভর্ন্যান্স",
         },
-        image: "/images/why-choose-us/transparent-plans-hd.jpeg",
+        image: "/images/philosophy/slide-2-shade-guide-smile.jpg",
       },
       {
         quote: {
@@ -217,7 +217,7 @@ export const UI_STRINGS = {
           en: "Specialist Care Collaborative",
           bn: "বিশেষজ্ঞ সমন্বিত চিকিৎসা দল",
         },
-        image: "/images/why-choose-us/specialist-care.jpg",
+        image: "/images/philosophy/slide-3-orthodontic-braces.jpg",
       },
     ],
     pills: [
@@ -241,8 +241,8 @@ export const UI_STRINGS = {
       bn: "আমাদের বিশেষজ্ঞদের সাথে পরিচিত হোন",
     },
     subtitle: {
-      en: "Six specialists, one shared commitment to your smile.",
-      bn: "ছয়জন বিশেষজ্ঞ, লক্ষ্য একটাই — আপনার হাসির যত্ন।",
+      en: "Seven specialists, one shared commitment to your smile.",
+      bn: "সাতজন বিশেষজ্ঞ, লক্ষ্য একটাই — আপনার হাসির যত্ন।",
     },
     viewProfile: {
       en: "View Full Profile",

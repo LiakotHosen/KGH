@@ -678,7 +678,7 @@ export default function AdminHomepagePage() {
                       onChange={(e) =>
                         updateCurrentQuote({ image: e.target.value })
                       }
-                      placeholder="/images/why-choose-us/modern-chamber.jpg or https://..."
+                      placeholder="/images/philosophy/slide-1-xray-diagnosis.jpg or https://..."
                       className="w-full px-3.5 py-2 rounded-xl border border-zinc-300 text-xs font-mono"
                     />
                   </div>
@@ -692,50 +692,50 @@ export default function AdminHomepagePage() {
                         type="button"
                         onClick={() =>
                           updateCurrentQuote({
-                            image: "/images/why-choose-us/modern-chamber.jpg",
+                            image: "/images/philosophy/slide-1-xray-diagnosis.jpg",
                           })
                         }
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                           currentQuote.image ===
-                          "/images/why-choose-us/modern-chamber.jpg"
+                          "/images/philosophy/slide-1-xray-diagnosis.jpg"
                             ? "bg-zinc-900 text-white border-zinc-900"
                             : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
                         }`}
                       >
-                        🏥 Modern Chamber
+                        🏥 Panoramic X-Ray & Modern Operatory
                       </button>
                       <button
                         type="button"
                         onClick={() =>
                           updateCurrentQuote({
                             image:
-                              "/images/why-choose-us/transparent-plans-hd.jpeg",
+                              "/images/philosophy/slide-2-shade-guide-smile.jpg",
                           })
                         }
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                           currentQuote.image ===
-                          "/images/why-choose-us/transparent-plans-hd.jpeg"
+                          "/images/philosophy/slide-2-shade-guide-smile.jpg"
                             ? "bg-zinc-900 text-white border-zinc-900"
                             : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
                         }`}
                       >
-                        🔬 Digital Scans & Diagnostics
+                        ✨ Shade Guide & Smile Restoration
                       </button>
                       <button
                         type="button"
                         onClick={() =>
                           updateCurrentQuote({
-                            image: "/images/why-choose-us/specialist-care.jpg",
+                            image: "/images/philosophy/slide-3-orthodontic-braces.jpg",
                           })
                         }
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                           currentQuote.image ===
-                          "/images/why-choose-us/specialist-care.jpg"
+                          "/images/philosophy/slide-3-orthodontic-braces.jpg"
                             ? "bg-zinc-900 text-white border-zinc-900"
                             : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100"
                         }`}
                       >
-                        🩺 Specialist Surgical Loupes
+                        😁 Orthodontic Braces & Confident Smile
                       </button>
                       <button
                         type="button"

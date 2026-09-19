@@ -209,8 +209,8 @@ export function BookingWizard() {
         return;
       }
 
-      // Generate doctor-coded reference code: KGH-[DOC]-[RANDOM]
-      const ref = generateAppointmentReference(activeDoctor?.id, activeDoctor?.name?.en);
+      // Generate doctor-coded reference code: KGH-[DOC][YYYY][DD][Mon]-[SERIAL] (e.g. KGH-ADS202611Sep-001)
+      const ref = generateAppointmentReference(activeDoctor?.id, activeDoctor?.name?.en, selectedDate);
       setBookingRef(ref);
       setIsSubmitted(true);
       setCurrentStep(4);

@@ -25,6 +25,8 @@ const LOCAL_DOCTOR_IMAGES: Record<string, string> = {
   "dr-bappy": "/images/doctors/dr-Bappy.png",
   "dr-ratina": "/images/doctors/Dr Jesinta Islam.png",
   "dr-rifat": "/images/doctors/Dr Rifat Rahman.png",
+  "dr-rafia": "/images/doctors/dr-rafia-nazneen.png",
+  "dr-rafia-nazneen": "/images/doctors/dr-rafia-nazneen.png",
 };
 
 export default function DoctorsPage() {
@@ -53,8 +55,8 @@ export default function DoctorsPage() {
             </h1>
             <p className="text-base sm:text-lg text-zinc-600 mt-4 leading-relaxed max-w-3xl">
               {isBn
-                ? "ছয়জন বিশেষজ্ঞ। লক্ষ্য একটাই — আপনার ঠিক যে চিকিৎসাটা দরকার, সেটা দেবে সেই বিষয়ে সবচেয়ে দক্ষ মানুষটাই।"
-                : "Six specialists. One shared mission — to give you the exact care you need, from the person best trained to give it."}
+                ? "সাতজন বিশেষজ্ঞ। লক্ষ্য একটাই — আপনার ঠিক যে চিকিৎসাটা দরকার, সেটা দেবে সেই বিষয়ে সবচেয়ে দক্ষ মানুষটাই।"
+                : "Seven specialists. One shared mission — to give you the exact care you need, from the person best trained to give it."}
             </p>
           </div>
         </div>

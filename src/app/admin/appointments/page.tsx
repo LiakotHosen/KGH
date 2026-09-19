@@ -49,7 +49,7 @@ import {
 const INITIAL_APPOINTMENTS: AppointmentRecord[] = [
   {
     id: "app-1",
-    reference_code: "KGH-ADS-472299",
+    reference_code: "KGH-ADS202606Sep-001",
     patient_name: "Rafiqul Islam",
     patient_phone: "01712345678",
     patient_email: "rafiqul@example.com",
@@ -63,7 +63,7 @@ const INITIAL_APPOINTMENTS: AppointmentRecord[] = [
   },
   {
     id: "app-2",
-    reference_code: "KGH-FTM-819302",
+    reference_code: "KGH-FTM202608Sep-002",
     patient_name: "Farhana Akter",
     patient_phone: "01898765432",
     doctor_name: "Dr. Fatema Tasrin Madhubi",
@@ -76,7 +76,7 @@ const INITIAL_APPOINTMENTS: AppointmentRecord[] = [
   },
   {
     id: "app-3",
-    reference_code: "KGH-SMH-304918",
+    reference_code: "KGH-SMH202605Sep-003",
     patient_name: "Kamal Hossain",
     patient_phone: "01911223344",
     doctor_name: "Dr. Md. Sanwar Hossain",
@@ -89,7 +89,7 @@ const INITIAL_APPOINTMENTS: AppointmentRecord[] = [
   },
   {
     id: "app-4",
-    reference_code: "KGH-ADS-192847",
+    reference_code: "KGH-ADS202604Sep-004",
     patient_name: "Nusrat Jahan",
     patient_phone: "01677889900",
     doctor_name: "Dr. Ahamed Diean Sammir",
@@ -313,6 +313,8 @@ export default function AdminAppointmentsPage() {
       // Search query filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
+        const cleanQ = q.replace(/[\s-]/g, "");
+        const cleanRef = app.reference_code.toLowerCase().replace(/[\s-]/g, "");
         const docName = resolveDoctorDisplayName(app.doctor_name || app.doctor_id).toLowerCase();
         const deptName = resolveDepartmentDisplayName(
           app.department_name || app.department_id,
@@ -322,6 +324,7 @@ export default function AdminAppointmentsPage() {
           app.patient_name.toLowerCase().includes(q) ||
           app.patient_phone.includes(q) ||
           app.reference_code.toLowerCase().includes(q) ||
+          (cleanQ.length >= 3 && cleanRef.includes(cleanQ)) ||
           docName.includes(q) ||
           deptName.includes(q);
         if (!matchesQuery) return false;

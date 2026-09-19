@@ -25,6 +25,8 @@ const LOCAL_DOCTOR_IMAGES: Record<string, string> = {
   "dr-bappy": "/images/doctors/dr-Bappy.png",
   "dr-ratina": "/images/doctors/Dr Jesinta Islam.png",
   "dr-rifat": "/images/doctors/Dr Rifat Rahman.png",
+  "dr-rafia": "/images/doctors/dr-rafia-nazneen.png",
+  "dr-rafia-nazneen": "/images/doctors/dr-rafia-nazneen.png",
 };
 
 // Global image cache to keep pre-decoded Image objects alive in memory across scroll and route navigation

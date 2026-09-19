@@ -23,22 +23,31 @@ export function ClinicalPhilosophyBanner() {
   const quoteData = UI_STRINGS.clinicalQuoteBreaker;
   const staticQuotes = quoteData?.quotes || [];
 
+  const PHILOSOPHY_SLIDE_IMAGES: Record<number, string> = {
+    0: "/images/philosophy/slide-1-xray-diagnosis.jpg",
+    1: "/images/philosophy/slide-2-shade-guide-smile.jpg",
+    2: "/images/philosophy/slide-3-orthodontic-braces.jpg",
+  };
+
   const quotesList =
     creedData?.quotes && creedData.quotes.length > 0
-      ? creedData.quotes
+      ? creedData.quotes.map((q, idx) => ({
+          ...q,
+          image:
+            !q.image ||
+            q.image.includes("modern-chamber") ||
+            q.image.includes("transparent-plans") ||
+            q.image.includes("specialist-care")
+              ? PHILOSOPHY_SLIDE_IMAGES[idx % 3]
+              : q.image,
+        }))
       : staticQuotes.map((sq, idx) => ({
           id: `quote-${idx + 1}`,
           quote: sq.quote,
           highlight: sq.highlight,
           author: sq.author,
           role: sq.role,
-          image:
-            sq.image ||
-            (idx === 0
-              ? "/images/why-choose-us/modern-chamber.jpg"
-              : idx === 1
-              ? "/images/why-choose-us/transparent-plans-hd.jpeg"
-              : "/images/why-choose-us/specialist-care.jpg"),
+          image: PHILOSOPHY_SLIDE_IMAGES[idx % 3],
         }));
 
   // Auto-advance quotes every 9 seconds
@@ -76,13 +85,7 @@ export function ClinicalPhilosophyBanner() {
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         {quotesList.map((q, qIdx) => {
           const isActive = qIdx === activeQuoteIndex;
-          const bgImg =
-            q.image ||
-            (qIdx === 0
-              ? "/images/why-choose-us/modern-chamber.jpg"
-              : qIdx === 1
-              ? "/images/why-choose-us/transparent-plans-hd.jpeg"
-              : "/images/why-choose-us/specialist-care.jpg");
+          const bgImg = q.image || PHILOSOPHY_SLIDE_IMAGES[qIdx % 3];
 
           return (
             <div
